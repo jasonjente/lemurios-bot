@@ -33,7 +33,7 @@ public enum Constants {
     /**
      * DIRECTORIES
      */
-    DATA_IN_DIR("images"),
+    DATA_IN_DIR("LemuriosBOT/images"),
     IMAGE_DETECTION_IMAGE_IN_DIR("detection/in"),
     IMAGE_DETECTION_IMAGE_OUT_DIR("detection/out");
 
