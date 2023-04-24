@@ -4,7 +4,7 @@ import bot.commands.Command;
 import bot.commands.history.HistoryEntry;
 import bot.commands.history.HistoryEntryRepository;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +22,8 @@ public class HistoryCommand extends Command {
     private HistoryEntryRepository repository;
 
     @Override
-    public void execute(MessageReceivedEvent event) {
-        String sender = event.getAuthor().getAsTag();
+    public void execute(SlashCommandInteractionEvent event) {
+        String sender = event.getUser().getAsTag();
         createHistoryEntry(event);
         LOGGER.info("{} has requested the history of commands.", sender);
         EmbedBuilder embedBuilder = new EmbedBuilder()

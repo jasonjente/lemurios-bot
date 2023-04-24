@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,8 @@ public class AssemblemursCommand extends Command {
 
 
     @Override
-    public void execute(MessageReceivedEvent event) {
+    public void execute(SlashCommandInteractionEvent event) {
+        event.deferReply().setEphemeral(false).queue(); // Tell discord we received the command, send a thinking... message to the user
         LOGGER.info("assemblemursCommand - ENTER");
         createHistoryEntry(event);
         if(userIsLemurWorthy(event)){
@@ -31,11 +32,12 @@ public class AssemblemursCommand extends Command {
         } else {
             notifyUnworthy(event);
         }
+        event.getInteraction().reply("");
         LOGGER.info("assemblemursCommand - LEAVE");
     }
 
-    private boolean userIsLemurWorthy(MessageReceivedEvent event) {
-        String sender = event.getAuthor().getAsTag();
+    private boolean userIsLemurWorthy(SlashCommandInteractionEvent event) {
+        String sender = event.getUser().getAsTag();
         Role lemurs = event.getGuild().getRolesByName("LEMURIOI", true).get(0);
         if (!event.getMember().getRoles().contains(lemurs)) {
             LOGGER.info("{} is not worthy", sender);
@@ -45,12 +47,12 @@ public class AssemblemursCommand extends Command {
         return true;
     }
 
-    private void doAssemble(MessageReceivedEvent event) {
+    private void doAssemble(SlashCommandInteractionEvent event) {
         Role lemurs = event.getGuild().getRolesByName("LEMURIOI", true).get(0);
-        User author = event.getAuthor();
+        User author = event.getUser();
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setTitle("LEMURS ASSEMBLE")
-                .setDescription(event.getAuthor().getAsTag() + "wants to play games. Please join them.")
+                .setDescription(event.getUser().getAsTag() + "wants to play games. Please join them.")
                 .setColor(Color.YELLOW)
                 .setFooter("NOW GTFO HERE!");
 
@@ -65,15 +67,15 @@ public class AssemblemursCommand extends Command {
                 continue;
             }
             PrivateChannel channel = member.getUser().openPrivateChannel().complete();
-            String message = HELLO.getValue() + member.getUser().getName() + " Lemurios-" + event.getAuthor().getAsTag()
+            String message = HELLO.getValue() + member.getUser().getName() + " Lemurios-" + event.getUser().getAsTag()
                     + INVITE_MESSAGE.getValue()+ SORRY_FOR_SPAM_MESSAGE.getValue();
             channel.sendMessage(message).queue();
             LOGGER.info("Sent direct message to {}." , member.getUser().getAsTag());
         }
     }
 
-    private void notifyUnworthy(MessageReceivedEvent event) {
-        String sender = event.getAuthor().getAsTag();
+    private void notifyUnworthy(SlashCommandInteractionEvent event) {
+        String sender = event.getUser().getAsTag();
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setTitle(sender + " sorry, but you are not worthy enough to call the Lemurs. :/")
                 .setDescription("Sorry " + sender + ", it seems you dont belong to the lemurs group.")

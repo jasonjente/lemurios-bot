@@ -3,12 +3,13 @@ package bot.commands;
 import bot.commands.history.HistoryEntry;
 import bot.commands.history.HistoryEntryRepository;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +20,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import static bot.constants.Constants.DATA_IN_DIR;
+import static bot.constants.Constants.HELLO;
 
 @Component
 public abstract class Command {
@@ -27,12 +28,12 @@ public abstract class Command {
     @Autowired
     private HistoryEntryRepository repository;
 
-    protected abstract void execute(MessageReceivedEvent event);
+    public abstract void execute(SlashCommandInteractionEvent event);
 
-    protected void createHistoryEntry(MessageReceivedEvent event){
+    protected void createHistoryEntry(SlashCommandInteractionEvent event){
         HistoryEntry entry = new HistoryEntry();
-        entry.setCommandIssued(event.getMessage().getContentRaw());
-        entry.setFullTag(event.getAuthor().getAsTag());
+        entry.setCommandIssued(event.getFullCommandName());
+        entry.setFullTag(event.getUser().getAsTag());
         entry.setCreatedOn(Timestamp.from(Instant.now()));
         repository.save(entry);
     }
@@ -48,11 +49,11 @@ public abstract class Command {
         return trimmedFilename;
     }
 
-    protected List<String> saveImagesReceived(String sender, EmbedBuilder embedBuilder, List<Message.Attachment> attachments, String directory) {
+    protected List<String> saveImagesReceived(String sender, EmbedBuilder embedBuilder, List<OptionMapping> attachments, String directory) {
         List<String> filenames = new ArrayList<>();
-        for(Message.Attachment attachment:attachments) {
-            String attachmentUrl = attachment.getUrl();
-            String fileName = attachment.getFileName();
+        for(OptionMapping attachment:attachments) {
+            String attachmentUrl = attachment.getAsAttachment().getUrl();
+            String fileName = attachment.getAsAttachment().getFileName();
             try {
                 URL url = new URL(attachmentUrl);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -65,7 +66,7 @@ public abstract class Command {
                 connection.setRequestProperty("Cookie", "cookies_here");
 
                 BufferedImage image = ImageIO.read(connection.getInputStream());
-                String finalFilename = getAvailableFilename(DATA_IN_DIR.getValue(), fileName);
+                String finalFilename = getAvailableFilename(directory, fileName);
                 File outputFile = new File(new File(directory), finalFilename);
                 ImageIO.write(image, "png", outputFile);
                 filenames.add(finalFilename);
@@ -75,5 +76,15 @@ public abstract class Command {
 
         }
         return filenames;
+    }
+
+    public void functionalityNotReadyYet(SlashCommandInteractionEvent event) {
+        createHistoryEntry(event);
+        EmbedBuilder embedBuilder = new EmbedBuilder()
+                .setTitle("LEMURIOS BOT Help Center.")
+                .setDescription(HELLO.getValue()+ event.getUser().getName() + ", unfortunately this functionality has not been setup yet :/.")
+                .setColor(Color.MAGENTA)
+                .setFooter("NOW GTFO HERE!\n With Best Regards Lemurios BOT-DEV Team.");
+        event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
     }
 }

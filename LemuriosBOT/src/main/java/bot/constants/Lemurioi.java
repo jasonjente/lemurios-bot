@@ -8,6 +8,7 @@ public enum Lemurioi {
     LEMURIOS_004("Lemurios 004"),
     LEMURIOS_005("Lemurios 005"),
     LEMURIOS_007("Lemurios 007"),
+    LEMURIOS_047("Lemurios 047"),
     LEMURIOS_666("Lemurios 626"),
     LEMURIOS_626("Lemurios 666");
 
@@ -32,6 +33,7 @@ public enum Lemurioi {
           .append("\n Lemurios 004")
           .append("\n Lemurios 005")
           .append("\n Lemurios 007")
+          .append("\n Lemurios 047")
           .append("\n Lemurios 626")
           .append("\n Lemurios 666");
         return sb.toString();

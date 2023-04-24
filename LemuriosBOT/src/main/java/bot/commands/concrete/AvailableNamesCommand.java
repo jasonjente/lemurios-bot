@@ -3,7 +3,7 @@ package bot.commands.concrete;
 import bot.commands.Command;
 import bot.constants.Lemurioi;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,8 +17,8 @@ public class AvailableNamesCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(AvailableNamesCommand.class);
 
     @Override
-    public void execute(MessageReceivedEvent event) {
-        String sender = event.getAuthor().getAsTag();
+    public void execute(SlashCommandInteractionEvent event) {
+        String sender = event.getUser().getAsTag();
         LOGGER.info("{} has requested the available names command.", sender);
         createHistoryEntry(event);
 

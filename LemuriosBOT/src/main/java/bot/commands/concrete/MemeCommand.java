@@ -4,7 +4,7 @@ import bot.MemeResult;
 import bot.commands.Command;
 import bot.exceptions.ImageProcessingException;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ import static bot.constants.Constants.SORRY_MSG;
 /**
  * Gets a random meme in File format, then it converted to a buffered image, passed into a buffered stream and
  * then converted into an Input Stream.
- * @param event contains relevant information like the author and the chat endpoints.
+ * The event parameter contains relevant information like the author and the chat endpoints.
  */
 @Service
 public class MemeCommand extends Command {
@@ -53,8 +53,8 @@ public class MemeCommand extends Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event) {
-        String sender = event.getAuthor().getAsTag();
+    public void execute(SlashCommandInteractionEvent event) {
+        String sender = event.getUser().getAsTag();
         createHistoryEntry(event);
         LOGGER.info("{} has requested the meme command.", sender);
         EmbedBuilder embedBuilder = new EmbedBuilder().setImage("attachment://meme.png") ;// we specify this in sendFile as "cat.png"

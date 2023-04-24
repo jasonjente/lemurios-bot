@@ -9,11 +9,11 @@ import org.springframework.context.ApplicationContext;
 import static bot.LemuriosBOT.API_TOKEN;
 
 @SpringBootApplication
-public class MessageHistoryApplication {
+public class LemuriosBotSpringBootApplication {
 
 
 	public static void main(String[] args) {
-		SpringApplication app = new SpringApplication(MessageHistoryApplication.class);
+		SpringApplication app = new SpringApplication(LemuriosBotSpringBootApplication.class);
 		ApplicationContext context = app.run(args);
 		LemuriosBOT lemuriosBOT = context.getBean(LemuriosBOT.class);
 
