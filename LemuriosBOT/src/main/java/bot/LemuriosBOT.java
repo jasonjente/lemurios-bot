@@ -1,7 +1,11 @@
 package bot;
 
 import bot.commands.Command;
-import bot.commands.concrete.*;
+import bot.commands.concrete.chat.*;
+import bot.commands.concrete.images.DetectImageEdgesCommand;
+import bot.commands.concrete.images.MemeCommand;
+import bot.commands.concrete.images.UploadMemeCommand;
+import bot.commands.concrete.music.*;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -35,7 +39,14 @@ public class LemuriosBOT extends ListenerAdapter {
     private MemeCommand memeCommand;
     private UploadMemeCommand uploadMemeCommand;
     private PlayCommand playCommand;
+    private StopCommand stopCommand;
+    private PauseCommand pauseCommand;
+    private SkipCommand skipCommand;
+    private ResumeCommand resumeCommand;
+    private NowPlaying nowPlaying;
+    private JoinCommand joinCommand;
     private final Map<String, Command> commands = new HashMap<>();
+
 
 
     //Guild Commands -- Commands get instantly deployed
@@ -68,6 +79,12 @@ public class LemuriosBOT extends ListenerAdapter {
         OptionData optionDataSongToPlay = new OptionData(OptionType.STRING, "url", "Used to add a song to the queue",true);
         commandData.add(Commands.slash(PLAY_COMMAND.getValue(), "play a song via soundcloud, YouTube or from a discord CDN link.").addOptions(optionDataSongToPlay));
 
+        commandData.add(Commands.slash(SKIP_COMMAND.getValue(), "Skips current song from the song list."));
+        commandData.add(Commands.slash(PAUSE_COMMAND.getValue(), "Pauses current song from the song list."));
+        commandData.add(Commands.slash(STOP_COMMAND.getValue(), "Stops execution and empties the song list."));
+        commandData.add(Commands.slash(JOIN_COMMAND.getValue(), "Bot joins the voice channel the caller is in."));
+        commandData.add(Commands.slash(NOW_PLAYING.getValue(), "Bot prints the song it is currently playing."));
+
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }
 
@@ -87,6 +104,12 @@ public class LemuriosBOT extends ListenerAdapter {
         commands.put(MEME_COMMAND.getValue(),memeCommand);
         commands.put(UPLOAD_MEME_COMMAND.getValue(),uploadMemeCommand);
         commands.put(PLAY_COMMAND.getValue(), playCommand);
+        commands.put(PAUSE_COMMAND.getValue(), pauseCommand);
+        commands.put(SKIP_COMMAND.getValue(), skipCommand);
+        commands.put(STOP_COMMAND.getValue(), stopCommand);
+        commands.put(JOIN_COMMAND.getValue(), joinCommand);
+        commands.put(NOW_PLAYING.getValue(), nowPlaying);
+        commands.put(RESUME_COMMAND.getValue(), resumeCommand);
     }
     //Global command for production -- takes up to 1 hour to get deployed
    /** @Override
@@ -131,7 +154,6 @@ public class LemuriosBOT extends ListenerAdapter {
             event.deferReply().queue(); // Tell discord we received the command, send a thinking... message to the user
             commands.get(event.getFullCommandName()).execute(event);
         }
-        event.getInteraction().getHook().editOriginal("Here are your results mate!").queue();
 
         LOGGER.info("Message received from {} - Content: {} - LEAVE", event.getInteraction().getUser().getAsTag(), event.getFullCommandName());
     }
@@ -183,4 +205,32 @@ public class LemuriosBOT extends ListenerAdapter {
         this.playCommand = playCommand;
     }
 
+    @Autowired
+    public void setStopCommand(StopCommand stopCommand) {
+        this.stopCommand = stopCommand;
+    }
+
+    @Autowired
+    public void setPauseCommand(PauseCommand pauseCommand) {
+        this.pauseCommand = pauseCommand;
+    }
+    @Autowired
+    public void setSkipCommand(SkipCommand skipCommand) {
+        this.skipCommand = skipCommand;
+    }
+
+    @Autowired
+    public void setJoinCommand(JoinCommand joinCommand) {
+        this.joinCommand = joinCommand;
+    }
+
+    @Autowired
+    public void setResumeCommand(ResumeCommand resumeCommand) {
+        this.resumeCommand = resumeCommand;
+    }
+
+    @Autowired
+    public void setNowPlaying(NowPlaying nowPlaying) {
+        this.nowPlaying = nowPlaying;
+    }
 }
