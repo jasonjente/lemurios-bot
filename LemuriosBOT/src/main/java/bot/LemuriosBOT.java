@@ -98,7 +98,6 @@ public class LemuriosBOT extends ListenerAdapter {
      * For example when the user prompts the '/help' command, the map returns the helpCommand bean and then the execute()
      * method is called.
      *
-     * The idea is to avoid the if/else statement hell and the Play/Pause/Skip/Stop commands will become classes in the
      * @param event contains all the information needed for the command flow.
      */
     @Override

@@ -801,7 +801,7 @@ public class ImageProcessor {
      * @throws IOException
      */
     public static BufferedImage importImageFile(String filename) throws IOException, ImageProcessingException {
-        LOGGER.info("importImageFile()- importing file{} - enter", filename);
+        LOGGER.info("importImageFile()- importing file {} - enter", filename);
         File directory = new File(IMAGE_DETECTION_IMAGE_IN_DIR.getValue());
         if(!directory.exists()){
             throw new ImageProcessingException("Directory " + "data/pictures/samples doesn't exist");

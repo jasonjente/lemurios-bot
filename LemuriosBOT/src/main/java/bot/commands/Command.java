@@ -46,6 +46,8 @@ public abstract class Command {
             trimmedFilename = trimmedFilename.concat(suffix);
             getAvailableFilename(directory, trimmedFilename);
         }
+        //replace .jpg/.jpeg with .png
+        trimmedFilename = trimmedFilename.endsWith(".jpg") ? trimmedFilename.replace(".jpg", ".png") : trimmedFilename.endsWith(".jpeg") ? trimmedFilename.replace(".jpeg", ".png") : trimmedFilename;
         return trimmedFilename;
     }
 
