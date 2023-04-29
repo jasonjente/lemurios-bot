@@ -34,6 +34,7 @@ public class LemuriosBOT extends ListenerAdapter {
     private HistoryCommand historyCommand;
     private MemeCommand memeCommand;
     private UploadMemeCommand uploadMemeCommand;
+    private PlayCommand playCommand;
     private final Map<String, Command> commands = new HashMap<>();
 
 
@@ -41,21 +42,31 @@ public class LemuriosBOT extends ListenerAdapter {
 
     /**
      * Deploys the guild commands, these can change anytime during the bot startup.
-     * @param event
+     * @param event allows us to upload the commands to the discord server
      */
     @Override
     public void onGuildReady(@NonNull GuildReadyEvent event){
         List<CommandData> commandData = new ArrayList<>();
         commandData.add(Commands.slash(ASSEMLEMURS_COMMAND.getValue(),"Pings all Lemurioi Role Members -- Can be used if and only if you belong to that group."));
+
         commandData.add(Commands.slash(TAKEN_NAMES.getValue(),"Prints out all taken Lemur names."));
+
         commandData.add(Commands.slash(CREDITS_COMMAND.getValue(),"Prints out the application's credits."));
+
         OptionData optionDataDetection = new OptionData(OptionType.ATTACHMENT, "image", "Upload an image to detect its edges.",true);
         commandData.add(Commands.slash(DETECT_IMAGE_EDGES.getValue(),"Upload an image and the bot will return the detected edges in that image.").addOptions(optionDataDetection));
+
         commandData.add(Commands.slash(HELP_COMMAND.getValue(),"Prints all the available commands."));
+
         commandData.add(Commands.slash(HISTORY_COMMAND.getValue(),"Prints the last 25 commands used."));
+
         commandData.add(Commands.slash(MEME_COMMAND.getValue(),"The bot will return with a random meme."));
+
         OptionData optionDataMeme = new OptionData(OptionType.ATTACHMENT, "meme-image", "Upload a meme to the BOT",true);
         commandData.add(Commands.slash(UPLOAD_MEME_COMMAND.getValue(),"Upload a meme to the Bot.").addOptions(optionDataMeme));
+
+        OptionData optionDataSongToPlay = new OptionData(OptionType.STRING, "url", "Used to add a song to the queue",true);
+        commandData.add(Commands.slash(PLAY_COMMAND.getValue(), "play a song via soundcloud, YouTube or from a discord CDN link.").addOptions(optionDataSongToPlay));
 
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }
@@ -75,22 +86,35 @@ public class LemuriosBOT extends ListenerAdapter {
         commands.put(HISTORY_COMMAND.getValue(),historyCommand);
         commands.put(MEME_COMMAND.getValue(),memeCommand);
         commands.put(UPLOAD_MEME_COMMAND.getValue(),uploadMemeCommand);
+        commands.put(PLAY_COMMAND.getValue(), playCommand);
     }
     //Global command for production -- takes up to 1 hour to get deployed
    /** @Override
     public void onReady(ReadyEvent event) {
     List<CommandData> commandData = new ArrayList<>();
-        commandData.add(Commands.slash(ASSEMLEMURS_COMMAND.getValue(),"Pings all Lemurioi Role Members -- Can be used if and only if you belong to that group."));
-        commandData.add(Commands.slash(AVAILABLE_NAMES.getValue(),"Prints out all taken Lemurioi names."));
-        commandData.add(Commands.slash(CREDITS_COMMAND.getValue(),"Prints out the application's credits."));
-        commandData.add(Commands.slash(DETECT_IMAGE_EDGES.getValue(),"Upload an image and the bot will return the detected edges in that image."));
-        commandData.add(Commands.slash(HELP_COMMAND.getValue(),"Prints all the available commands."));
-        commandData.add(Commands.slash(HISTORY_COMMAND.getValue(),"Prints the last 25 commands used."));
-        commandData.add(Commands.slash(MEME_COMMAND.getValue(),"The bot will return with a random meme."));
-        OptionData optionData = new OptionData(OptionType.ATTACHMENT, "meme-image", "Upload a meme to the BOT",true);
-        commandData.add(Commands.slash(UPLOAD_MEME_COMMAND.getValue(),"Upload a meme to the Bot.").addOptions(optionData));
+   commandData.add(Commands.slash(ASSEMLEMURS_COMMAND.getValue(),"Pings all Lemurioi Role Members -- Can be used if and only if you belong to that group."));
 
-        event.getGuild().updateCommands().addCommands(commandData).queue();
+   commandData.add(Commands.slash(TAKEN_NAMES.getValue(),"Prints out all taken Lemur names."));
+
+   commandData.add(Commands.slash(CREDITS_COMMAND.getValue(),"Prints out the application's credits."));
+
+   OptionData optionDataDetection = new OptionData(OptionType.ATTACHMENT, "image", "Upload an image to detect its edges.",true);
+   commandData.add(Commands.slash(DETECT_IMAGE_EDGES.getValue(),"Upload an image and the bot will return the detected edges in that image.").addOptions(optionDataDetection));
+
+   commandData.add(Commands.slash(HELP_COMMAND.getValue(),"Prints all the available commands."));
+
+   commandData.add(Commands.slash(HISTORY_COMMAND.getValue(),"Prints the last 25 commands used."));
+
+   commandData.add(Commands.slash(MEME_COMMAND.getValue(),"The bot will return with a random meme."));
+
+   OptionData optionDataMeme = new OptionData(OptionType.ATTACHMENT, "meme-image", "Upload a meme to the BOT",true);
+   commandData.add(Commands.slash(UPLOAD_MEME_COMMAND.getValue(),"Upload a meme to the Bot.").addOptions(optionDataMeme));
+
+   OptionData optionDataSongToPlay = new OptionData(OptionType.STRING, "url", "Used to add a song to the queue",true);
+   commandData.add(Commands.slash(PLAY_COMMAND.getValue(), "play a song via soundcloud, YouTube or from a discord CDN link.").addOptions(optionDataSongToPlay));
+
+
+   event.getGuild().updateCommands().addCommands(commandData).queue();
     }*/
 
     /**
@@ -107,6 +131,8 @@ public class LemuriosBOT extends ListenerAdapter {
             event.deferReply().queue(); // Tell discord we received the command, send a thinking... message to the user
             commands.get(event.getFullCommandName()).execute(event);
         }
+        event.getInteraction().getHook().editOriginal("Here are your results mate!").queue();
+
         LOGGER.info("Message received from {} - Content: {} - LEAVE", event.getInteraction().getUser().getAsTag(), event.getFullCommandName());
     }
 
@@ -151,6 +177,10 @@ public class LemuriosBOT extends ListenerAdapter {
     @Autowired
     public void setUploadMemeCommand(UploadMemeCommand uploadMemeCommand) {
         this.uploadMemeCommand = uploadMemeCommand;
+    }
+    @Autowired
+    public void setPlayCommand(PlayCommand playCommand){
+        this.playCommand = playCommand;
     }
 
 }

@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static bot.constants.Constants.DATA_IN_DIR;
 import static bot.constants.Constants.SORRY_MSG;
@@ -33,24 +35,30 @@ public class MemeCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(MemeCommand.class);
     private static final Set<String> unusedMemeMap = new HashSet<>();
     private static final Set<String> memeMap = new HashSet<>();
-    private Random random = new Random();  // SecureRandom is preferred to Random
+    private final Random random = new Random();  // SecureRandom is preferred to Random
 
     @PostConstruct
     private void init(){
-        File directory = new File(DATA_IN_DIR.getValue());
-        File[] files = directory.listFiles();
-        LOGGER.info("Initializing meme map!");
-        for(File meme:files) {
-            LOGGER.info("Indexed file {}!", meme.getName());
-            unusedMemeMap.add(meme.getName());
-            memeMap.add(meme.getName());
-        }
-        if (memeMap.isEmpty()) {
-            LOGGER.warn("EMPTY Meme MAP!");
-        } else {
-            LOGGER.info("Total memes available: {}", memeMap.size());
-        }
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            File directory = new File(DATA_IN_DIR.getValue());
+            File[] files = directory.listFiles();
+            LOGGER.info("Initializing meme map!");
+            assert files != null;
+            for(File meme : files) {
+                LOGGER.info("Indexed file {}!", meme.getName());
+                unusedMemeMap.add(meme.getName());
+                memeMap.add(meme.getName());
+            }
+            if (memeMap.isEmpty()) {
+                LOGGER.warn("EMPTY Meme MAP!");
+            } else {
+                LOGGER.info("Total memes available: {}", memeMap.size());
+            }
+        });
+        executor.shutdown();
     }
+
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
@@ -95,7 +103,7 @@ public class MemeCommand extends Command {
      * Then checks the /images directory in classpath. If it finds it then gets the random file,
      * removing its file name from the unused set. If the unused set is emptied, the image is changed to one already used.
      * if no image exists an exception is thrown.
-     * @return
+     * @returns the File Wrapper with extra information such as if this is the first occurrence of the meme.
      */
     public MemeResult getRandomMeme() throws ImageProcessingException {
         File directory = new File(DATA_IN_DIR.getValue());
