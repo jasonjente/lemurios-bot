@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
 import java.io.*;
 import java.util.List;
 
@@ -25,16 +24,17 @@ public class DetectImageEdgesCommand extends Command {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         String sender = event.getUser().getName();
-        LOGGER.info("{} has requested to upload a meme!", sender);
+        LOGGER.info("{} has requested to detect some edges!", sender);
         createHistoryEntry(event);
-
-        EmbedBuilder embedBuilder = new EmbedBuilder();
+        InputStream inputStream;
+        EmbedBuilder embedBuilder = new EmbedBuilder().setImage("attachment://detectedImage.png") ;// we specify this in sendFile as "detectedImage.png"
         List<OptionMapping> attachments = event.getInteraction().getOptions();
         if (!attachments.isEmpty()) {
             List<String> files = saveImagesReceived(sender, embedBuilder, attachments, IMAGE_DETECTION_IMAGE_IN_DIR.getValue());
             for(String file:files){
                 ImageProcessorBuilder imageProcessorBuilder;
                 try {
+                    String filename = getAvailableFilename(IMAGE_DETECTION_IMAGE_OUT_DIR.getValue(), file);
                     imageProcessorBuilder = new ImageProcessorBuilder(file).upscale(2)
                             .applyGaussianBlur()
                             .applyMedianFilter()
@@ -44,14 +44,16 @@ public class DetectImageEdgesCommand extends Command {
                             .applyBinaryBlackAndWhite()
                             .applyErodeFilter()
                             .detectEdges()
-                            .downscale(2)
-                            .exportImage(getAvailableFilename(IMAGE_DETECTION_IMAGE_OUT_DIR.getValue(), file));
+                            .downscale(2);
 
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    ImageIO.write(imageProcessorBuilder.getImage(), "png", os);
-                    InputStream ret = new ByteArrayInputStream(os.toByteArray());
-                    event.getChannel().sendFiles(FileUpload.fromData(ret, file)).setEmbeds(embedBuilder.build()).queue();
+                            imageProcessorBuilder.exportImage(filename.substring(0, filename.lastIndexOf(".")));
 
+                    File convertedImage = new File(new File(IMAGE_DETECTION_IMAGE_OUT_DIR.getValue()), filename);
+                    LOGGER.info("Filename old {}, Filename new: {} ,exists {},  full path to new file: {} ", file, filename, convertedImage.exists(), convertedImage.getAbsolutePath());
+
+                    inputStream = new FileInputStream(convertedImage);
+                    event.getChannel().sendFiles(FileUpload.fromData(inputStream, file)).setEmbeds(embedBuilder.build()).queue();
+                    inputStream.close();
                 } catch (ImageProcessingException | IOException e) {
                     embedBuilder.addField("Error!", "There was en error! " + e.getCause(), true);
                     event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
@@ -70,18 +72,6 @@ public class DetectImageEdgesCommand extends Command {
                     "\nConverted to Black and White" +
                     "\nErosion Filter", true);
             event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
-
-            cleanUpDirectory(IMAGE_DETECTION_IMAGE_IN_DIR.getValue(), new File(IMAGE_DETECTION_IMAGE_IN_DIR.getValue()));
-            cleanUpDirectory(IMAGE_DETECTION_IMAGE_OUT_DIR.getValue(), new File(IMAGE_DETECTION_IMAGE_OUT_DIR.getValue()));
-        }
-    }
-
-    private void cleanUpDirectory(String directory, File fileDirectories){
-        for(String filename:fileDirectories.list()){
-            File file = new File(directory, filename);
-            if (file.exists()) {
-                file.delete();
-            }
         }
     }
 }

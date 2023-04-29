@@ -57,7 +57,7 @@ public class MemeCommand extends Command {
         String sender = event.getUser().getAsTag();
         createHistoryEntry(event);
         LOGGER.info("{} has requested the meme command.", sender);
-        EmbedBuilder embedBuilder = new EmbedBuilder().setImage("attachment://meme.png") ;// we specify this in sendFile as "cat.png"
+        EmbedBuilder embedBuilder = new EmbedBuilder().setImage("attachment://meme.png") ;// we specify this in sendFile as "meme.png"
 
         MemeResult meme;
         try {

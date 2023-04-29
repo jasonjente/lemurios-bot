@@ -25,10 +25,9 @@ import static bot.constants.Constants.*;
 
 @Component
 public class LemuriosBOT extends ListenerAdapter {
-    public static final String API_TOKEN = "mytoken-1-12--312-313";
     private static final Logger LOGGER = LoggerFactory.getLogger(LemuriosBOT.class);
     private AssemblemursCommand assemblemursCommand;
-    private AvailableNamesCommand availableNamesCommand;
+    private TakenNamesCommand takenNamesCommand;
     private CreditsCommand creditsCommand;
     private DetectImageEdgesCommand detectImageEdgesCommand;
     private HelpCommand helpCommand;
@@ -48,7 +47,7 @@ public class LemuriosBOT extends ListenerAdapter {
     public void onGuildReady(@NonNull GuildReadyEvent event){
         List<CommandData> commandData = new ArrayList<>();
         commandData.add(Commands.slash(ASSEMLEMURS_COMMAND.getValue(),"Pings all Lemurioi Role Members -- Can be used if and only if you belong to that group."));
-        commandData.add(Commands.slash(TAKEN_NAMES.getValue(),"Prints out all taken Lemurioi names."));
+        commandData.add(Commands.slash(TAKEN_NAMES.getValue(),"Prints out all taken Lemur names."));
         commandData.add(Commands.slash(CREDITS_COMMAND.getValue(),"Prints out the application's credits."));
         OptionData optionDataDetection = new OptionData(OptionType.ATTACHMENT, "image", "Upload an image to detect its edges.",true);
         commandData.add(Commands.slash(DETECT_IMAGE_EDGES.getValue(),"Upload an image and the bot will return the detected edges in that image.").addOptions(optionDataDetection));
@@ -69,7 +68,7 @@ public class LemuriosBOT extends ListenerAdapter {
     @PostConstruct
     private void init(){
         commands.put(ASSEMLEMURS_COMMAND.getValue(),assemblemursCommand);
-        commands.put(TAKEN_NAMES.getValue(),availableNamesCommand);
+        commands.put(TAKEN_NAMES.getValue(), takenNamesCommand);
         commands.put(CREDITS_COMMAND.getValue(),creditsCommand);
         commands.put(DETECT_IMAGE_EDGES.getValue(),detectImageEdgesCommand);
         commands.put(HELP_COMMAND.getValue(),helpCommand);
@@ -104,11 +103,12 @@ public class LemuriosBOT extends ListenerAdapter {
      */
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event){ 
-    LOGGER.info("Message received from {} - Content: {}", event.getInteraction().getUser().getAsTag(), event.getFullCommandName());
+        LOGGER.info("Message received from {} - Content: {} - ENTER", event.getInteraction().getUser().getAsTag(), event.getFullCommandName());
         if (commands.containsKey(event.getFullCommandName())){
-            event.deferReply().setEphemeral(false).queue(); // Tell discord we received the command, send a thinking... message to the user
+            event.deferReply().queue(); // Tell discord we received the command, send a thinking... message to the user
             commands.get(event.getFullCommandName()).execute(event);
         }
+        LOGGER.info("Message received from {} - Content: {} - LEAVE", event.getInteraction().getUser().getAsTag(), event.getFullCommandName());
     }
 
     /**
@@ -120,8 +120,8 @@ public class LemuriosBOT extends ListenerAdapter {
     }
 
     @Autowired
-    public void setAvailableNamesCommand(AvailableNamesCommand availableNamesCommand) {
-        this.availableNamesCommand = availableNamesCommand;
+    public void setAvailableNamesCommand(TakenNamesCommand takenNamesCommand) {
+        this.takenNamesCommand = takenNamesCommand;
     }
 
     @Autowired

@@ -6,11 +6,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
-import static bot.LemuriosBOT.API_TOKEN;
-
 @SpringBootApplication
 public class LemuriosBotSpringBootApplication {
 
+	private static final String API_TOKEN = "mytoken-1234-5123412345";
 
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(LemuriosBotSpringBootApplication.class);

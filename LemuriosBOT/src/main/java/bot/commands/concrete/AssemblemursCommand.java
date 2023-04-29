@@ -24,7 +24,6 @@ public class AssemblemursCommand extends Command {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        event.deferReply().setEphemeral(false).queue(); // Tell discord we received the command, send a thinking... message to the user
         LOGGER.info("assemblemursCommand - ENTER");
         createHistoryEntry(event);
         if(userIsLemurWorthy(event)){
@@ -63,7 +62,8 @@ public class AssemblemursCommand extends Command {
 
         List<Member> membersWithLemursRole = event.getGuild().getMembersWithRoles(lemurs);
         for (Member member : membersWithLemursRole) {
-            if (member.getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
+            //prevents bot from sending to itself or to the caller
+            if (member.getUser().getId().equals(event.getJDA().getSelfUser().getId()) || member.getUser().equals(event.getUser())) {
                 continue;
             }
             PrivateChannel channel = member.getUser().openPrivateChannel().complete();
