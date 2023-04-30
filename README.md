@@ -19,8 +19,7 @@ The commands currently available:
  - STOP_COMMAND
  - JOIN_COMMAND
  - NOW_PLAYING
-
-
+ 
 
 ### Technical Overview:
 
@@ -32,7 +31,10 @@ During startup all beans get instantiated and are added to a map where the key i
 
 Please find below a list of all the beans used in the application:
  * LemuriosBOT.java - @Component
- * Responsible for catching the Interaction events with the Event Listeners
+   * Responsible for registering the slash interaction commands and map them to java beans/Commands. 
+     When a Slash Interaction event arrives is picked up by the BOT, the bot will initially reply. During the initial reply, the bot will appear with the:
+
+    ![img.png](img.png)
  * Command.java - @Service
    * Abstract class which holds all basic functionality of the commands.
  * AssemblemursCommand.java - @Service
@@ -67,11 +69,6 @@ Please find below a list of all the beans used in the application:
    * Chat command that stops the execution of the player and removes the queue.
  * MusicPlayerManager.java - @Service
    * Class responsible for providing different instances of MusicPlayers to different guilds.
-
-When a Slash Interaction event arrives is picked up by the BOT, the bot will initially reply. 
-During the initial reply, the bot will appear with the:
-
-![img.png](img.png)
 
 **Finally, each command will be responsible for editing the initial reply and adding any information needed by the bot.**
 
@@ -144,6 +141,11 @@ The command should be now available on the next startup:
 ![img_1.png](img_1.png)
 
 ### More on Commands:
-Guild Commands: these commands get instantly deployed. These are the commands under the onGuildReady() method.
-Global Commands: for production use and takes up to 1 hour to get deployed on the discord's backend. These commands are defined in the onReady() method. {
+ - Guild Commands: these commands get instantly deployed. These are the commands under the onGuildReady() method.
+ - Global Commands: for production use and takes up to 1 hour to get deployed on the discord's backend. These commands are defined in the onReady() method. {
+ 
+ ### Guides:
+ * [Lave player](https://github.com/sedmelluq/LavaPlayer#jda-integration)
+ * [JDA Wiki Tutorial](https://jda.wiki/using-jda/making-a-music-bot/)
+ 
 
