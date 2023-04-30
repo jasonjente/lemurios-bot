@@ -13,15 +13,19 @@ import java.util.Objects;
 
 @Service
 public class PauseCommand extends Command {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JoinCommand.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PauseCommand.class);
     private MusicPlayerManager musicPlayerManager;
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("{} has requested the Pause command.", event.getUser().getName());
         EmbedBuilder embedBuilder = new EmbedBuilder().setTitle("Lemurios Music BOT - Song Paused.");
-        if(event.getInteraction().getMember() != null || event.getInteraction().getMember().getVoiceState() != null) {
-            musicPlayerManager.pause(Objects.requireNonNull(event.getGuild()));
+        try {
+            if (event.getInteraction().getMember() != null || event.getInteraction().getMember().getVoiceState() != null) {
+                musicPlayerManager.pause(Objects.requireNonNull(event.getGuild()));
+            }
+        }catch (NullPointerException e){
+            embedBuilder.addField("Could not pause!", "To pause, verify that you are connected to a voice channel or that the bot has access to the voice channel.", true);
         }
         createHistoryEntry(event);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();

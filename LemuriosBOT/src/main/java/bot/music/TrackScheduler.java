@@ -17,6 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
     private final BlockingQueue<AudioTrack> queue;
+    private String currentlyPlaying;
 
     /**
      * @param player The audio player this scheduler uses
@@ -40,6 +41,7 @@ public class TrackScheduler extends AudioEventAdapter {
         if (!player.startTrack(track, true)) {
             queue.offer(track);
         }
+        currentlyPlaying = track.getInfo().title;
     }
 
     /**
@@ -49,6 +51,7 @@ public class TrackScheduler extends AudioEventAdapter {
         // Start the next track, regardless of if something is already playing or not. In case queue was empty, we are
         // giving null to startTrack, which is a valid argument and will simply stop the player.
         player.startTrack(queue.poll(), false);
+        currentlyPlaying = player.getPlayingTrack().getInfo().title;
     }
 
     @Override
@@ -57,6 +60,8 @@ public class TrackScheduler extends AudioEventAdapter {
         if (endReason.mayStartNext) {
             nextTrack();
         }
+        currentlyPlaying = track.getInfo().title;
+
     }
 
     @Override
@@ -77,10 +82,16 @@ public class TrackScheduler extends AudioEventAdapter {
 
     public List<String> getAllSongsOfList(){
         List<String> ret = new ArrayList<>();
+        if(currentlyPlaying != null)
+            ret.add(currentlyPlaying);
         for(AudioTrack audioTrack:queue){
             ret.add(audioTrack.getInfo().title);
         }
 
         return ret;
+    }
+
+    public String getCurrentlyPlaying() {
+        return currentlyPlaying;
     }
 }

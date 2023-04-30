@@ -22,6 +22,11 @@ public class ResumeCommand extends Command {
 
         EmbedBuilder embedBuilder = new EmbedBuilder().setTitle("Lemurios Music BOT - Song Paused.");
         if(event.getInteraction().getMember() != null || event.getInteraction().getMember().getVoiceState() != null) {
+            if(event.getGuild() == null){
+                embedBuilder.addField("Cannot resume player if it is not playing a song!", "Please Use the /play command first", true);
+                event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+                return;
+            }
             musicPlayerManager.resume(Objects.requireNonNull(event.getGuild()));
         }
         createHistoryEntry(event);

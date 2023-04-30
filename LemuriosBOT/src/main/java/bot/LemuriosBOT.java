@@ -6,6 +6,7 @@ import bot.commands.concrete.images.DetectImageEdgesCommand;
 import bot.commands.concrete.images.MemeCommand;
 import bot.commands.concrete.images.UploadMemeCommand;
 import bot.commands.concrete.music.*;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static bot.constants.Constants.*;
 
@@ -84,6 +87,7 @@ public class LemuriosBOT extends ListenerAdapter {
         commandData.add(Commands.slash(STOP_COMMAND.getValue(), "Stops execution and empties the song list."));
         commandData.add(Commands.slash(JOIN_COMMAND.getValue(), "Bot joins the voice channel the caller is in."));
         commandData.add(Commands.slash(NOW_PLAYING.getValue(), "Bot prints the song it is currently playing."));
+        commandData.add(Commands.slash(RESUME_COMMAND.getValue(), "Bot unpauses the song it paused."));
 
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }
@@ -150,11 +154,20 @@ public class LemuriosBOT extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event){ 
         LOGGER.info("Message received from {} - Content: {} - ENTER", event.getInteraction().getUser().getAsTag(), event.getFullCommandName());
-        if (commands.containsKey(event.getFullCommandName())){
-            event.deferReply().queue(); // Tell discord we received the command, send a thinking... message to the user
-            commands.get(event.getFullCommandName()).execute(event);
-        }
-
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+                    try {
+                        if (commands.containsKey(event.getFullCommandName())) {
+                            event.deferReply().queue(); // Tell discord we received the command, send a thinking... message to the user
+                            commands.get(event.getFullCommandName()).execute(event);
+                        }
+                    } catch (RuntimeException e) {
+                        EmbedBuilder embedBuilder = new EmbedBuilder().setTitle("We encountered an error during command execution :(");
+                        embedBuilder.setDescription(e.getCause().getMessage());
+                        event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+                        return;
+                    }
+                });
         LOGGER.info("Message received from {} - Content: {} - LEAVE", event.getInteraction().getUser().getAsTag(), event.getFullCommandName());
     }
 

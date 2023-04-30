@@ -10,9 +10,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class JoinCommand extends Command {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PauseCommand.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JoinCommand.class);
     private MusicPlayerManager musicPlayerManager;
 
 
@@ -20,10 +22,10 @@ public class JoinCommand extends Command {
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("{} has requested the Join command - ENTER.", event.getUser().getName());
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        if (event.getInteraction().getMember().getVoiceState() != null) {
-            VoiceChannel voiceChannel = event.getInteraction().getMember().getVoiceState().getChannel().asVoiceChannel();
+        try{
+            VoiceChannel voiceChannel = Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(event.getInteraction().getMember()).getVoiceState()).getChannel()).asVoiceChannel());
             musicPlayerManager.connectToVoiceChannel(event, voiceChannel);
-        } else {
+        }catch (NullPointerException e){
             embedBuilder.addField("Error:", "To call the bot you have to be in a voice channel.", false);
         }
         LOGGER.info("{} has requested the Join command - LEAVE.", event.getUser().getName());
