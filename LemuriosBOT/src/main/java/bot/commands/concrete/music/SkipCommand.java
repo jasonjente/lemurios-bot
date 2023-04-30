@@ -30,9 +30,12 @@ public class SkipCommand extends Command {
             embedBuilder.addField("Skipped track:", nowPlaying, true);
         } catch (NullPointerException e){
             LOGGER.warn("Not playing any songs ?");
+            embedBuilder.addField("Lemurios Music BOT has no songs in its queue", "Use /play to add a song to the queue.", true);
         }
         createHistoryEntry(event);
         LOGGER.info("{} has requested the Skip command.", event.getUser().getName());
+        event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+
     }
 
     @Autowired

@@ -161,11 +161,16 @@ public class LemuriosBOT extends ListenerAdapter {
                             event.deferReply().queue(); // Tell discord we received the command, send a thinking... message to the user
                             commands.get(event.getFullCommandName()).execute(event);
                         }
+                    } catch (NullPointerException npe){
+                        EmbedBuilder embedBuilder = new EmbedBuilder().setTitle("We encountered an error during command execution :(");
+                        embedBuilder.setDescription("Please connect to a voice channel first before calling the bot!");
+                        event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+                        LOGGER.error("ERROR:", npe);
                     } catch (RuntimeException e) {
                         EmbedBuilder embedBuilder = new EmbedBuilder().setTitle("We encountered an error during command execution :(");
                         embedBuilder.setDescription(e.getCause().getMessage());
                         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
-                        return;
+                        LOGGER.error("ERROR:", e);
                     }
                 });
         LOGGER.info("Message received from {} - Content: {} - LEAVE", event.getInteraction().getUser().getAsTag(), event.getFullCommandName());
