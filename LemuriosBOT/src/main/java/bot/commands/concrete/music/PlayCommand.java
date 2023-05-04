@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
+
 @Service
 public class PlayCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlayCommand.class);
@@ -27,15 +29,15 @@ public class PlayCommand extends Command {
         if (event.getUser().isBot()) return;
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("LEMURIOS BOT - Now Playing:");
         if (event.getInteraction().getMember().getVoiceState() != null) {
             String song = event.getInteraction().getOptions().get(0).getAsString();
             TextChannel textChannel = event.getChannel().asTextChannel();
             VoiceChannel voiceChannel = event.getInteraction().getMember().getVoiceState().getChannel().asVoiceChannel();
             LOGGER.info("Voice channel {}", voiceChannel.getName());
-
+            embedBuilder.setTitle("Lemurios Music BOT - Started playing." + song).setColor(Color.YELLOW);
             musicPlayerManager.loadAndPlay(textChannel, voiceChannel, song);
         } else {
+            embedBuilder.setTitle("Lemurios Music BOT - Error.").setColor(Color.RED);
             embedBuilder.addField("Error:", "To call the bot you have to be in a voice channel.", false);
         }
 

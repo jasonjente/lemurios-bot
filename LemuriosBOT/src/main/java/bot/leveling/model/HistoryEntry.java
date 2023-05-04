@@ -1,4 +1,4 @@
-package bot.history;
+package bot.leveling.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

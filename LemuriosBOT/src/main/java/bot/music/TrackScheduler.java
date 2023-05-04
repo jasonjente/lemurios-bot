@@ -8,8 +8,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 /**
  * This class schedules tracks for the audio player. It contains the queue of tracks.
@@ -26,7 +25,7 @@ public class TrackScheduler extends AudioEventAdapter {
         this.player = player;
         this.queue = new LinkedBlockingQueue<>();
 
-        player.setVolume(60);
+        player.setVolume(69);
     }
 
     /**
@@ -41,17 +40,25 @@ public class TrackScheduler extends AudioEventAdapter {
         if (!player.startTrack(track, true)) {
             queue.offer(track);
         }
-        currentlyPlaying = track.getInfo().title;
+        if((queue.size()==1)){
+            currentlyPlaying = track.getInfo().title;
+        }
+
+
     }
 
     /**
      * Start the next track, stopping the current one if it is playing.
      */
-    public void nextTrack() {
+    public boolean nextTrack() {
         // Start the next track, regardless of if something is already playing or not. In case queue was empty, we are
         // giving null to startTrack, which is a valid argument and will simply stop the player.
-        player.startTrack(queue.poll(), false);
-        currentlyPlaying = player.getPlayingTrack().getInfo().title;
+        boolean playing = player.startTrack(queue.poll(), false);
+        if(playing){
+            currentlyPlaying = player.getPlayingTrack().getInfo().title;
+        }
+        return playing;
+
     }
 
     @Override
@@ -60,8 +67,6 @@ public class TrackScheduler extends AudioEventAdapter {
         if (endReason.mayStartNext) {
             nextTrack();
         }
-        currentlyPlaying = track.getInfo().title;
-
     }
 
     @Override
@@ -82,13 +87,19 @@ public class TrackScheduler extends AudioEventAdapter {
 
     public List<String> getAllSongsOfList(){
         List<String> ret = new ArrayList<>();
-        if(currentlyPlaying != null)
-            ret.add(currentlyPlaying);
+
+        currentlyPlaying = this.player.getPlayingTrack().getInfo().title;
+        ret.add(currentlyPlaying);
+
         for(AudioTrack audioTrack:queue){
             ret.add(audioTrack.getInfo().title);
         }
 
         return ret;
+    }
+
+    public AudioPlayer getPlayer() {
+        return player;
     }
 
     public String getCurrentlyPlaying() {

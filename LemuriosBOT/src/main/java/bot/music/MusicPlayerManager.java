@@ -58,7 +58,7 @@ public class MusicPlayerManager {
         MusicPlayer player = instances.get(guild.getId());
         player.stop(guild);
         removeInstance(guild.getId());
-        //set timer for 5 minute idle. on 5 minute completion disconnect bot
+        //TODO set timer for 5 minute idle. on 5 minute completion disconnect bot
         LOGGER.info("stop() - LEAVE");
     }
 
@@ -82,5 +82,28 @@ public class MusicPlayerManager {
         List<String> ret = player.getSongQueue(guild);
         LOGGER.info("getSongPlaying() - LEAVE");
         return ret;
+    }
+
+    public String getTimeRemaining(Guild guild) {
+        LOGGER.info("getTimeRemaining() - ENTER");
+        MusicPlayer player = instances.get(guild.getId());
+        String timeRemaining = player.getTimeRemaining(guild);
+        LOGGER.info("getTimeRemaining() - LEAVE");
+        return timeRemaining;
+    }
+
+    public void disconnectFromVoiceChannel(SlashCommandInteractionEvent event, VoiceChannel voiceChannel) {
+        LOGGER.info("disconnectFromVoiceChannel() - ENTER - Attempting to connect MusicPlayer to voice channel: {} for Guild Id {}",voiceChannel.getName(), event.getChannel().getId());
+        MusicPlayer player = instances.get(event.getGuild().getId());
+        player.disconnectFromVoiceChannel(event.getGuild().getAudioManager());
+        LOGGER.info("disconnectFromVoiceChannel() - LEAVE");
+    }
+
+    public void joinVoiceChannel(SlashCommandInteractionEvent event, VoiceChannel voiceChannel) {
+        if(!instances.containsKey(voiceChannel.getGuild().getId())){
+            addInstance(voiceChannel.getGuild().getId());
+        }
+        MusicPlayer player = instances.get(voiceChannel.getGuild().getId());
+        player.connectToVoiceChannel(event.getGuild().getAudioManager(), voiceChannel);
     }
 }

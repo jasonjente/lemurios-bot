@@ -15,24 +15,6 @@ public enum Constants {
 
 
     /**
-     * BOT COMMANDS
-     */
-    ASSEMLEMURS_COMMAND("assemblemurs"),
-    CREDITS_COMMAND("credits"),
-    HELP_COMMAND("help"),
-    PLAY_COMMAND("play"),
-    PAUSE_COMMAND("pause"),
-    RESUME_COMMAND("resume"),
-    SKIP_COMMAND("skip"),
-    STOP_COMMAND("stop"),
-    JOIN_COMMAND("join"),
-    NOW_PLAYING("now-playing"),
-    MEME_COMMAND("meme"),
-    HISTORY_COMMAND("history"),
-    TAKEN_NAMES("taken-names"),
-    UPLOAD_MEME_COMMAND("upload"),
-    DETECT_IMAGE_EDGES("detect-edges"),
-    /**
      * DIRECTORIES
      */
     DATA_IN_DIR("LemuriosBOT/images"),

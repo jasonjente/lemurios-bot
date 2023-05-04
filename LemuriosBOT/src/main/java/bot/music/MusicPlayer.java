@@ -65,12 +65,17 @@ public class MusicPlayer {
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
+                List<AudioTrack> audioTrackList = playlist.getTracks();
                 AudioTrack firstTrack = playlist.getSelectedTrack();
 
                 if (firstTrack == null) {
                     firstTrack = playlist.getTracks().get(0);
                 }
                 createReturnMessageAndPlay(firstTrack, channel, voiceChannel, musicManager);
+                audioTrackList.remove(firstTrack);
+                for(AudioTrack track: audioTrackList){
+                    musicManager.getScheduler().queue(track);
+                }
             }
 
             @Override
@@ -90,15 +95,15 @@ public class MusicPlayer {
         embedBuilder.setTitle("Lemurios Music BOT");
         embedBuilder.addField("Added to queue: ", track.getInfo().title, false);
         embedBuilder.setColor(Color.ORANGE);
-
         channel.sendMessageEmbeds(embedBuilder.build()).queue();
 
         play(channel.getGuild(), voiceChannel, musicManager, track);
     }
 
     private void play(Guild guild, VoiceChannel voiceChannel, GuildMusicManager musicManager, AudioTrack track) {
-        connectToVoiceChannel(guild.getAudioManager(), voiceChannel);
-
+        if(!guild.getAudioManager().isConnected()) {
+            connectToVoiceChannel(guild.getAudioManager(), voiceChannel);
+        }
         musicManager.getScheduler().queue(track);
     }
 
@@ -122,6 +127,15 @@ public class MusicPlayer {
     public void connectToVoiceChannel(AudioManager audioManager, VoiceChannel voiceChannel) {
         if (!audioManager.isConnected() && audioManager.isAutoReconnect()) {
             audioManager.openAudioConnection(voiceChannel);
+        } else {
+            audioManager.closeAudioConnection();
+            try {
+                Thread.sleep(100);
+                audioManager.openAudioConnection(voiceChannel);
+            } catch (InterruptedException e) {
+
+            }
+
         }
     }
 
@@ -135,5 +149,31 @@ public class MusicPlayer {
     public List<String> getSongQueue(Guild guild) {
         GuildMusicManager musicManager = getGuildAudioPlayer(guild);
         return musicManager.getScheduler().getAllSongsOfList();
+    }
+
+    public String getTimeRemaining(Guild guild) {
+        GuildMusicManager musicManager = getGuildAudioPlayer(guild);
+        StringBuilder ret = new StringBuilder()
+                .append(formatTime(musicManager.getScheduler().getPlayer().getPlayingTrack().getPosition()))
+                .append(" : ")
+                .append(formatTime(musicManager.getScheduler().getPlayer().getPlayingTrack().getDuration()));
+        return ret.toString();
+    }
+
+    public static String formatTime(long timeInMs) {
+        long seconds = timeInMs / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+
+        // Calculate remaining minutes and seconds after calculating hours
+        minutes %= 60;
+        seconds %= 60;
+
+        // Format the time as a string with leading zeros where needed
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    public void disconnectFromVoiceChannel(AudioManager audioManager) {
+        audioManager.closeAudioConnection();
     }
 }

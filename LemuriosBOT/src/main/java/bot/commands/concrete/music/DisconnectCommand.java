@@ -10,27 +10,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.util.Objects;
 
 @Service
-public class JoinCommand extends Command {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JoinCommand.class);
+public class DisconnectCommand extends Command {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DisconnectCommand.class);
     private MusicPlayerManager musicPlayerManager;
-
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        LOGGER.info("{} has requested the Join command - ENTER.", event.getUser().getName());
+        LOGGER.info("{} has requested the Disconnect command - ENTER.", event.getUser().getName());
         EmbedBuilder embedBuilder = new EmbedBuilder();
         try{
             VoiceChannel voiceChannel = Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(event.getInteraction().getMember()).getVoiceState()).getChannel()).asVoiceChannel());
-            musicPlayerManager.joinVoiceChannel(event, voiceChannel);
-            embedBuilder.addField("Bot joined voice channel.", voiceChannel.getName(), true).setColor(Color.YELLOW);
+            musicPlayerManager.disconnectFromVoiceChannel(event, voiceChannel);
+            embedBuilder.addField("Disconnecting..", "Bot stopped playing and disconnected from: " + voiceChannel.getName() , false);
         }catch (NullPointerException e){
-            embedBuilder.addField("Error:", "To call the bot you have to be in a voice channel.", false);
+            embedBuilder.addField("Error:", "The bot is not in a voice channel!", false);
         }
-        LOGGER.info("{} has requested the Join command - LEAVE.", event.getUser().getName());
+        LOGGER.info("{} has requested the Disconnect command - LEAVE.", event.getUser().getName());
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
     }
 
@@ -38,5 +36,4 @@ public class JoinCommand extends Command {
     private void setMusicBot(MusicPlayerManager musicPlayerManager){
         this.musicPlayerManager = musicPlayerManager;
     }
-
 }

@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static bot.constants.Constants.*;
+import static bot.constants.Commands.*;
 
 @Component
 public class LemuriosBOT extends ListenerAdapter {
@@ -46,10 +46,10 @@ public class LemuriosBOT extends ListenerAdapter {
     private PauseCommand pauseCommand;
     private SkipCommand skipCommand;
     private ResumeCommand resumeCommand;
-    private NowPlaying nowPlaying;
+    private NowPlayingCommand nowPlayingCommand;
     private JoinCommand joinCommand;
     private final Map<String, Command> commands = new HashMap<>();
-
+    private DisconnectCommand disconnectCommand;
 
 
     //Guild Commands -- Commands get instantly deployed
@@ -68,7 +68,7 @@ public class LemuriosBOT extends ListenerAdapter {
         commandData.add(Commands.slash(CREDITS_COMMAND.getValue(),"Prints out the application's credits."));
 
         OptionData optionDataDetection = new OptionData(OptionType.ATTACHMENT, "image", "Upload an image to detect its edges.",true);
-        commandData.add(Commands.slash(DETECT_IMAGE_EDGES.getValue(),"Upload an image and the bot will return the detected edges in that image.").addOptions(optionDataDetection));
+        commandData.add(Commands.slash(DETECT_IMAGE_EDGES_COMMAND.getValue(),"Upload an image and the bot will return the detected edges in that image.").addOptions(optionDataDetection));
 
         commandData.add(Commands.slash(HELP_COMMAND.getValue(),"Prints all the available commands."));
 
@@ -88,6 +88,7 @@ public class LemuriosBOT extends ListenerAdapter {
         commandData.add(Commands.slash(JOIN_COMMAND.getValue(), "Bot joins the voice channel the caller is in."));
         commandData.add(Commands.slash(NOW_PLAYING.getValue(), "Bot prints the song it is currently playing."));
         commandData.add(Commands.slash(RESUME_COMMAND.getValue(), "Bot unpauses the song it paused."));
+        commandData.add(Commands.slash(DISCONNECT_COMMAND.getValue(), "Bot disconnects and empties the queue."));
 
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }
@@ -102,7 +103,7 @@ public class LemuriosBOT extends ListenerAdapter {
         commands.put(ASSEMLEMURS_COMMAND.getValue(),assemblemursCommand);
         commands.put(TAKEN_NAMES.getValue(), takenNamesCommand);
         commands.put(CREDITS_COMMAND.getValue(),creditsCommand);
-        commands.put(DETECT_IMAGE_EDGES.getValue(),detectImageEdgesCommand);
+        commands.put(DETECT_IMAGE_EDGES_COMMAND.getValue(),detectImageEdgesCommand);
         commands.put(HELP_COMMAND.getValue(),helpCommand);
         commands.put(HISTORY_COMMAND.getValue(),historyCommand);
         commands.put(MEME_COMMAND.getValue(),memeCommand);
@@ -112,8 +113,9 @@ public class LemuriosBOT extends ListenerAdapter {
         commands.put(SKIP_COMMAND.getValue(), skipCommand);
         commands.put(STOP_COMMAND.getValue(), stopCommand);
         commands.put(JOIN_COMMAND.getValue(), joinCommand);
-        commands.put(NOW_PLAYING.getValue(), nowPlaying);
+        commands.put(NOW_PLAYING.getValue(), nowPlayingCommand);
         commands.put(RESUME_COMMAND.getValue(), resumeCommand);
+        commands.put(DISCONNECT_COMMAND.getValue(), disconnectCommand);
     }
     //Global command for production -- takes up to 1 hour to get deployed
    /** @Override
@@ -185,7 +187,7 @@ public class LemuriosBOT extends ListenerAdapter {
     }
 
     @Autowired
-    public void setAvailableNamesCommand(TakenNamesCommand takenNamesCommand) {
+    public void setTakenNamesCommand(TakenNamesCommand takenNamesCommand) {
         this.takenNamesCommand = takenNamesCommand;
     }
 
@@ -248,7 +250,12 @@ public class LemuriosBOT extends ListenerAdapter {
     }
 
     @Autowired
-    public void setNowPlaying(NowPlaying nowPlaying) {
-        this.nowPlaying = nowPlaying;
+    public void setNowPlayingCommand(NowPlayingCommand nowPlayingCommand) {
+        this.nowPlayingCommand = nowPlayingCommand;
+    }
+
+    @Autowired
+    public void setDisconnectCommand(DisconnectCommand disconnectCommand) {
+        this.disconnectCommand = disconnectCommand;
     }
 }

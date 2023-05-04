@@ -9,6 +9,7 @@ public enum Lemurioi {
     LEMURIOS_005("Lemurios 005"),
     LEMURIOS_007("Lemurios 007"),
     LEMURIOS_021("Lemurios 021"),
+    LEMURIOS_298("Lemurios 298"),
     LEMURIOS_362("Lemurios 362"),
     LEMURIOS_666("Lemurios 626"),
     LEMURIOS_626("Lemurios 666");

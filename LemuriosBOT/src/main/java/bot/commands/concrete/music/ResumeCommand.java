@@ -20,13 +20,15 @@ public class ResumeCommand extends Command {
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("{} has requested the Resume command.", event.getUser().getName());
 
-        EmbedBuilder embedBuilder = new EmbedBuilder().setTitle("Lemurios Music BOT - Song Paused.");
+        EmbedBuilder embedBuilder = new EmbedBuilder().setTitle("Lemurios Music BOT - Song Resumed.");
         if(event.getInteraction().getMember() != null || event.getInteraction().getMember().getVoiceState() != null) {
             if(event.getGuild() == null){
                 embedBuilder.addField("Cannot resume player if it is not playing a song!", "Please Use the /play command first", true);
                 event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
                 return;
             }
+            String currentlyPlayingValue = musicPlayerManager.getTimeRemaining(event.getGuild());
+            embedBuilder.addField("Time: ", currentlyPlayingValue,false);
             musicPlayerManager.resume(Objects.requireNonNull(event.getGuild()));
         }
         createHistoryEntry(event);

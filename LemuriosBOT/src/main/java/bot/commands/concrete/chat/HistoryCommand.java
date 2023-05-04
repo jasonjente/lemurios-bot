@@ -1,8 +1,8 @@
 package bot.commands.concrete.chat;
 
 import bot.commands.Command;
-import bot.history.HistoryEntry;
-import bot.history.HistoryEntryRepository;
+import bot.leveling.model.HistoryEntry;
+import bot.leveling.repositories.HistoryEntryRepository;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;

@@ -24,6 +24,8 @@ public class PauseCommand extends Command {
             if (event.getInteraction().getMember() != null || event.getInteraction().getMember().getVoiceState() != null) {
                 musicPlayerManager.pause(Objects.requireNonNull(event.getGuild()));
             }
+            String currentlyPlayingValue = musicPlayerManager.getTimeRemaining(event.getGuild());
+            embedBuilder.addField("Time: ", currentlyPlayingValue,false);
         }catch (NullPointerException e){
             embedBuilder.addField("Could not pause!", "To pause, verify that you are connected to a voice channel or that the bot has access to the voice channel.", true);
         }

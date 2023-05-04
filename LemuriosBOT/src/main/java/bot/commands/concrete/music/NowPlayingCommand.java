@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class NowPlaying extends Command {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NowPlaying.class);
+public class NowPlayingCommand extends Command {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NowPlayingCommand.class);
 
     private MusicPlayerManager musicPlayerManager;
 
@@ -23,11 +23,12 @@ public class NowPlaying extends Command {
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("{} has requested the Now Playing command - ENTER.", event.getUser().getName());
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("LEMURIOS BOT - Now Playing:").setColor(Color.ORANGE);
         try {
             List<String> songInQueue = musicPlayerManager.getSongPlaying(Objects.requireNonNull(event.getGuild()));
             if(!songInQueue.isEmpty()) {
-                embedBuilder.addField("Now playing:", songInQueue.get(0), true);
+                embedBuilder.setTitle("LEMURIOS BOT - Now Playing: " + songInQueue.get(0)).setColor(Color.ORANGE);
+                String currentlyPlayingValue = musicPlayerManager.getTimeRemaining(event.getGuild());
+                embedBuilder.addField("Time: ", currentlyPlayingValue,false);
                 songInQueue.remove(0);
             }
             for (String song : songInQueue) {
@@ -35,7 +36,7 @@ public class NowPlaying extends Command {
             }
             LOGGER.info("{} has requested the Now Playing command. - LEAVE", event.getUser().getName());
         }catch (NullPointerException e){
-            embedBuilder.addField("No songs are playing!", "The queue is empty, use the /play command while in a voice channel to summon the bot and start playing music.", true);
+            embedBuilder.addField("No songs are playing!", "The queue is empty, use the /play command while in a voice channel to summon the bot and start playing music.", true).setColor(Color.RED);
         }
 
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
