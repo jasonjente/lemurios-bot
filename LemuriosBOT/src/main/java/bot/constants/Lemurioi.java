@@ -8,7 +8,9 @@ public enum Lemurioi {
     LEMURIOS_004("Lemurios 004"),
     LEMURIOS_005("Lemurios 005"),
     LEMURIOS_007("Lemurios 007"),
-    LEMURIOS_047("Lemurios 047"),
+    LEMURIOS_021("Lemurios 021"),
+    LEMURIOS_298("Lemurios 298"),
+    LEMURIOS_362("Lemurios 362"),
     LEMURIOS_666("Lemurios 626"),
     LEMURIOS_626("Lemurios 666");
 
@@ -25,18 +27,11 @@ public enum Lemurioi {
 
     public static String usedNames() {
         StringBuilder sb = new StringBuilder();
-
-        sb.append("Lemurios 000")
-          .append("\n Lemurios 001")
-          .append("\n Lemurios 002")
-          .append("\n Lemurios 003")
-          .append("\n Lemurios 004")
-          .append("\n Lemurios 005")
-          .append("\n Lemurios 007")
-          .append("\n Lemurios 047")
-          .append("\n Lemurios 626")
-          .append("\n Lemurios 666");
+        Lemurioi[] values = Lemurioi.class.getEnumConstants();
+        for (Lemurioi value : values) {
+            sb.append(value.getValue()).append("\n");
+        }
         return sb.toString();
-
     }
+
 }

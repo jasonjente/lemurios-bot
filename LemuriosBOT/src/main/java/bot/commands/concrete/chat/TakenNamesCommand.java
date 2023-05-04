@@ -1,4 +1,4 @@
-package bot.commands.concrete;
+package bot.commands.concrete.chat;
 
 import bot.commands.Command;
 import bot.constants.Lemurioi;
@@ -30,6 +30,6 @@ public class TakenNamesCommand extends Command {
             embedBuilder.addField("Name: " + ++counter , lemur, true);
         }
         embedBuilder.setFooter(GTFO_MESSAGE.getValue()).setColor(Color.YELLOW);
-        event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+        event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
     }
 }

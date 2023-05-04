@@ -1,7 +1,7 @@
 package bot.commands;
 
-import bot.commands.history.HistoryEntry;
-import bot.commands.history.HistoryEntryRepository;
+import bot.leveling.model.HistoryEntry;
+import bot.leveling.repositories.HistoryEntryRepository;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
