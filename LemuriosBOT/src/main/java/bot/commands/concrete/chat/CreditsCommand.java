@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.stereotype.Service;
 
+import static bot.constants.Commands.CREDITS_COMMAND;
+
 @Service
 public class CreditsCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(CreditsCommand.class);
@@ -28,6 +30,16 @@ public class CreditsCommand extends Command {
         embedBuilder.setColor(java.awt.Color.RED);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
         LOGGER.info("creditsCommand - LEAVE");
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "View the credits.";
+    }
+
+    @Override
+    public String getCommandName() {
+        return CREDITS_COMMAND.getValue();
     }
 
     @Autowired

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.util.List;
 
+import static bot.constants.Commands.ASSEMLEMURS_COMMAND;
 import static bot.constants.Constants.*;
 
 @Service
@@ -33,6 +34,16 @@ public class AssemblemursCommand extends Command {
         }
         event.getInteraction().reply("");
         LOGGER.info("assemblemursCommand - LEAVE");
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "pings all lemurs that belong in the LEMURIOI role. \nTo call the other lemurs you will have to be a member of lemurs :).";
+    }
+
+    @Override
+    public String getCommandName() {
+        return ASSEMLEMURS_COMMAND.getValue();
     }
 
     private boolean userIsLemurWorthy(SlashCommandInteractionEvent event) {

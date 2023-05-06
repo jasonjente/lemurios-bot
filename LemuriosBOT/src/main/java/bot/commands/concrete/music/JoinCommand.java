@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.util.Objects;
 
+import static bot.constants.Commands.JOIN_COMMAND;
+
 @Service
 public class JoinCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(JoinCommand.class);
@@ -32,6 +34,16 @@ public class JoinCommand extends Command {
         }
         LOGGER.info("{} has requested the Join command - LEAVE.", event.getUser().getName());
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "Summons the bot the voice channel the user is in. [new!]";
+    }
+
+    @Override
+    public String getCommandName() {
+        return JOIN_COMMAND.getValue();
     }
 
     @Autowired

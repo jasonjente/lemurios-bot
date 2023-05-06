@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -20,22 +19,20 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import static bot.constants.Constants.HELLO;
-
 @Service
 public abstract class Command {
 
     @Autowired
-    private HistoryEntryRepository repository;
+    private HistoryEntryRepository historyEntryRepository;
 
     public abstract void execute(SlashCommandInteractionEvent event);
 
-    protected void createHistoryEntry(SlashCommandInteractionEvent event){
+    public void createHistoryEntry(SlashCommandInteractionEvent event){
         HistoryEntry entry = new HistoryEntry();
         entry.setCommandIssued(event.getFullCommandName());
         entry.setFullTag(event.getUser().getAsTag());
         entry.setCreatedOn(Timestamp.from(Instant.now()));
-        repository.save(entry);
+        historyEntryRepository.save(entry);
     }
     protected String getAvailableFilename(String directory, String filename){
         File file = new File(new File(directory), filename);
@@ -47,7 +44,12 @@ public abstract class Command {
             getAvailableFilename(directory, trimmedFilename);
         }
         //replace .jpg/.jpeg with .png
-        trimmedFilename = trimmedFilename.endsWith(".jpg") ? trimmedFilename.replace(".jpg", ".png") : trimmedFilename.endsWith(".jpeg") ? trimmedFilename.replace(".jpeg", ".png") : trimmedFilename;
+
+        if (trimmedFilename.endsWith(".jpg")) {
+            trimmedFilename = trimmedFilename.replace(".jpg", ".png");
+        } else if (trimmedFilename.endsWith(".jpeg")){
+            trimmedFilename = trimmedFilename.replace(".jpeg", ".png");
+        }
         return trimmedFilename;
     }
 
@@ -80,13 +82,6 @@ public abstract class Command {
         return filenames;
     }
 
-    public void functionalityNotReadyYet(SlashCommandInteractionEvent event) {
-        createHistoryEntry(event);
-        EmbedBuilder embedBuilder = new EmbedBuilder()
-                .setTitle("LEMURIOS BOT Help Center.")
-                .setDescription(HELLO.getValue()+ event.getUser().getName() + ", unfortunately this functionality has not been setup yet :/.")
-                .setColor(Color.MAGENTA)
-                .setFooter("NOW GTFO HERE!\n With Best Regards Lemurios BOT-DEV Team.");
-        event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
-    }
+    public abstract String getCommandDescription();
+    public abstract String getCommandName();
 }

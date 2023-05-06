@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+import static bot.constants.Commands.DISCONNECT_COMMAND;
+
 @Service
 public class DisconnectCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(DisconnectCommand.class);
@@ -30,6 +32,16 @@ public class DisconnectCommand extends Command {
         }
         LOGGER.info("{} has requested the Disconnect command - LEAVE.", event.getUser().getName());
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "Disconnects the bot the voice channel the user is currently in. [new!]";
+    }
+
+    @Override
+    public String getCommandName() {
+        return DISCONNECT_COMMAND.getValue();
     }
 
     @Autowired

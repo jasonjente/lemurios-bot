@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.util.Objects;
 
+import static bot.constants.Commands.STOP_COMMAND;
+
 @Service
 public class StopCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(StopCommand.class);
@@ -31,6 +33,16 @@ public class StopCommand extends Command {
         createHistoryEntry(event);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
         LOGGER.info("{} has requested the Stop command - LEAVE.", event.getUser().getName());
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "Empties the song queue and stops playing. [new!]";
+    }
+
+    @Override
+    public String getCommandName() {
+        return STOP_COMMAND.getValue();
     }
 
     @Autowired

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.util.Objects;
 
+import static bot.constants.Commands.SKIP_COMMAND;
+
 @Service
 public class SkipCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(SkipCommand.class);
@@ -36,6 +38,16 @@ public class SkipCommand extends Command {
         LOGGER.info("{} has requested the Skip command.", event.getUser().getName());
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
 
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "Skips current song playing and goes to the next song in the queue. [new!]";
+    }
+
+    @Override
+    public String getCommandName() {
+        return SKIP_COMMAND.getValue();
     }
 
     @Autowired

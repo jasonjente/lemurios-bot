@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.awt.*;
 
+import static bot.constants.Commands.TAKEN_NAMES;
 import static bot.constants.Constants.GTFO_MESSAGE;
 
 @Service
@@ -31,5 +32,15 @@ public class TakenNamesCommand extends Command {
         }
         embedBuilder.setFooter(GTFO_MESSAGE.getValue()).setColor(Color.YELLOW);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "View Lemurios XXX taken names.";
+    }
+
+    @Override
+    public String getCommandName() {
+        return TAKEN_NAMES.getValue();
     }
 }

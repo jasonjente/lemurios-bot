@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+import static bot.constants.Commands.RESUME_COMMAND;
+
 @Service
 public class ResumeCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResumeCommand.class);
@@ -35,6 +37,16 @@ public class ResumeCommand extends Command {
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
 
         LOGGER.info("{} has requested the Resume command.", event.getUser().getName());
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "Unpauses the music player and resumes the track that was paused.";
+    }
+
+    @Override
+    public String getCommandName() {
+        return RESUME_COMMAND.getValue();
     }
 
     @Autowired

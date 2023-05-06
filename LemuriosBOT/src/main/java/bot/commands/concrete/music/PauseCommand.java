@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+import static bot.constants.Commands.PAUSE_COMMAND;
+
 @Service
 public class PauseCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(PauseCommand.class);
@@ -31,6 +33,16 @@ public class PauseCommand extends Command {
         }
         createHistoryEntry(event);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "Pause the bot if it is playing music. [new!]";
+    }
+
+    @Override
+    public String getCommandName() {
+        return PAUSE_COMMAND.getValue();
     }
 
     @Autowired
