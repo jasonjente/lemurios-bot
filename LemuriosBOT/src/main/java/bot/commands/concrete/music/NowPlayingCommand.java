@@ -13,6 +13,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.Objects;
 
+import static bot.constants.Commands.NOW_PLAYING;
+
 @Service
 public class NowPlayingCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(NowPlayingCommand.class);
@@ -40,6 +42,16 @@ public class NowPlayingCommand extends Command {
         }
 
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "Prints the songs in the queue. [new!]";
+    }
+
+    @Override
+    public String getCommandName() {
+        return NOW_PLAYING.getValue();
     }
 
     @Autowired

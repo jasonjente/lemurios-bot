@@ -48,7 +48,7 @@ public class LemuriosBOT extends ListenerAdapter {
     private ResumeCommand resumeCommand;
     private NowPlayingCommand nowPlayingCommand;
     private JoinCommand joinCommand;
-    private final Map<String, Command> commands = new HashMap<>();
+    private static final Map<String, Command> commands = new HashMap<>();
     private DisconnectCommand disconnectCommand;
 
 
@@ -257,5 +257,9 @@ public class LemuriosBOT extends ListenerAdapter {
     @Autowired
     public void setDisconnectCommand(DisconnectCommand disconnectCommand) {
         this.disconnectCommand = disconnectCommand;
+    }
+
+    public static Map<String, Command> getCommands() {
+        return commands;
     }
 }

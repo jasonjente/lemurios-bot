@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static bot.constants.Commands.UPLOAD_MEME_COMMAND;
 import static bot.constants.Constants.DATA_IN_DIR;
 @Service
 public class UploadMemeCommand extends Command {
@@ -33,6 +34,16 @@ public class UploadMemeCommand extends Command {
         }
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
 
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "Upload a meme that can be seen when the random meme is called!";
+    }
+
+    @Override
+    public String getCommandName() {
+        return UPLOAD_MEME_COMMAND.getValue();
     }
 
 }

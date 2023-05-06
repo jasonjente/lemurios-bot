@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.awt.*;
 
+import static bot.constants.Commands.PLAY_COMMAND;
+
 @Service
 public class PlayCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlayCommand.class);
@@ -47,8 +49,18 @@ public class PlayCommand extends Command {
 
     }
 
+    @Override
+    public String getCommandDescription() {
+        return "Use with a youtube URL to summon the bot and add the songs to the queue";
+    }
+
+    @Override
+    public String getCommandName() {
+        return PLAY_COMMAND.getValue();
+    }
+
     @Autowired
-    private void setMusicBot(MusicPlayerManager musicPlayerManager){
+    public void setMusicBot(MusicPlayerManager musicPlayerManager){
         this.musicPlayerManager = musicPlayerManager;
     }
 

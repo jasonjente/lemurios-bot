@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.List;
 
+import static bot.constants.Commands.DETECT_IMAGE_EDGES_COMMAND;
 import static bot.constants.Constants.IMAGE_DETECTION_IMAGE_IN_DIR;
 import static bot.constants.Constants.IMAGE_DETECTION_IMAGE_OUT_DIR;
 
@@ -73,5 +74,15 @@ public class DetectImageEdgesCommand extends Command {
                     "\nErosion Filter", true);
             event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
         }
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "Upload an image to detect its edges!";
+    }
+
+    @Override
+    public String getCommandName() {
+        return DETECT_IMAGE_EDGES_COMMAND.getValue();
     }
 }

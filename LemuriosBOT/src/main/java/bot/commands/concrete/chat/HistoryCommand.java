@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.util.List;
 
+import static bot.constants.Commands.HISTORY_COMMAND;
 import static bot.constants.Constants.GTFO_MESSAGE;
 
 @Service
@@ -45,5 +46,15 @@ public class HistoryCommand extends Command {
         }
         embedBuilder.setFooter(GTFO_MESSAGE.getValue());
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "View command history.";
+    }
+
+    @Override
+    public String getCommandName() {
+        return HISTORY_COMMAND.getValue();
     }
 }

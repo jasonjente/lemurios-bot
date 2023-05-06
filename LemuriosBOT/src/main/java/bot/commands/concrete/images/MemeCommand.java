@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static bot.constants.Commands.MEME_COMMAND;
 import static bot.constants.Constants.DATA_IN_DIR;
 import static bot.constants.Constants.SORRY_MSG;
 
@@ -95,6 +96,16 @@ public class MemeCommand extends Command {
 
         embedBuilder.setDescription("Your meme kind of person.");
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "View a random meme.";
+    }
+
+    @Override
+    public String getCommandName() {
+        return MEME_COMMAND.getValue();
     }
 
     /**
