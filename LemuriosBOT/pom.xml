@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>LemuriosBOT</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
 
 
     <properties>
@@ -76,13 +76,19 @@
             <version>${springboot.version}</version>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>com.h2database</groupId>-->
+<!--            <artifactId>h2</artifactId>-->
+<!--            <scope>runtime</scope>-->
+<!--            <version>2.1.214</version>-->
+<!--        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-            <version>2.1.214</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.6.0</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

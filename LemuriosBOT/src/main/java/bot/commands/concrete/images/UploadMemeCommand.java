@@ -43,7 +43,7 @@ public class UploadMemeCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return UPLOAD_MEME_COMMAND.getValue();
+        return UPLOAD_MEME_COMMAND.getCommandName();
     }
 
 }

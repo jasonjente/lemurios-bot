@@ -56,7 +56,7 @@ public class PlayCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return PLAY_COMMAND.getValue();
+        return PLAY_COMMAND.getCommandName();
     }
 
     @Autowired

@@ -42,7 +42,7 @@ public class PauseCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return PAUSE_COMMAND.getValue();
+        return PAUSE_COMMAND.getCommandName();
     }
 
     @Autowired

@@ -45,6 +45,6 @@ public class HelpCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return HELP_COMMAND.getValue();
+        return HELP_COMMAND.getCommandName();
     }
 }

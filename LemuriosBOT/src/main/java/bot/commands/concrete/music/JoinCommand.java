@@ -43,7 +43,7 @@ public class JoinCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return JOIN_COMMAND.getValue();
+        return JOIN_COMMAND.getCommandName();
     }
 
     @Autowired

@@ -46,7 +46,7 @@ public class ResumeCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return RESUME_COMMAND.getValue();
+        return RESUME_COMMAND.getCommandName();
     }
 
     @Autowired

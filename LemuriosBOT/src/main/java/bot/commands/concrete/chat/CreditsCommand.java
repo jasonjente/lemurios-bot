@@ -39,7 +39,7 @@ public class CreditsCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return CREDITS_COMMAND.getValue();
+        return CREDITS_COMMAND.getCommandName();
     }
 
     @Autowired

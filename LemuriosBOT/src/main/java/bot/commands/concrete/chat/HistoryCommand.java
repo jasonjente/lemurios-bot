@@ -55,6 +55,6 @@ public class HistoryCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return HISTORY_COMMAND.getValue();
+        return HISTORY_COMMAND.getCommandName();
     }
 }

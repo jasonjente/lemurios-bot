@@ -41,6 +41,6 @@ public class TakenNamesCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return TAKEN_NAMES.getValue();
+        return TAKEN_NAMES.getCommandName();
     }
 }

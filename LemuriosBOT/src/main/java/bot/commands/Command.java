@@ -1,7 +1,8 @@
 package bot.commands;
 
-import bot.leveling.model.HistoryEntry;
-import bot.leveling.repositories.HistoryEntryRepository;
+import bot.leveling.model.*;
+import bot.leveling.repositories.*;
+import bot.leveling.service.LevelingService;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -16,14 +17,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public abstract class Command {
 
     @Autowired
     private HistoryEntryRepository historyEntryRepository;
+    @Autowired
+    private LevelingService levelingService;
 
     public abstract void execute(SlashCommandInteractionEvent event);
 
@@ -82,6 +84,9 @@ public abstract class Command {
         return filenames;
     }
 
+    public void earnPoints(SlashCommandInteractionEvent event){
+        levelingService.earnPoints(event);
+    }
     public abstract String getCommandDescription();
     public abstract String getCommandName();
 }
