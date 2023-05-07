@@ -48,7 +48,7 @@ public class LevelingServiceImpl implements LevelingService {
     public List<LeaderboardResult> getLeaderboardForGuild(SlashCommandInteractionEvent event){
         LOGGER.info("getLeaderboardForGuild() - Enter - GuildId: {}", event.getGuild().getId());
         List<LeaderboardResult> ret = new LinkedList<>();
-        List<ServerUser> serverUsers = serverUserRepository.findAllByServer(dataServiceImpl.createDiscordServerObject(event));
+        List<ServerUser> serverUsers = serverUserRepository.findOrderedByServerOrderByPointsDesc(dataServiceImpl.createDiscordServerObject(event));
         if(!serverUsers.isEmpty()){
             for (ServerUser user:serverUsers){
                 ret.add(new LeaderboardResult(user.getTag(), user.getPoints()));

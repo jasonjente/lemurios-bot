@@ -3,14 +3,11 @@ package bot.commands.concrete.music;
 import bot.commands.Command;
 import bot.music.MusicPlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 import static bot.constants.Commands.DISCONNECT_COMMAND;
 
@@ -22,11 +19,11 @@ public class DisconnectCommand extends Command {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("{} has requested the Disconnect command - ENTER.", event.getUser().getName());
+        createHistoryEntry(event);
         EmbedBuilder embedBuilder = new EmbedBuilder();
         try{
-            VoiceChannel voiceChannel = Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(event.getInteraction().getMember()).getVoiceState()).getChannel()).asVoiceChannel());
-            musicPlayerManager.disconnectFromVoiceChannel(event, voiceChannel);
-            embedBuilder.addField("Disconnecting..", "Bot stopped playing and disconnected from: " + voiceChannel.getName() , false);
+            String disconnectedChannel = musicPlayerManager.disconnectFromVoiceChannel(event);
+            embedBuilder.addField("Disconnecting..", "Bot stopped playing and disconnected from: " + disconnectedChannel , false);
         }catch (NullPointerException e){
             embedBuilder.addField("Error:", "The bot is not in a voice channel!", false);
         }

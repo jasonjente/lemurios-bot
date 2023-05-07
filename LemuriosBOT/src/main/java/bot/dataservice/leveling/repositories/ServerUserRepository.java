@@ -12,4 +12,6 @@ public interface ServerUserRepository extends CrudRepository<ServerUser, Long> {
     Boolean existsServerUserByTagAndServer(String tag, DiscordServer discordServer);
     ServerUser findServerUserByTagAndServer(String tag, DiscordServer server);
     List<ServerUser> findAllByServer(DiscordServer server);
+
+    List<ServerUser> findOrderedByServerOrderByPointsDesc(DiscordServer server);
 }

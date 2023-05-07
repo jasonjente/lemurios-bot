@@ -99,7 +99,7 @@ public class LemuriosBOT extends ListenerAdapter {
     /**
      * Initialize the commands map.
      * The map has as a key the commands name (which is the same as the slash interaction event) and as a value
-     * is passed the CommandXXX bean in order to call using encapsulation the appropriate Command instance.execute(event).
+     * is passed the CommandXXX bean in order to call using polymorphism the appropriate Command instance.execute(event).
      */
     @PostConstruct
     private void init(){

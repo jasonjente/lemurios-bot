@@ -22,6 +22,7 @@ public class LeaderboardCommand extends Command {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("LeaderboardCommand() - Enter");
+        createHistoryEntry(event);
         EmbedBuilder embedBuilder = new EmbedBuilder();
         List<LeaderboardResult> leaderboardResults = levelingService.getLeaderboardForGuild(event);
 
