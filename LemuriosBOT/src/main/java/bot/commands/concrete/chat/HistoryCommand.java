@@ -1,13 +1,13 @@
 package bot.commands.concrete.chat;
 
 import bot.commands.Command;
+import bot.dataservice.DataService;
 import bot.dataservice.leveling.model.HistoryEntry;
 import bot.dataservice.leveling.repositories.HistoryEntryRepository;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -19,8 +19,13 @@ import static bot.constants.Constants.GTFO_MESSAGE;
 @Service
 public class HistoryCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(HistoryCommand.class);
-    @Autowired
-    private HistoryEntryRepository repository;
+    private final HistoryEntryRepository repository;
+    private final DataService dataService;
+
+    public HistoryCommand(HistoryEntryRepository repository, DataService dataService) {
+        this.repository = repository;
+        this.dataService = dataService;
+    }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
@@ -31,7 +36,7 @@ public class HistoryCommand extends Command {
                 .setTitle("Command History:")
                 .setDescription("Last 25 commands executed:").setColor(Color.BLACK);
         try {
-            List<HistoryEntry> historyEntryList = (List<HistoryEntry>) repository.findAll();
+            List<HistoryEntry> historyEntryList = repository.findOrderedByDiscordServerOrderByEntryId(dataService.createDiscordServerObject(event));
             int max = 0;
             for(HistoryEntry entry:historyEntryList){
                 if(max == 25){

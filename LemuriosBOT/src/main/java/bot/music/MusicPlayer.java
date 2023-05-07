@@ -130,6 +130,8 @@ public class MusicPlayer {
         } else {
             audioManager.closeAudioConnection();
             try {
+                //This flow applies to the case that the bot is already connected to another voice channel.
+                //Wait for some seconds to register the leaving of one voice channel before entering another one.
                 Thread.sleep(100);
                 audioManager.openAudioConnection(voiceChannel);
             } catch (InterruptedException e) {
@@ -173,7 +175,9 @@ public class MusicPlayer {
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
-    public void disconnectFromVoiceChannel(AudioManager audioManager) {
+    public String disconnectFromVoiceChannel(AudioManager audioManager) {
+        String voiceChanel = audioManager.getConnectedChannel().getName();
         audioManager.closeAudioConnection();
+        return voiceChanel;
     }
 }

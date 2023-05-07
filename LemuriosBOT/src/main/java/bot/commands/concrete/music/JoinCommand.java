@@ -24,6 +24,7 @@ public class JoinCommand extends Command {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("{} has requested the Join command - ENTER.", event.getUser().getName());
+        createHistoryEntry(event);
         EmbedBuilder embedBuilder = new EmbedBuilder();
         try{
             VoiceChannel voiceChannel = Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(event.getInteraction().getMember()).getVoiceState()).getChannel()).asVoiceChannel());

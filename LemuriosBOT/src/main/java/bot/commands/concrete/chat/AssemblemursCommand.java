@@ -26,9 +26,9 @@ public class AssemblemursCommand extends Command {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("assemblemursCommand - ENTER");
-        createHistoryEntry(event);
         if(userIsLemurWorthy(event)){
             doAssemble(event);
+            createHistoryEntry(event);
         } else {
             notifyUnworthy(event);
         }

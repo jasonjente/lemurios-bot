@@ -57,7 +57,6 @@ public class MusicPlayerManager {
         LOGGER.info("stop() - ENTER - Attempting to stop MusicPlayer for Guild Id {}", guild.getId());
         MusicPlayer player = instances.get(guild.getId());
         player.stop(guild);
-        removeInstance(guild.getId());
         //TODO set timer for 5 minute idle. on 5 minute completion disconnect bot
         LOGGER.info("stop() - LEAVE");
     }
@@ -92,11 +91,13 @@ public class MusicPlayerManager {
         return timeRemaining;
     }
 
-    public void disconnectFromVoiceChannel(SlashCommandInteractionEvent event, VoiceChannel voiceChannel) {
-        LOGGER.info("disconnectFromVoiceChannel() - ENTER - Attempting to connect MusicPlayer to voice channel: {} for Guild Id {}",voiceChannel.getName(), event.getChannel().getId());
+    public String disconnectFromVoiceChannel(SlashCommandInteractionEvent event) {
+        LOGGER.info("disconnectFromVoiceChannel() - ENTER - Attempting to connect MusicPlayer to voice channel for Guild Id {}", event.getChannel().getId());
         MusicPlayer player = instances.get(event.getGuild().getId());
-        player.disconnectFromVoiceChannel(event.getGuild().getAudioManager());
-        LOGGER.info("disconnectFromVoiceChannel() - LEAVE");
+        String disconnectedChannelName = player.disconnectFromVoiceChannel(event.getGuild().getAudioManager());
+        removeInstance(event.getGuild().getId());
+        LOGGER.info("disconnectFromVoiceChannel() - Left from {} - LEAVE", disconnectedChannelName);
+        return disconnectedChannelName;
     }
 
     public void joinVoiceChannel(SlashCommandInteractionEvent event, VoiceChannel voiceChannel) {

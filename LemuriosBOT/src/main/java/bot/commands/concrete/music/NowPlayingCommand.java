@@ -24,6 +24,7 @@ public class NowPlayingCommand extends Command {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("{} has requested the Now Playing command - ENTER.", event.getUser().getName());
+        createHistoryEntry(event);
         EmbedBuilder embedBuilder = new EmbedBuilder();
         try {
             List<String> songInQueue = musicPlayerManager.getSongPlaying(Objects.requireNonNull(event.getGuild()));
