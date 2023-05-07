@@ -42,7 +42,7 @@ public class StopCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return STOP_COMMAND.getValue();
+        return STOP_COMMAND.getCommandName();
     }
 
     @Autowired

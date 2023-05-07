@@ -83,6 +83,6 @@ public class DetectImageEdgesCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return DETECT_IMAGE_EDGES_COMMAND.getValue();
+        return DETECT_IMAGE_EDGES_COMMAND.getCommandName();
     }
 }

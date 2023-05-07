@@ -50,6 +50,7 @@ public class LemuriosBOT extends ListenerAdapter {
     private JoinCommand joinCommand;
     private static final Map<String, Command> commands = new HashMap<>();
     private DisconnectCommand disconnectCommand;
+    private LeaderboardCommand leaderboardCommand;
 
 
     //Guild Commands -- Commands get instantly deployed
@@ -61,34 +62,35 @@ public class LemuriosBOT extends ListenerAdapter {
     @Override
     public void onGuildReady(@NonNull GuildReadyEvent event){
         List<CommandData> commandData = new ArrayList<>();
-        commandData.add(Commands.slash(ASSEMLEMURS_COMMAND.getValue(),"Pings all Lemurioi Role Members -- Can be used if and only if you belong to that group."));
+        commandData.add(Commands.slash(ASSEMLEMURS_COMMAND.getCommandName(),"Pings all Lemurioi Role Members -- Can be used if and only if you belong to that group."));
 
-        commandData.add(Commands.slash(TAKEN_NAMES.getValue(),"Prints out all taken Lemur names."));
+        commandData.add(Commands.slash(TAKEN_NAMES.getCommandName(),"Prints out all taken Lemur names."));
 
-        commandData.add(Commands.slash(CREDITS_COMMAND.getValue(),"Prints out the application's credits."));
+        commandData.add(Commands.slash(CREDITS_COMMAND.getCommandName(),"Prints out the application's credits."));
 
         OptionData optionDataDetection = new OptionData(OptionType.ATTACHMENT, "image", "Upload an image to detect its edges.",true);
-        commandData.add(Commands.slash(DETECT_IMAGE_EDGES_COMMAND.getValue(),"Upload an image and the bot will return the detected edges in that image.").addOptions(optionDataDetection));
+        commandData.add(Commands.slash(DETECT_IMAGE_EDGES_COMMAND.getCommandName(),"Upload an image and the bot will return the detected edges in that image.").addOptions(optionDataDetection));
 
-        commandData.add(Commands.slash(HELP_COMMAND.getValue(),"Prints all the available commands."));
+        commandData.add(Commands.slash(HELP_COMMAND.getCommandName(),"Prints all the available commands."));
 
-        commandData.add(Commands.slash(HISTORY_COMMAND.getValue(),"Prints the last 25 commands used."));
+        commandData.add(Commands.slash(HISTORY_COMMAND.getCommandName(),"Prints the last 25 commands used."));
 
-        commandData.add(Commands.slash(MEME_COMMAND.getValue(),"The bot will return with a random meme."));
+        commandData.add(Commands.slash(MEME_COMMAND.getCommandName(),"The bot will return with a random meme."));
 
         OptionData optionDataMeme = new OptionData(OptionType.ATTACHMENT, "meme-image", "Upload a meme to the BOT",true);
-        commandData.add(Commands.slash(UPLOAD_MEME_COMMAND.getValue(),"Upload a meme to the Bot.").addOptions(optionDataMeme));
+        commandData.add(Commands.slash(UPLOAD_MEME_COMMAND.getCommandName(),"Upload a meme to the Bot.").addOptions(optionDataMeme));
 
         OptionData optionDataSongToPlay = new OptionData(OptionType.STRING, "url", "Used to add a song to the queue",true);
-        commandData.add(Commands.slash(PLAY_COMMAND.getValue(), "play a song via soundcloud, YouTube or from a discord CDN link.").addOptions(optionDataSongToPlay));
+        commandData.add(Commands.slash(PLAY_COMMAND.getCommandName(), "play a song via soundcloud, YouTube or from a discord CDN link.").addOptions(optionDataSongToPlay));
 
-        commandData.add(Commands.slash(SKIP_COMMAND.getValue(), "Skips current song from the song list."));
-        commandData.add(Commands.slash(PAUSE_COMMAND.getValue(), "Pauses current song from the song list."));
-        commandData.add(Commands.slash(STOP_COMMAND.getValue(), "Stops execution and empties the song list."));
-        commandData.add(Commands.slash(JOIN_COMMAND.getValue(), "Bot joins the voice channel the caller is in."));
-        commandData.add(Commands.slash(NOW_PLAYING.getValue(), "Bot prints the song it is currently playing."));
-        commandData.add(Commands.slash(RESUME_COMMAND.getValue(), "Bot unpauses the song it paused."));
-        commandData.add(Commands.slash(DISCONNECT_COMMAND.getValue(), "Bot disconnects and empties the queue."));
+        commandData.add(Commands.slash(SKIP_COMMAND.getCommandName(), "Skips current song from the song list."));
+        commandData.add(Commands.slash(PAUSE_COMMAND.getCommandName(), "Pauses current song from the song list."));
+        commandData.add(Commands.slash(STOP_COMMAND.getCommandName(), "Stops execution and empties the song list."));
+        commandData.add(Commands.slash(JOIN_COMMAND.getCommandName(), "Bot joins the voice channel the caller is in."));
+        commandData.add(Commands.slash(NOW_PLAYING.getCommandName(), "Bot prints the song it is currently playing."));
+        commandData.add(Commands.slash(RESUME_COMMAND.getCommandName(), "Bot unpauses the song it paused."));
+        commandData.add(Commands.slash(DISCONNECT_COMMAND.getCommandName(), "Bot disconnects and empties the queue."));
+        commandData.add(Commands.slash(LEADERBOARD_COMMAND.getCommandName(), leaderboardCommand.getCommandDescription()));
 
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }
@@ -100,22 +102,23 @@ public class LemuriosBOT extends ListenerAdapter {
      */
     @PostConstruct
     private void init(){
-        commands.put(ASSEMLEMURS_COMMAND.getValue(),assemblemursCommand);
-        commands.put(TAKEN_NAMES.getValue(), takenNamesCommand);
-        commands.put(CREDITS_COMMAND.getValue(),creditsCommand);
-        commands.put(DETECT_IMAGE_EDGES_COMMAND.getValue(),detectImageEdgesCommand);
-        commands.put(HELP_COMMAND.getValue(),helpCommand);
-        commands.put(HISTORY_COMMAND.getValue(),historyCommand);
-        commands.put(MEME_COMMAND.getValue(),memeCommand);
-        commands.put(UPLOAD_MEME_COMMAND.getValue(),uploadMemeCommand);
-        commands.put(PLAY_COMMAND.getValue(), playCommand);
-        commands.put(PAUSE_COMMAND.getValue(), pauseCommand);
-        commands.put(SKIP_COMMAND.getValue(), skipCommand);
-        commands.put(STOP_COMMAND.getValue(), stopCommand);
-        commands.put(JOIN_COMMAND.getValue(), joinCommand);
-        commands.put(NOW_PLAYING.getValue(), nowPlayingCommand);
-        commands.put(RESUME_COMMAND.getValue(), resumeCommand);
-        commands.put(DISCONNECT_COMMAND.getValue(), disconnectCommand);
+        commands.put(ASSEMLEMURS_COMMAND.getCommandName(),assemblemursCommand);
+        commands.put(TAKEN_NAMES.getCommandName(), takenNamesCommand);
+        commands.put(CREDITS_COMMAND.getCommandName(),creditsCommand);
+        commands.put(DETECT_IMAGE_EDGES_COMMAND.getCommandName(),detectImageEdgesCommand);
+        commands.put(HELP_COMMAND.getCommandName(),helpCommand);
+        commands.put(HISTORY_COMMAND.getCommandName(),historyCommand);
+        commands.put(MEME_COMMAND.getCommandName(),memeCommand);
+        commands.put(UPLOAD_MEME_COMMAND.getCommandName(),uploadMemeCommand);
+        commands.put(PLAY_COMMAND.getCommandName(), playCommand);
+        commands.put(PAUSE_COMMAND.getCommandName(), pauseCommand);
+        commands.put(SKIP_COMMAND.getCommandName(), skipCommand);
+        commands.put(STOP_COMMAND.getCommandName(), stopCommand);
+        commands.put(JOIN_COMMAND.getCommandName(), joinCommand);
+        commands.put(NOW_PLAYING.getCommandName(), nowPlayingCommand);
+        commands.put(RESUME_COMMAND.getCommandName(), resumeCommand);
+        commands.put(DISCONNECT_COMMAND.getCommandName(), disconnectCommand);
+        commands.put(LEADERBOARD_COMMAND.getCommandName(), leaderboardCommand);
     }
     //Global command for production -- takes up to 1 hour to get deployed
    /** @Override
@@ -161,7 +164,9 @@ public class LemuriosBOT extends ListenerAdapter {
                     try {
                         if (commands.containsKey(event.getFullCommandName())) {
                             event.deferReply().queue(); // Tell discord we received the command, send a thinking... message to the user
-                            commands.get(event.getFullCommandName()).execute(event);
+                            Command command = commands.get(event.getFullCommandName());
+                            command.execute(event);
+                            command.earnPoints(event);
                         }
                     } catch (NullPointerException npe){
                         EmbedBuilder embedBuilder = new EmbedBuilder().setTitle("We encountered an error during command execution :(");
@@ -258,6 +263,13 @@ public class LemuriosBOT extends ListenerAdapter {
     public void setDisconnectCommand(DisconnectCommand disconnectCommand) {
         this.disconnectCommand = disconnectCommand;
     }
+
+    @Autowired
+    public void setLeaderboardCommand(LeaderboardCommand leaderboardCommand) {
+        this.leaderboardCommand = leaderboardCommand;
+    }
+
+
 
     public static Map<String, Command> getCommands() {
         return commands;

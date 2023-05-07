@@ -47,7 +47,7 @@ public class SkipCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return SKIP_COMMAND.getValue();
+        return SKIP_COMMAND.getCommandName();
     }
 
     @Autowired

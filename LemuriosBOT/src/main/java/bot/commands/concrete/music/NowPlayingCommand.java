@@ -51,7 +51,7 @@ public class NowPlayingCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return NOW_PLAYING.getValue();
+        return NOW_PLAYING.getCommandName();
     }
 
     @Autowired

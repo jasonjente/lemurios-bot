@@ -105,7 +105,7 @@ public class MemeCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return MEME_COMMAND.getValue();
+        return MEME_COMMAND.getCommandName();
     }
 
     /**

@@ -43,7 +43,7 @@ public class AssemblemursCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return ASSEMLEMURS_COMMAND.getValue();
+        return ASSEMLEMURS_COMMAND.getCommandName();
     }
 
     private boolean userIsLemurWorthy(SlashCommandInteractionEvent event) {

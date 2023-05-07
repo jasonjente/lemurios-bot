@@ -41,7 +41,7 @@ public class DisconnectCommand extends Command {
 
     @Override
     public String getCommandName() {
-        return DISCONNECT_COMMAND.getValue();
+        return DISCONNECT_COMMAND.getCommandName();
     }
 
     @Autowired
