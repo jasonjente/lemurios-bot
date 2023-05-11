@@ -1,24 +1,35 @@
 ## Lemurios Discord BOT Guide
 
+---
+
 ### To Add to your server you can use this link:
  - [Bot Invite Link](https://discord.com/oauth2/authorize?client_id=1096774404526063687&permissions=2184226816&redirect_uri=https%3A%2F%2Fdiscordapp.com%2Foauth2%2Fauthorize%3F%26client_id%3D1096774404526063687%26scope%3Dbot&response_type=code&scope=voice%20connections%20bot)
  - Approve the requested rights and accesses.
 
+---
 ### Overview:
 The commands currently available:
- - ASSEMLEMURS_COMMAND
- - CREDITS_COMMAND
- - TAKEN_NAMES
- - MEME_COMMAND
- - UPLOAD_MEME_COMMAND
- - DETECT_IMAGE_EDGES
- - HISTORY_COMMAND
- - PLAY_COMMAND
- - PAUSE_COMMAND
- - SKIP_COMMAND
- - STOP_COMMAND
- - JOIN_COMMAND
- - NOW_PLAYING
+ - ASSEMLEMURS_COMMAND / calls all members of the LEMURIOI role
+ - CREDITS_COMMAND / shows the credits
+ - HELP_COMMAND / shows all available commands
+ - PLAY_COMMAND / the bot will join the channel that the caller is in and then plays the audio of the provided URL, works with most CDNs (like discords or facebook's) and youtube
+ - PAUSE_COMMAND / pauses the bot
+ - RESUME_COMMAND / unpauses the bot
+ - SKIP_COMMAND / skips current track
+ - STOP_COMMAND / completely stops current track and removes following tracks from the queue
+ - JOIN_COMMAND / the bot will join the voice channel the caller is in
+ - NOW_PLAYING / shows information about the current track playing
+ - MEME_COMMAND / bot returns a random meme that the server hasn't seen. 
+ - HISTORY_COMMAND / shows the last commands executed
+ - TAKEN_NAMES / shows the taken names of Lemurioi
+ - UPLOAD_MEME_COMMAND / lets the user upload a meme to the bot so it can be served later
+ - DETECT_IMAGE_EDGES_COMMAND / the user uploads an image and the bot will return a bnw image with the detected edges 
+ - DISCONNECT_COMMAND / disconnects the bot from the voice channel
+ - LEADERBOARD_COMMAND / shows the leaderboard for the guild
+ - SCHEDULE_COMMAND / [Work in progress]
+
+---
+   
  
 
 ### Technical Overview:
@@ -45,6 +56,8 @@ Please find below a list of all the beans used in the application:
    * Chat command that prints all commands available.
  * HistoryCommand.java - @Service
    * Chat command that prints the last 25 commands.
+ * Leaderboard.java @Service
+    * Chat command shows the leaderboard for the server the command was executed on.
  * TakenNamesCommand.java - @Service
    * Chat command that prints the taken Lemurios XXX names.
  * DetectImageEdgesCommand.java - @Service
@@ -52,7 +65,9 @@ Please find below a list of all the beans used in the application:
  * MemeCommand.java - @Service
    * Chat command that returns a random meme.
  * UploadMemeCommand.java - @Service
-   *  Chat command uploads a meme that can be uploaded by a user.
+   * Chat command uploads a meme that can be uploaded by a user.
+ * DisconnectCommand.java @Service
+    * Chat command that disconnects the bot from the voice channel
  * JoinCommand.java - @Service
    * Chat command that summons the bot on the voice chat that the caller is in.
  * NowPlaying - @Service
@@ -69,13 +84,21 @@ Please find below a list of all the beans used in the application:
    * Chat command that stops the execution of the player and removes the queue.
  * MusicPlayerManager.java - @Service
    * Class responsible for providing different instances of MusicPlayers to different guilds.
-
+ * DataServiceImpl.java -@Service
+   * Class responsible for database operations
+ * LevelingServiceImpl.java - @Service
+   * Class responsible for level/point progression
+ * DiscordUtilsImpl.java - @Service
+   * Class responsible for providing utilities like downloading images or getting an available filename
+ 
 **Finally, each command will be responsible for editing the initial reply and adding any information needed by the bot.**
+
+---
 
 ### Example for extending the Command.java
 
 ```java
-package bot.commands.concrete.music;
+package bot.commands.concrete.placeholder;
 
 import bot.commands.Command;
 import bot.music.MusicPlayerManager;
@@ -114,6 +137,16 @@ public class PlaceHolderCommand extends Command {
     public void setMusicPlayerManager(MusicPlayerManager musicPlayerManager) {
         this.musicPlayerManager = musicPlayerManager;
     }
+    
+   @Override
+   public String getCommandDescription() {
+      return "Enter a description here about the command.";
+   }
+
+   @Override
+   public String getCommandName() {
+      return PLACEHOLDER_COMMAND.getCommandName();
+   }
 }
 ```
 
@@ -144,7 +177,13 @@ The command should be now available on the next startup:
  - Guild Commands: these commands get instantly deployed. These are the commands under the onGuildReady() method.
  - Global Commands: for production use and takes up to 1 hour to get deployed on the discord's backend. These commands are defined in the onReady() method. {
  
- ### Guides:
+
+### Known errors:
+- this sequence of commands leads to an error: /stop, /disconnect
+- /disconnect doesn't work if the user is not connected to a voice channel
+- sometimes lava player crashes when loading a youtube links
+- history command prints the first 25 commands instead of the last 25
+### Guides:
  * [Lave player](https://github.com/sedmelluq/LavaPlayer#jda-integration)
  * [JDA Wiki Tutorial](https://jda.wiki/using-jda/making-a-music-bot/)
  
