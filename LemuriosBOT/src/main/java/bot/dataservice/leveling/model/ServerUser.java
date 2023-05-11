@@ -1,4 +1,4 @@
-package bot.leveling.model;
+package bot.dataservice.leveling.model;
 
 import javax.persistence.*;
 import java.util.ArrayList;

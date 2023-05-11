@@ -32,7 +32,6 @@ public class AssemblemursCommand extends Command {
         } else {
             notifyUnworthy(event);
         }
-        event.getInteraction().reply("");
         LOGGER.info("assemblemursCommand - LEAVE");
     }
 
@@ -98,7 +97,7 @@ public class AssemblemursCommand extends Command {
                 .setColor(java.awt.Color.RED)
                 .setFooter(GTFO_MESSAGE.getValue());
 
-        event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+        event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
 
     }
 }

@@ -1,8 +1,8 @@
 package bot.commands.concrete.chat;
 
 import bot.commands.Command;
-import bot.leveling.model.HistoryEntry;
-import bot.leveling.repositories.HistoryEntryRepository;
+import bot.dataservice.leveling.model.HistoryEntry;
+import bot.dataservice.leveling.repositories.HistoryEntryRepository;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class HistoryCommand extends Command {
                 .setTitle("Command History:")
                 .setDescription("Last 25 commands executed:").setColor(Color.BLACK);
         try {
-            java.util.List<HistoryEntry> historyEntryList = (List<HistoryEntry>) repository.findAll();
+            List<HistoryEntry> historyEntryList = (List<HistoryEntry>) repository.findAll();
             int max = 0;
             for(HistoryEntry entry:historyEntryList){
                 if(max == 25){

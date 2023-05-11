@@ -51,6 +51,7 @@ public class LemuriosBOT extends ListenerAdapter {
     private static final Map<String, Command> commands = new HashMap<>();
     private DisconnectCommand disconnectCommand;
     private LeaderboardCommand leaderboardCommand;
+    private ScheduleCommand scheduleCommand;
 
 
     //Guild Commands -- Commands get instantly deployed
@@ -269,7 +270,10 @@ public class LemuriosBOT extends ListenerAdapter {
         this.leaderboardCommand = leaderboardCommand;
     }
 
-
+    @Autowired
+    public void setScheduleCommand(ScheduleCommand scheduleCommand){
+        this.scheduleCommand = scheduleCommand;
+    }
 
     public static Map<String, Command> getCommands() {
         return commands;

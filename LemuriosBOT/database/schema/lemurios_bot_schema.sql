@@ -5,7 +5,7 @@ CREATE TABLE history_entry
 (
     entry_id       BIGINT                      NOT NULL,
     full_tag_name  VARCHAR(255)                NOT NULL,
-    command_issued VARCHAR(32)                 NOT NULL,
+    command_issued VARCHAR(2048)                 NOT NULL,
     created_on     TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     CONSTRAINT pk_historyentry PRIMARY KEY (entry_id)
 );

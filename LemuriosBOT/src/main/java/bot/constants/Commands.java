@@ -21,7 +21,8 @@ public enum Commands {
     UPLOAD_MEME_COMMAND("upload", 5),
     DETECT_IMAGE_EDGES_COMMAND("detect-edges", 2),
     DISCONNECT_COMMAND("disconnect", 1),
-    LEADERBOARD_COMMAND("leaderboard", 0);
+    LEADERBOARD_COMMAND("leaderboard", 0),
+    SCHEDULE_COMMAND("schedule", 5);
 
     private final String commandName;
     private final int points;

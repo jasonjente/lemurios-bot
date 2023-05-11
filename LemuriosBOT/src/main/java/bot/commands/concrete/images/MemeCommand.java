@@ -2,6 +2,7 @@ package bot.commands.concrete.images;
 
 import bot.commands.Command;
 import bot.exceptions.ImageProcessingException;
+import bot.image.MemeResult;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.utils.FileUpload;

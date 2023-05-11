@@ -1,4 +1,4 @@
-package bot.leveling.model;
+package bot.dataservice.leveling.model;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,6 +16,9 @@ public class DiscordServer {
 
     @OneToMany(mappedBy = "server")
     private List<ServerUser> users;
+
+    @OneToMany(mappedBy = "discordServer")
+    private List<HistoryEntry> entries;
 
     public Long getId() {
         return id;
@@ -39,5 +42,13 @@ public class DiscordServer {
 
     public void setUsers(List<ServerUser> users) {
         this.users = users;
+    }
+
+    public List<HistoryEntry> getEntries() {
+        return entries;
+    }
+
+    public void setEntries(List<HistoryEntry> entries) {
+        this.entries = entries;
     }
 }
