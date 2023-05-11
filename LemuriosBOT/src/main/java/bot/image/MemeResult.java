@@ -1,4 +1,4 @@
-package bot.commands.concrete.images;
+package bot.image;
 
 import java.io.File;
 

@@ -3,15 +3,20 @@ package bot.commands.concrete.images;
 import bot.commands.Command;
 import bot.exceptions.ImageProcessingException;
 import bot.image.processing.builder.ImageProcessorBuilder;
+import bot.utils.DiscordUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import static bot.constants.Commands.DETECT_IMAGE_EDGES_COMMAND;
@@ -22,6 +27,9 @@ import static bot.constants.Constants.IMAGE_DETECTION_IMAGE_OUT_DIR;
 public class DetectImageEdgesCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(DetectImageEdgesCommand.class);
 
+    @Autowired
+    private DiscordUtils discordUtils;
+
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         String sender = event.getUser().getName();
@@ -31,11 +39,11 @@ public class DetectImageEdgesCommand extends Command {
         EmbedBuilder embedBuilder = new EmbedBuilder().setImage("attachment://detectedImage.png") ;// we specify this in sendFile as "detectedImage.png"
         List<OptionMapping> attachments = event.getInteraction().getOptions();
         if (!attachments.isEmpty()) {
-            List<String> files = saveImagesReceived(sender, embedBuilder, attachments, IMAGE_DETECTION_IMAGE_IN_DIR.getValue());
+            List<String> files = discordUtils.saveImagesReceived(sender, embedBuilder, attachments, IMAGE_DETECTION_IMAGE_IN_DIR.getValue());
             for(String file:files){
                 ImageProcessorBuilder imageProcessorBuilder;
                 try {
-                    String filename = getAvailableFilename(IMAGE_DETECTION_IMAGE_OUT_DIR.getValue(), file);
+                    String filename = discordUtils.getAvailableFilename(IMAGE_DETECTION_IMAGE_OUT_DIR.getValue(), file);
                     imageProcessorBuilder = new ImageProcessorBuilder(file).upscale(2)
                             .applyGaussianBlur()
                             .applyMedianFilter()

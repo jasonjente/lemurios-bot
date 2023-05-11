@@ -1,4 +1,4 @@
-package bot.leveling.model;
+package bot.dataservice.leveling.model;
 
 public class LeaderboardResult {
     private String userTag;

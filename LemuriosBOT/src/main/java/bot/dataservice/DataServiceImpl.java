@@ -1,20 +1,27 @@
-package bot.leveling.service.impl;
+package bot.dataservice;
 
 import bot.constants.Commands;
-import bot.leveling.model.*;
-import bot.leveling.repositories.BotCommandRepository;
-import bot.leveling.repositories.CommandExecutionRepository;
-import bot.leveling.repositories.DiscordServerRepository;
-import bot.leveling.repositories.ServerUserRepository;
-import bot.leveling.service.LevelingService;
+import bot.dataservice.leveling.model.BotCommand;
+import bot.dataservice.leveling.model.CommandExecution;
+import bot.dataservice.leveling.model.DiscordServer;
+import bot.dataservice.leveling.model.ServerUser;
+import bot.dataservice.leveling.repositories.BotCommandRepository;
+import bot.dataservice.leveling.repositories.CommandExecutionRepository;
+import bot.dataservice.leveling.repositories.DiscordServerRepository;
+import bot.dataservice.leveling.repositories.ServerUserRepository;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
-public class LevelingServiceImpl implements LevelingService {
+public class DataServiceImpl implements DataService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataServiceImpl.class);
 
     private final ServerUserRepository serverUserRepository;
 
@@ -23,7 +30,7 @@ public class LevelingServiceImpl implements LevelingService {
     private final CommandExecutionRepository commandExecutionRepository;
     private final BotCommandRepository botCommandRepository;
 
-    public LevelingServiceImpl(ServerUserRepository serverUserRepository, DiscordServerRepository discordServerRepository, CommandExecutionRepository commandExecutionRepository, BotCommandRepository botCommandRepository) {
+    public DataServiceImpl(ServerUserRepository serverUserRepository, DiscordServerRepository discordServerRepository, CommandExecutionRepository commandExecutionRepository, BotCommandRepository botCommandRepository) {
         this.serverUserRepository = serverUserRepository;
         this.discordServerRepository = discordServerRepository;
         this.commandExecutionRepository = commandExecutionRepository;
@@ -31,36 +38,8 @@ public class LevelingServiceImpl implements LevelingService {
     }
 
     @Override
-    public void earnPoints(SlashCommandInteractionEvent event){
-        //Find what command was used to calculate the earned points and create an entry in the CommandExecution table.
-        String commandUsed = event.getFullCommandName();
-        Commands command = CommandsReverseLookup.getCommand(commandUsed);
-        Integer pointsEarned = command.getPoints();
-
-        CommandExecution commandExecution = createCommandExecutionObject(event);
-        //Find if the discord server exists, if not create it
-        DiscordServer discordServer = createDiscordServerObject(event);
-        String tag = event.getUser().getAsTag();
-        //find if the user exists, if not create that user and persist in the database
-        createServerUserObject(tag,discordServer, commandExecution, pointsEarned);
-    }
-
-    @Override
-    public List<LeaderboardResult> getLeaderboardForGuild(SlashCommandInteractionEvent event){
-        List<LeaderboardResult> ret = new LinkedList<>();
-        List<ServerUser> serverUsers = serverUserRepository.findAllByServer(createDiscordServerObject(event));
-        if(!serverUsers.isEmpty()){
-            for (ServerUser user:serverUsers){
-                ret.add(new LeaderboardResult(user.getTag(), user.getPoints()));
-            }
-            ret.sort((o1, o2) -> o1.getPoints() > o2.getPoints() ? o2.getPoints() : o1.getPoints());
-        }
-
-
-        return ret;
-    }
-
-    private ServerUser createServerUserObject(String tag, DiscordServer discordServer, CommandExecution commandExecution, Integer pointsEarned) {
+    public ServerUser createServerUserObject(String tag, DiscordServer discordServer, CommandExecution commandExecution, Integer pointsEarned) {
+        LOGGER.info("createServerUserObject() - caller tag: {}, server: {}, command {}, points earned: {}", tag, discordServer.getGuildId(), commandExecution.getCommand().getName(), pointsEarned );
         ServerUser ret;
         if(Boolean.FALSE.equals(serverUserRepository.existsServerUserByTagAndServer(tag,discordServer))){
             ret = new ServerUser();
@@ -75,7 +54,8 @@ public class LevelingServiceImpl implements LevelingService {
         return serverUserRepository.save(ret);
     }
 
-    private CommandExecution createCommandExecutionObject(SlashCommandInteractionEvent event) {
+    @Override
+    public CommandExecution createCommandExecutionObject(SlashCommandInteractionEvent event) {
         CommandExecution ret = new CommandExecution();
         BotCommand botCommand = new BotCommand();
         botCommand.setName(event.getCommandString());
@@ -85,7 +65,8 @@ public class LevelingServiceImpl implements LevelingService {
         return commandExecutionRepository.save(ret);
     }
 
-    private DiscordServer createDiscordServerObject(SlashCommandInteractionEvent event) {
+    @Override
+    public DiscordServer createDiscordServerObject(SlashCommandInteractionEvent event) {
         DiscordServer ret;
         if(Boolean.FALSE.equals(discordServerRepository.existsByGuildId(event.getGuild().getId()))){
             ret = new DiscordServer();
@@ -96,7 +77,9 @@ public class LevelingServiceImpl implements LevelingService {
         }
         return ret;
     }
-    private static class CommandsReverseLookup {
+
+    public static class CommandsReverseLookup {
+        private CommandsReverseLookup(){}
         private static final Map<String, Commands> reverseLookupMap = new HashMap<>();
 
         static {

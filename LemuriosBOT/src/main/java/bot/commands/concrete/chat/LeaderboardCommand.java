@@ -1,8 +1,8 @@
 package bot.commands.concrete.chat;
 
 import bot.commands.Command;
-import bot.leveling.model.LeaderboardResult;
-import bot.leveling.service.LevelingService;
+import bot.dataservice.leveling.model.LeaderboardResult;
+import bot.dataservice.leveling.service.LevelingService;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;

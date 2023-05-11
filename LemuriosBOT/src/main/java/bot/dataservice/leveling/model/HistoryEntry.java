@@ -1,4 +1,4 @@
-package bot.leveling.model;
+package bot.dataservice.leveling.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -14,11 +14,19 @@ public class HistoryEntry {
     @Column(name = "FULL_TAG_NAME", nullable = false)
     private String fullTag;
 
-    @Column(name = "COMMAND_ISSUED", nullable = false, length = 32)
+    @Column(name = "COMMAND_ISSUED", nullable = false, length = 1000)
     private String commandIssued;
 
     @Column(name = "CREATED_ON", nullable = false)
     private Timestamp createdOn;
+
+    @ManyToOne
+    @JoinColumn(name = "DISCORD_SERVER", nullable = false)
+    private DiscordServer discordServer;
+
+    @OneToOne
+    @JoinColumn(name = "COMMAND_EXECUTION", nullable = false)
+    private CommandExecution commandExecution;
 
     public Long getEntryId() {
         return entryId;
@@ -50,5 +58,21 @@ public class HistoryEntry {
 
     public void setCreatedOn(Timestamp createdOn) {
         this.createdOn = createdOn;
+    }
+
+    public DiscordServer getDiscordServer() {
+        return discordServer;
+    }
+
+    public void setDiscordServer(DiscordServer discordServer) {
+        this.discordServer = discordServer;
+    }
+
+    public CommandExecution getCommandExecution() {
+        return commandExecution;
+    }
+
+    public void setCommandExecution(CommandExecution commandExecution) {
+        this.commandExecution = commandExecution;
     }
 }
