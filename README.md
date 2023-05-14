@@ -179,10 +179,7 @@ The command should be now available on the next startup:
  
 
 ### Known errors:
-- this sequence of commands leads to an error: /stop, /disconnect
-- /disconnect doesn't work if the user is not connected to a voice channel
 - sometimes lava player crashes when loading a youtube links
-- history command prints the first 25 commands instead of the last 25
 ### Guides:
  * [Lave player](https://github.com/sedmelluq/LavaPlayer#jda-integration)
  * [JDA Wiki Tutorial](https://jda.wiki/using-jda/making-a-music-bot/)
