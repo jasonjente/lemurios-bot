@@ -25,7 +25,7 @@ public class CreditsCommand extends Command {
         embedBuilder.setTitle("Lemurios BOT Credits");
         embedBuilder.setDescription("This bot was created by OSO ZW XATZO, Development started in April 2023.");
         embedBuilder.addField("Version", version, false);
-        embedBuilder.addField("Github", "https://github.com/jasonjente?tab=repositories", false);
+        embedBuilder.addField("Github", "https://github.com/jasonjente/lemurios-bot", false);
         embedBuilder.setFooter("NOW GTFO HERE!\n With Best Regards Lemurios BOT.");
         embedBuilder.setColor(java.awt.Color.RED);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();

@@ -1,10 +1,10 @@
 package bot.dataservice.leveling.service.impl;
 
 import bot.constants.Commands;
-import bot.dataservice.leveling.model.CommandExecution;
-import bot.dataservice.leveling.model.DiscordServer;
-import bot.dataservice.leveling.model.LeaderboardResult;
-import bot.dataservice.leveling.model.ServerUser;
+import bot.dataservice.model.CommandExecution;
+import bot.dataservice.model.DiscordServer;
+import bot.dataservice.model.LeaderboardResult;
+import bot.dataservice.model.ServerUser;
 import bot.dataservice.leveling.repositories.ServerUserRepository;
 import bot.dataservice.leveling.service.LevelingService;
 import bot.dataservice.DataServiceImpl;

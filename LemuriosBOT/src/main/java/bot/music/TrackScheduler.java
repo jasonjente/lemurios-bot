@@ -3,11 +3,11 @@ package bot.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -17,6 +17,7 @@ public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
     private final BlockingQueue<AudioTrack> queue;
     private String currentlyPlaying;
+    private static Set<AudioTrack> trackRetransmitionSet = new HashSet<>();
 
     /**
      * @param player The audio player this scheduler uses
@@ -79,6 +80,21 @@ public class TrackScheduler extends AudioEventAdapter {
         player.setPaused(false);
     }
 
+    @Override
+    public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
+        // There was an error playing the track, so we retry once otherwise we suppress.
+        if(!trackRetransmitionSet.contains(track)){
+            try{
+                Thread.sleep(1000);
+            }catch (InterruptedException e){
+                //do nothing
+            }
+            trackRetransmitionSet.add(track);
+            queue(track);
+        } else {
+            trackRetransmitionSet.remove(track);
+        }
+    }
 
     public void stop() {
         player.stopTrack();

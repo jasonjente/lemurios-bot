@@ -1,6 +1,6 @@
 package bot.dataservice.leveling.repositories;
 
-import bot.dataservice.leveling.model.DiscordServer;
+import bot.dataservice.model.DiscordServer;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
