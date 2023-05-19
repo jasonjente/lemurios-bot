@@ -1,8 +1,8 @@
 package bot.commands;
 
 import bot.dataservice.DataService;
-import bot.dataservice.leveling.model.DiscordServer;
-import bot.dataservice.leveling.model.HistoryEntry;
+import bot.dataservice.model.DiscordServer;
+import bot.dataservice.model.HistoryEntry;
 import bot.dataservice.leveling.repositories.HistoryEntryRepository;
 import bot.dataservice.leveling.service.LevelingService;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

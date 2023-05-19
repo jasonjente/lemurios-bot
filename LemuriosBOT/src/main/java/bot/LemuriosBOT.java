@@ -6,6 +6,7 @@ import bot.commands.concrete.images.DetectImageEdgesCommand;
 import bot.commands.concrete.images.MemeCommand;
 import bot.commands.concrete.images.UploadMemeCommand;
 import bot.commands.concrete.music.*;
+import bot.commands.concrete.music.radio.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -33,6 +34,7 @@ import static bot.constants.Commands.*;
 @Component
 public class LemuriosBOT extends ListenerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(LemuriosBOT.class);
+    private static final String GENRE_OPTION = "genre";
     private AssemblemursCommand assemblemursCommand;
     private TakenNamesCommand takenNamesCommand;
     private CreditsCommand creditsCommand;
@@ -51,8 +53,11 @@ public class LemuriosBOT extends ListenerAdapter {
     private static final Map<String, Command> commands = new HashMap<>();
     private DisconnectCommand disconnectCommand;
     private LeaderboardCommand leaderboardCommand;
-    private ScheduleCommand scheduleCommand;
-
+    private PlayCustomRadioCommand playCustomRadioCommand;
+    private SetCustomRadioLinkCommand setCustomRadioLinkCommand;
+    private GetCustomRadioLinkCommand getCustomRadioLinkCommand;
+    private DeleteAllCustomRadioLinkCommand deleteAllCustomRadioLinkCommand;
+    private DeleteGenreCustomRadioLinkCommand deleteGenreCustomRadioLinkCommand;
 
     //Guild Commands -- Commands get instantly deployed
 
@@ -73,8 +78,8 @@ public class LemuriosBOT extends ListenerAdapter {
         commandData.add(Commands.slash(DETECT_IMAGE_EDGES_COMMAND.getCommandName(),"Upload an image and the bot will return the detected edges in that image.").addOptions(optionDataDetection));
 
         commandData.add(Commands.slash(HELP_COMMAND.getCommandName(),"Prints all the available commands."));
-
-        commandData.add(Commands.slash(HISTORY_COMMAND.getCommandName(),"Prints the last 25 commands used."));
+        OptionData historyOptionData = new OptionData(OptionType.STRING,"command-name", "Optional: narrow down your search by providing a command name, e.g. play");
+        commandData.add(Commands.slash(HISTORY_COMMAND.getCommandName(),"Prints the last 25 commands used.").addOptions(historyOptionData));
 
         commandData.add(Commands.slash(MEME_COMMAND.getCommandName(),"The bot will return with a random meme."));
 
@@ -92,6 +97,19 @@ public class LemuriosBOT extends ListenerAdapter {
         commandData.add(Commands.slash(RESUME_COMMAND.getCommandName(), "Bot unpauses the song it paused."));
         commandData.add(Commands.slash(DISCONNECT_COMMAND.getCommandName(), "Bot disconnects and empties the queue."));
         commandData.add(Commands.slash(LEADERBOARD_COMMAND.getCommandName(), leaderboardCommand.getCommandDescription()));
+
+        OptionData setCustomRadioCommandOptionDataUrl = new OptionData((OptionType.STRING), "url" ,setCustomRadioLinkCommand.getCommandDescription(), true);
+        OptionData setCustomRadioCommandOptionDataGenre = new OptionData((OptionType.STRING), GENRE_OPTION ,"specify the genre you want to add.", true);
+        commandData.add(Commands.slash(setCustomRadioLinkCommand.getCommandName(), setCustomRadioLinkCommand.getCommandDescription()).addOptions(setCustomRadioCommandOptionDataUrl,setCustomRadioCommandOptionDataGenre));
+        commandData.add(Commands.slash(getCustomRadioLinkCommand.getCommandName(), getCustomRadioLinkCommand.getCommandDescription()));
+
+        OptionData playCustomRadioGenreOptionData = new OptionData((OptionType.STRING), GENRE_OPTION ,"specify the genre you want to add.", true);
+        commandData.add(Commands.slash(playCustomRadioCommand.getCommandName(), playCustomRadioCommand.getCommandDescription()).addOptions(playCustomRadioGenreOptionData));
+
+        OptionData deleteByGenre = new OptionData((OptionType.STRING), GENRE_OPTION,"specify the genre you want to delete.", true);
+        commandData.add(Commands.slash(deleteGenreCustomRadioLinkCommand.getCommandName(), deleteGenreCustomRadioLinkCommand.getCommandDescription()).addOptions(deleteByGenre));
+        commandData.add(Commands.slash(deleteAllCustomRadioLinkCommand.getCommandName(), deleteAllCustomRadioLinkCommand.getCommandDescription()));
+
 
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }
@@ -120,6 +138,11 @@ public class LemuriosBOT extends ListenerAdapter {
         commands.put(RESUME_COMMAND.getCommandName(), resumeCommand);
         commands.put(DISCONNECT_COMMAND.getCommandName(), disconnectCommand);
         commands.put(LEADERBOARD_COMMAND.getCommandName(), leaderboardCommand);
+        commands.put(playCustomRadioCommand.getCommandName(), playCustomRadioCommand);
+        commands.put(setCustomRadioLinkCommand.getCommandName(), setCustomRadioLinkCommand);
+        commands.put(getCustomRadioLinkCommand.getCommandName(), getCustomRadioLinkCommand);
+        commands.put(deleteAllCustomRadioLinkCommand.getCommandName(), deleteAllCustomRadioLinkCommand);
+        commands.put(deleteGenreCustomRadioLinkCommand.getCommandName(), deleteGenreCustomRadioLinkCommand);
     }
     //Global command for production -- takes up to 1 hour to get deployed
    /** @Override
@@ -271,8 +294,27 @@ public class LemuriosBOT extends ListenerAdapter {
     }
 
     @Autowired
-    public void setScheduleCommand(ScheduleCommand scheduleCommand){
-        this.scheduleCommand = scheduleCommand;
+    public void setPlayCustomRadioCommand(PlayCustomRadioCommand playCustomRadioCommand) {
+        this.playCustomRadioCommand = playCustomRadioCommand;
+    }
+
+    @Autowired
+    public void setSetCustomRadioLinkCommand(SetCustomRadioLinkCommand setCustomRadioLinkCommand) {
+        this.setCustomRadioLinkCommand = setCustomRadioLinkCommand;
+    }
+    @Autowired
+    public void setGetCustomRadioLinkCommand(GetCustomRadioLinkCommand getCustomRadioLinkCommand) {
+        this.getCustomRadioLinkCommand = getCustomRadioLinkCommand;
+    }
+
+    @Autowired
+    public void setDeleteAllCustomRadioLinkCommand(DeleteAllCustomRadioLinkCommand deleteAllCustomRadioLinkCommand) {
+        this.deleteAllCustomRadioLinkCommand = deleteAllCustomRadioLinkCommand;
+    }
+
+    @Autowired
+    public void setDeleteGenreCustomRadioLinkCommand(DeleteGenreCustomRadioLinkCommand deleteGenreCustomRadioLinkCommand) {
+        this.deleteGenreCustomRadioLinkCommand = deleteGenreCustomRadioLinkCommand;
     }
 
     public static Map<String, Command> getCommands() {

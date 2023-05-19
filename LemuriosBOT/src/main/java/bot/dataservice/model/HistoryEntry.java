@@ -1,4 +1,4 @@
-package bot.dataservice.leveling.model;
+package bot.dataservice.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

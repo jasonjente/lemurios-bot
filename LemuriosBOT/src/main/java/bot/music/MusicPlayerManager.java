@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class for mapping Music player instances to servers.
+ * Class for mapping Music player instances to discord servers.
+ * Each server is mapped by its guild id in String format.
  */
 
 @Service
@@ -21,6 +22,10 @@ public class MusicPlayerManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(MusicPlayerManager.class);
     private static final Map<String, MusicPlayer> instances = new HashMap<>();
 
+    /**
+     * Adds a new mapping of Music player with key the guild ID.
+     * @param guildId
+     */
     public void addInstance(String guildId){
         instances.put(guildId, new MusicPlayer());
     }
@@ -106,5 +111,12 @@ public class MusicPlayerManager {
         }
         MusicPlayer player = instances.get(voiceChannel.getGuild().getId());
         player.connectToVoiceChannel(event.getGuild().getAudioManager(), voiceChannel);
+    }
+
+    public void stopAndLoadAndPlay(TextChannel textChannel, VoiceChannel voiceChannel, String song) {
+        if(instances.containsKey(textChannel.getGuild().getId())){
+            stop(textChannel.getGuild());
+        }
+        loadAndPlay(textChannel, voiceChannel, song);
     }
 }

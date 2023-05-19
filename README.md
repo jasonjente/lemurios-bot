@@ -13,6 +13,10 @@ The commands currently available:
  - CREDITS_COMMAND / shows the credits
  - HELP_COMMAND / shows all available commands
  - PLAY_COMMAND / the bot will join the channel that the caller is in and then plays the audio of the provided URL, works with most CDNs (like discords or facebook's) and youtube
+ - SET_RADIO / The bot will save a URL and a genre for later retrieval, works with the /get-radio :genre command.
+ - GET_RADIO / the bot will join the channel that the caller is in and then plays the audio of the provided URL, works with most CDNs (like discords or facebook's) and youtube
+ - DELETE_ALL / the bot will delete all urls for the server
+ - DELETE_GENRE / the bot will delete the urls for a specific genre server
  - PAUSE_COMMAND / pauses the bot
  - RESUME_COMMAND / unpauses the bot
  - SKIP_COMMAND / skips current track
@@ -61,7 +65,7 @@ Please find below a list of all the beans used in the application:
  * TakenNamesCommand.java - @Service
    * Chat command that prints the taken Lemurios XXX names.
  * DetectImageEdgesCommand.java - @Service
-   * Chat command that uploads a picture to the BOT and it will find its edges.
+   * Chat command that uploads a picture to the BOT, and it will find its edges.
  * MemeCommand.java - @Service
    * Chat command that returns a random meme.
  * UploadMemeCommand.java - @Service
@@ -90,7 +94,17 @@ Please find below a list of all the beans used in the application:
    * Class responsible for level/point progression
  * DiscordUtilsImpl.java - @Service
    * Class responsible for providing utilities like downloading images or getting an available filename
- 
+ * DeleteAllCustomRadioLinkCommand.java - @Service
+   * Class responsible for deleting all links
+ * DeleteGenreCustomRadioLinkCommand.java - @Service
+   * Class responsible for deleting the link for a genre
+ * GetCustomRadioLinkCommand.java - @Service
+   * Class responsible for retrieving all persisted urls and their genres
+ * PlayCustomRadioCommand.java - @Service
+   * Class responsible for playing the radio for the link of the specified genre
+ * SetCustomRadioLinkCommand.java - @Service
+   * Class responsible for setting a URL and genre
+
 **Finally, each command will be responsible for editing the initial reply and adding any information needed by the bot.**
 
 ---

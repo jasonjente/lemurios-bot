@@ -1,8 +1,13 @@
 package bot.commands.concrete.chat;
 
+import bot.LemuriosBOT;
 import bot.commands.Command;
 import bot.dataservice.DataService;
-import bot.dataservice.leveling.model.HistoryEntry;
+import bot.dataservice.model.BotCommand;
+import bot.dataservice.model.CommandExecution;
+import bot.dataservice.model.DiscordServer;
+import bot.dataservice.model.HistoryEntry;
+import bot.dataservice.leveling.repositories.CommandExecutionRepository;
 import bot.dataservice.leveling.repositories.HistoryEntryRepository;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -11,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.List;
 
 import static bot.constants.Commands.HISTORY_COMMAND;
@@ -21,10 +27,12 @@ public class HistoryCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(HistoryCommand.class);
     private final HistoryEntryRepository repository;
     private final DataService dataService;
+    private final CommandExecutionRepository commandExecutionRepository;
 
-    public HistoryCommand(HistoryEntryRepository repository, DataService dataService) {
+    public HistoryCommand(HistoryEntryRepository repository, DataService dataService, CommandExecutionRepository commandExecutionRepository) {
         this.repository = repository;
         this.dataService = dataService;
+        this.commandExecutionRepository = commandExecutionRepository;
     }
 
     @Override
@@ -35,6 +43,30 @@ public class HistoryCommand extends Command {
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setTitle("Command History:")
                 .setDescription("Last 25 commands executed:").setColor(Color.BLACK);
+        String command = event.getCommandString();
+        List<String> commandTrimmed = Arrays.asList(command.split(" "));
+        if(commandTrimmed.size()>1){
+            command = commandTrimmed.get(0);
+        }
+        if(event.getOptions().isEmpty()) {
+            findAllCommandsExecuted(event, embedBuilder);
+        } else if (LemuriosBOT.getCommands().containsKey(command)){
+            findAllCommandsExecutedByCommandName(command, event);
+        }
+        embedBuilder.setFooter(GTFO_MESSAGE.getValue());
+        event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+    }
+
+    private List<HistoryEntry> findAllCommandsExecutedByCommandName(String command, SlashCommandInteractionEvent event) {
+        BotCommand botCommand = new BotCommand();
+        botCommand.setName(command);
+
+        CommandExecution commandExecution = commandExecutionRepository.findAllByCommand(botCommand).get(0);
+        DiscordServer discordServer = dataService.createDiscordServerObject(event);
+        return repository.findHistoryEntryByCommandExecutionAndDiscordServer(commandExecution, discordServer);
+    }
+
+    private void findAllCommandsExecuted(SlashCommandInteractionEvent event, EmbedBuilder embedBuilder) {
         try {
             List<HistoryEntry> historyEntryList = repository.findOrderedByDiscordServerOrderByEntryId(dataService.createDiscordServerObject(event));
             int max = 0;
@@ -49,8 +81,6 @@ public class HistoryCommand extends Command {
             LOGGER.error("Error connecting to History Archival ", e);
             embedBuilder.addField("Error connecting to History Archival :((", "If this error persist please contact our adminstrators @oso zw xatzo", true);
         }
-        embedBuilder.setFooter(GTFO_MESSAGE.getValue());
-        event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
     }
 
     @Override

@@ -64,6 +64,27 @@ CREATE TABLE server_user_command_executions
     command_executions_id      BIGINT NOT NULL
 );
 
+-- Discord music radio:
+CREATE SEQUENCE IF NOT EXISTS discord_server_gen START WITH 1 INCREMENT BY 50;
+
+CREATE TABLE custom_radio_link
+(
+    id               BIGINT       NOT NULL,
+    custom_url       VARCHAR(10000),
+    discord_guild_id VARCHAR(255) NOT NULL,
+    genre            VARCHAR(255) NOT NULL,
+    CONSTRAINT pk_custom_radio_link PRIMARY KEY (id)
+);
+
+
+-- constraints:
+
+ALTER TABLE custom_radio_link
+    ADD CONSTRAINT uc_custom_radio_link_discord_guild UNIQUE (discord_guild_id);
+
+ALTER TABLE custom_radio_link
+    ADD CONSTRAINT uc_custom_radio_link_genre UNIQUE (genre);
+
 ALTER TABLE server_user_command_executions
     ADD CONSTRAINT uc_server_user_command_executions_commandexecutions UNIQUE (command_executions_id);
 

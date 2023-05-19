@@ -1,14 +1,8 @@
 package bot.dataservice;
 
 import bot.constants.Commands;
-import bot.dataservice.leveling.model.BotCommand;
-import bot.dataservice.leveling.model.CommandExecution;
-import bot.dataservice.leveling.model.DiscordServer;
-import bot.dataservice.leveling.model.ServerUser;
-import bot.dataservice.leveling.repositories.BotCommandRepository;
-import bot.dataservice.leveling.repositories.CommandExecutionRepository;
-import bot.dataservice.leveling.repositories.DiscordServerRepository;
-import bot.dataservice.leveling.repositories.ServerUserRepository;
+import bot.dataservice.leveling.repositories.*;
+import bot.dataservice.model.*;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -29,12 +24,14 @@ public class DataServiceImpl implements DataService {
 
     private final CommandExecutionRepository commandExecutionRepository;
     private final BotCommandRepository botCommandRepository;
+    private final CustomLinkRepository customLinkRepository;
 
-    public DataServiceImpl(ServerUserRepository serverUserRepository, DiscordServerRepository discordServerRepository, CommandExecutionRepository commandExecutionRepository, BotCommandRepository botCommandRepository) {
+    public DataServiceImpl(ServerUserRepository serverUserRepository, DiscordServerRepository discordServerRepository, CommandExecutionRepository commandExecutionRepository, BotCommandRepository botCommandRepository, CustomLinkRepository customLinkRepository) {
         this.serverUserRepository = serverUserRepository;
         this.discordServerRepository = discordServerRepository;
         this.commandExecutionRepository = commandExecutionRepository;
         this.botCommandRepository = botCommandRepository;
+        this.customLinkRepository = customLinkRepository;
     }
 
     @Override
@@ -76,6 +73,31 @@ public class DataServiceImpl implements DataService {
             ret = discordServerRepository.findDiscordServerByGuildId(event.getGuild().getId());
         }
         return ret;
+    }
+
+    @Override
+    public void deleteCustomLinksByDiscordServer(String guildId) {
+        customLinkRepository.deleteCustomLinksByDiscordServer(guildId);
+    }
+
+    @Override
+    public void deleteCustomLinkByDiscordServerAndGenre(String guildId, String genre) {
+        customLinkRepository.deleteCustomLinkByDiscordServerAndGenre(guildId, genre);
+    }
+
+    @Override
+    public void saveCustomLink(CustomLink customLink) {
+        customLinkRepository.save(customLink);
+    }
+
+    @Override
+    public CustomLink findCustomLinkByDiscordServerAndGenre(String id, String genre) {
+        return customLinkRepository.findCustomLinkByDiscordServerAndGenre(id, genre);
+    }
+
+    @Override
+    public List<CustomLink> findCustomLinksByDiscordServerAndGenre(String guildId) {
+        return customLinkRepository.getCustomLinksByDiscordServer(guildId);
     }
 
     public static class CommandsReverseLookup {
