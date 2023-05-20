@@ -55,6 +55,7 @@ CREATE TABLE server_user
     user_tag       VARCHAR(255),
     server_id      BIGINT,
     points         INTEGER NOT NULL,
+    level          INTEGER,
     CONSTRAINT pk_server_user PRIMARY KEY (server_user_id)
 );
 

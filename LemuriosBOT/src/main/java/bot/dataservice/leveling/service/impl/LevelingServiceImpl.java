@@ -1,6 +1,7 @@
 package bot.dataservice.leveling.service.impl;
 
 import bot.constants.Commands;
+import bot.dataservice.DataService;
 import bot.dataservice.model.CommandExecution;
 import bot.dataservice.model.DiscordServer;
 import bot.dataservice.model.LeaderboardResult;
@@ -21,11 +22,11 @@ public class LevelingServiceImpl implements LevelingService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LevelingServiceImpl.class);
 
     private final ServerUserRepository serverUserRepository;
-    private final DataServiceImpl dataServiceImpl;
+    private final DataService dataService;
 
-    public LevelingServiceImpl(ServerUserRepository serverUserRepository, DataServiceImpl dataServiceImpl) {
+    public LevelingServiceImpl(ServerUserRepository serverUserRepository, DataService dataService) {
         this.serverUserRepository = serverUserRepository;
-        this.dataServiceImpl = dataServiceImpl;
+        this.dataService = dataService;
     }
 
     @Override
@@ -35,12 +36,12 @@ public class LevelingServiceImpl implements LevelingService {
         Commands command = DataServiceImpl.CommandsReverseLookup.getCommand(commandUsed);
         Integer pointsEarned = command.getPoints();
         LOGGER.info("earnPoints() - Enter - Command: {}, points earned: {} for user: {}.", commandUsed, pointsEarned, event.getUser().getAsTag());
-        CommandExecution commandExecution = dataServiceImpl.createCommandExecutionObject(event);
+        CommandExecution commandExecution = dataService.createCommandExecutionObject(event);
         //Find if the discord server exists, if not create it
-        DiscordServer discordServer = dataServiceImpl.createDiscordServerObject(event);
+        DiscordServer discordServer = dataService.createDiscordServerObject(event);
         String tag = event.getUser().getAsTag();
         //find if the user exists, if not create that user and persist in the database
-        dataServiceImpl.createServerUserObject(tag,discordServer, commandExecution, pointsEarned);
+        dataService.createServerUserObject(tag,discordServer, commandExecution, pointsEarned);
         LOGGER.info("earnPoints()");
     }
 
@@ -48,10 +49,11 @@ public class LevelingServiceImpl implements LevelingService {
     public List<LeaderboardResult> getLeaderboardForGuild(SlashCommandInteractionEvent event){
         LOGGER.info("getLeaderboardForGuild() - Enter - GuildId: {}", event.getGuild().getId());
         List<LeaderboardResult> ret = new LinkedList<>();
-        List<ServerUser> serverUsers = serverUserRepository.findOrderedByServerOrderByPointsDesc(dataServiceImpl.createDiscordServerObject(event));
+        List<ServerUser> serverUsers = serverUserRepository.findOrderedByServerOrderByPointsDesc(dataService.createDiscordServerObject(event));
         if(!serverUsers.isEmpty()){
             for (ServerUser user:serverUsers){
-                ret.add(new LeaderboardResult(user.getTag(), user.getPoints()));
+                Integer userLevel = dataService.calculateLevel(user);
+                ret.add(new LeaderboardResult(user.getTag(), user.getPoints(), userLevel));
             }
             ret.sort((o1, o2) -> o1.getPoints() > o2.getPoints() ? o2.getPoints() : o1.getPoints());
         }

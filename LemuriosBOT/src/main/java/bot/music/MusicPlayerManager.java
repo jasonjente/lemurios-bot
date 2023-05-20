@@ -99,6 +99,7 @@ public class MusicPlayerManager {
     public String disconnectFromVoiceChannel(SlashCommandInteractionEvent event) {
         LOGGER.info("disconnectFromVoiceChannel() - ENTER - Attempting to connect MusicPlayer to voice channel for Guild Id {}", event.getChannel().getId());
         MusicPlayer player = instances.get(event.getGuild().getId());
+        player.stop(event.getGuild());
         String disconnectedChannelName = player.disconnectFromVoiceChannel(event.getGuild().getAudioManager());
         removeInstance(event.getGuild().getId());
         LOGGER.info("disconnectFromVoiceChannel() - Left from {} - LEAVE", disconnectedChannelName);

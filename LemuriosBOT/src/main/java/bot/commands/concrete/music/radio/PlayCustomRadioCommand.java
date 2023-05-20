@@ -2,7 +2,6 @@ package bot.commands.concrete.music.radio;
 
 import bot.commands.Command;
 import bot.dataservice.DataService;
-import bot.dataservice.leveling.repositories.CustomLinkRepository;
 import bot.dataservice.model.CustomLink;
 import bot.music.MusicPlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -51,7 +50,7 @@ public class PlayCustomRadioCommand extends Command {
                 TextChannel textChannel = event.getChannel().asTextChannel();
                 VoiceChannel voiceChannel = event.getInteraction().getMember().getVoiceState().getChannel().asVoiceChannel();
                 LOGGER.info("Voice channel {}", voiceChannel.getName());
-                embedBuilder.setTitle("Lemurios Music BOT - Started playing Custom URL!" + song).setColor(Color.YELLOW);
+                embedBuilder.setTitle("Lemurios Music BOT - Started " + genre +" radio!").setColor(Color.YELLOW);
                 musicPlayerManager.stopAndLoadAndPlay(textChannel, voiceChannel, song);
             } else {
                 embedBuilder.setTitle("Lemurios Music BOT - Error.").setColor(Color.RED);

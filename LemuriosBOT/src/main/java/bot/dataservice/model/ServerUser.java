@@ -26,6 +26,9 @@ public class ServerUser {
     @Column(nullable = false)
     private Integer points;
 
+    @Column(name = "level")
+    private Integer level;
+
     public Long getId() {
         return id;
     }
@@ -67,5 +70,13 @@ public class ServerUser {
 
     public void setPoints(Integer points) {
         this.points = points;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 }

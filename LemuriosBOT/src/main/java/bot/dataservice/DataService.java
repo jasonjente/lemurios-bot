@@ -11,6 +11,8 @@ import java.util.List;
 public interface DataService {
     ServerUser createServerUserObject(String tag, DiscordServer discordServer, CommandExecution commandExecution, Integer pointsEarned);
 
+    int calculateLevel(ServerUser ret);
+
     CommandExecution createCommandExecutionObject(SlashCommandInteractionEvent event);
 
     DiscordServer createDiscordServerObject(SlashCommandInteractionEvent event);
