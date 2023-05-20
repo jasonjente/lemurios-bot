@@ -27,7 +27,8 @@ public class LeaderboardCommand extends Command {
         List<LeaderboardResult> leaderboardResults = levelingService.getLeaderboardForGuild(event);
 
         for (LeaderboardResult result : leaderboardResults){
-            embedBuilder.addField("User: " + result.getUserTag(), "Points: " + result.getPoints(),false);
+            String valueMessage = "Points: " + result.getPoints() + " , Level: " + result.getLevel();
+            embedBuilder.addField("User: " + result.getUserTag(), valueMessage,false);
         }
 
         embedBuilder.setColor(java.awt.Color.PINK).setFooter("NOW GTFO HERE!\n With Best Regards Lemurios BOT.");
