@@ -12,5 +12,6 @@ public interface CustomLinkRepository extends CrudRepository<CustomLink, Long> {
     void deleteCustomLinksByDiscordServer(String discordServer);
     void deleteCustomLinkByDiscordServerAndGenre(String discordServer, String genre);
     List<CustomLink> getCustomLinksByDiscordServer(String discordServer);
+    CustomLink getCustomLinkByDiscordServerAndGenre(String discordServer, String genre);
 
 }

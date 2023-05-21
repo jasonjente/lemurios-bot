@@ -58,6 +58,7 @@ public class LemuriosBOT extends ListenerAdapter {
     private GetCustomRadioLinkCommand getCustomRadioLinkCommand;
     private DeleteAllCustomRadioLinkCommand deleteAllCustomRadioLinkCommand;
     private DeleteGenreCustomRadioLinkCommand deleteGenreCustomRadioLinkCommand;
+    private CreateInviteCommand createInviteCommand;
 
     //Guild Commands -- Commands get instantly deployed
 
@@ -68,49 +69,67 @@ public class LemuriosBOT extends ListenerAdapter {
     @Override
     public void onGuildReady(@NonNull GuildReadyEvent event){
         List<CommandData> commandData = new ArrayList<>();
+        /* Chat Commands */
+        // /assemblemurs
         commandData.add(Commands.slash(ASSEMLEMURS_COMMAND.getCommandName(),"Pings all Lemurioi Role Members -- Can be used if and only if you belong to that group."));
-
+        // /taken-names
         commandData.add(Commands.slash(TAKEN_NAMES.getCommandName(),"Prints out all taken Lemur names."));
-
+        // /credits
         commandData.add(Commands.slash(CREDITS_COMMAND.getCommandName(),"Prints out the application's credits."));
-
-        OptionData optionDataDetection = new OptionData(OptionType.ATTACHMENT, "image", "Upload an image to detect its edges.",true);
-        commandData.add(Commands.slash(DETECT_IMAGE_EDGES_COMMAND.getCommandName(),"Upload an image and the bot will return the detected edges in that image.").addOptions(optionDataDetection));
-
+        // /help
         commandData.add(Commands.slash(HELP_COMMAND.getCommandName(),"Prints all the available commands."));
+        // /history
         OptionData historyOptionData = new OptionData(OptionType.STRING,"command-name", "Optional: narrow down your search by providing a command name, e.g. play");
         commandData.add(Commands.slash(HISTORY_COMMAND.getCommandName(),"Prints the last 25 commands used.").addOptions(historyOptionData));
+        // /leaderboard
+        commandData.add(Commands.slash(LEADERBOARD_COMMAND.getCommandName(), leaderboardCommand.getCommandDescription()));
+        // /invite
+        commandData.add(Commands.slash(createInviteCommand.getCommandName(), createInviteCommand.getCommandDescription()));
 
+        /* Image Commands */
+        // /detect-edges
+        OptionData optionDataDetection = new OptionData(OptionType.ATTACHMENT, "image", "Upload an image to detect its edges.",true);
+        commandData.add(Commands.slash(DETECT_IMAGE_EDGES_COMMAND.getCommandName(),"Upload an image and the bot will return the detected edges in that image.").addOptions(optionDataDetection));
+        // /meme
         commandData.add(Commands.slash(MEME_COMMAND.getCommandName(),"The bot will return with a random meme."));
-
+        // /upload-meme
         OptionData optionDataMeme = new OptionData(OptionType.ATTACHMENT, "meme-image", "Upload a meme to the BOT",true);
         commandData.add(Commands.slash(UPLOAD_MEME_COMMAND.getCommandName(),"Upload a meme to the Bot.").addOptions(optionDataMeme));
 
+        /* Music Commands */
+        // /play :url
         OptionData optionDataSongToPlay = new OptionData(OptionType.STRING, "url", "Used to add a song to the queue",true);
         commandData.add(Commands.slash(PLAY_COMMAND.getCommandName(), "play a song via soundcloud, YouTube or from a discord CDN link.").addOptions(optionDataSongToPlay));
-
+        // /play-radio :genre
+        OptionData playCustomRadioGenreOptionData = new OptionData((OptionType.STRING), GENRE_OPTION ,"specify the genre you want to add.", true);
+        commandData.add(Commands.slash(playCustomRadioCommand.getCommandName(), playCustomRadioCommand.getCommandDescription()).addOptions(playCustomRadioGenreOptionData));
+        // /skip
         commandData.add(Commands.slash(SKIP_COMMAND.getCommandName(), "Skips current song from the song list."));
+        // /pause
         commandData.add(Commands.slash(PAUSE_COMMAND.getCommandName(), "Pauses current song from the song list."));
+        // /resume
         commandData.add(Commands.slash(STOP_COMMAND.getCommandName(), "Stops execution and empties the song list."));
+        // /join
         commandData.add(Commands.slash(JOIN_COMMAND.getCommandName(), "Bot joins the voice channel the caller is in."));
+        // /now-playing
         commandData.add(Commands.slash(NOW_PLAYING.getCommandName(), "Bot prints the song it is currently playing."));
+        // /resume
         commandData.add(Commands.slash(RESUME_COMMAND.getCommandName(), "Bot unpauses the song it paused."));
+        // /disconnect
         commandData.add(Commands.slash(DISCONNECT_COMMAND.getCommandName(), "Bot disconnects and empties the queue."));
-        commandData.add(Commands.slash(LEADERBOARD_COMMAND.getCommandName(), leaderboardCommand.getCommandDescription()));
-
+        // /set-radio-url :url :genre
         OptionData setCustomRadioCommandOptionDataUrl = new OptionData((OptionType.STRING), "url" ,setCustomRadioLinkCommand.getCommandDescription(), true);
         OptionData setCustomRadioCommandOptionDataGenre = new OptionData((OptionType.STRING), GENRE_OPTION ,"specify the genre you want to add.", true);
         commandData.add(Commands.slash(setCustomRadioLinkCommand.getCommandName(), setCustomRadioLinkCommand.getCommandDescription()).addOptions(setCustomRadioCommandOptionDataUrl,setCustomRadioCommandOptionDataGenre));
+        // /get-radio-urls
         commandData.add(Commands.slash(getCustomRadioLinkCommand.getCommandName(), getCustomRadioLinkCommand.getCommandDescription()));
-
-        OptionData playCustomRadioGenreOptionData = new OptionData((OptionType.STRING), GENRE_OPTION ,"specify the genre you want to add.", true);
-        commandData.add(Commands.slash(playCustomRadioCommand.getCommandName(), playCustomRadioCommand.getCommandDescription()).addOptions(playCustomRadioGenreOptionData));
-
+        // /delete-genre
         OptionData deleteByGenre = new OptionData((OptionType.STRING), GENRE_OPTION,"specify the genre you want to delete.", true);
         commandData.add(Commands.slash(deleteGenreCustomRadioLinkCommand.getCommandName(), deleteGenreCustomRadioLinkCommand.getCommandDescription()).addOptions(deleteByGenre));
+        // /delete-all
         commandData.add(Commands.slash(deleteAllCustomRadioLinkCommand.getCommandName(), deleteAllCustomRadioLinkCommand.getCommandDescription()));
 
-
+        //Push the commands to discord
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }
 
@@ -143,6 +162,7 @@ public class LemuriosBOT extends ListenerAdapter {
         commands.put(getCustomRadioLinkCommand.getCommandName(), getCustomRadioLinkCommand);
         commands.put(deleteAllCustomRadioLinkCommand.getCommandName(), deleteAllCustomRadioLinkCommand);
         commands.put(deleteGenreCustomRadioLinkCommand.getCommandName(), deleteGenreCustomRadioLinkCommand);
+        commands.put(createInviteCommand.getCommandName(), createInviteCommand);
     }
     //Global command for production -- takes up to 1 hour to get deployed
    /** @Override
@@ -317,6 +337,10 @@ public class LemuriosBOT extends ListenerAdapter {
         this.deleteGenreCustomRadioLinkCommand = deleteGenreCustomRadioLinkCommand;
     }
 
+    @Autowired
+    public void setCreateInviteCommand(CreateInviteCommand createInviteCommand) {
+        this.createInviteCommand = createInviteCommand;
+    }
     public static Map<String, Command> getCommands() {
         return commands;
     }

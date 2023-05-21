@@ -27,7 +27,8 @@ public enum Commands {
     DETECT_IMAGE_EDGES_COMMAND("detect-edges", 2),
     DISCONNECT_COMMAND("disconnect", 2),
     LEADERBOARD_COMMAND("leaderboard", 0),
-    SCHEDULE_COMMAND("schedule", 5);
+    SCHEDULE_COMMAND("schedule", 5),
+    INVITE_LINK("invite", 0);
 
     private final String commandName;
     private final int points;
