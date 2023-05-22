@@ -58,6 +58,13 @@ public class DataServiceImpl implements DataService {
     public int calculateLevel(ServerUser ret) {
         LOGGER.info("calculateLevel() - ENTER - points: {}", ret.getPoints());
         int level = (int) Math.floor(Math.sqrt((ret.getPoints() + 1)));
+        //both checks are in case the serveruser is a new user that hasn't been persisted yet
+        if(ret.getLevel()==null){
+            ret.setLevel(0);
+        }
+        if(ret.getPoints()==null){
+            ret.setPoints(5);
+        }
         if(ret.getLevel() != level){
             ret.setLevel(level);
             serverUserRepository.save(ret);
