@@ -13,7 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static bot.constants.Commands.ASSEMLEMURS_COMMAND;
 import static bot.constants.Constants.*;
@@ -21,6 +25,11 @@ import static bot.constants.Constants.*;
 @Service
 public class AssemblemursCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(AssemblemursCommand.class);
+    private static final String ROLE_NAME = "LEMURIOI";
+    private static final boolean ENABLE_SEND_PRIVATE_MESSAGES = true;
+    private static Map<String, LocalDateTime> timeoutMap = new HashMap<>();
+    private static final long MAX_TIME_OUT_FOR_ASSEMBLEMURS = 1;
+    private static final boolean ENABLE_TIMEOUTS = true;
 
 
     @Override
@@ -47,7 +56,7 @@ public class AssemblemursCommand extends Command {
 
     private boolean userIsLemurWorthy(SlashCommandInteractionEvent event) {
         String sender = event.getUser().getAsTag();
-        Role lemurs = event.getGuild().getRolesByName("LEMURIOI", true).get(0);
+        Role lemurs = event.getGuild().getRolesByName(ROLE_NAME, true).get(0);
         if (!event.getMember().getRoles().contains(lemurs)) {
             LOGGER.info("{} is not worthy", sender);
             return false;
@@ -57,30 +66,63 @@ public class AssemblemursCommand extends Command {
     }
 
     private void doAssemble(SlashCommandInteractionEvent event) {
-        Role lemurs = event.getGuild().getRolesByName("LEMURIOI", true).get(0);
+        Role lemurs = event.getGuild().getRolesByName(ROLE_NAME, true).get(0);
         User author = event.getUser();
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setTitle("LEMURS ASSEMBLE")
-                .setDescription(event.getUser().getAsTag() + "wants to play games. Please join them.")
-                .setColor(Color.YELLOW)
-                .setFooter("NOW GTFO HERE!");
+                .setColor(Color.YELLOW);
 
+        if(ENABLE_TIMEOUTS) {
+            LocalDateTime lastTimeUsed;
+
+            if (timeoutMap.containsKey(author.getId())) {
+                lastTimeUsed = timeoutMap.get(author.getId());
+            } else {
+                lastTimeUsed = LocalDateTime.MIN;
+            }
+
+            LocalDateTime currentTime = LocalDateTime.now();
+            Duration duration = Duration.between(lastTimeUsed, currentTime);
+            long minutesDifference = duration.toMinutes();
+
+            if (minutesDifference > MAX_TIME_OUT_FOR_ASSEMBLEMURS) {
+                notifyChannel(event, lemurs, author, embedBuilder);
+                sentPrivateMessagesToTheUsers(event, lemurs);
+                timeoutMap.put(author.getId(), currentTime);
+            } else {
+                String user = author.getName();
+                String message = user + ", you can use this command every " + MAX_TIME_OUT_FOR_ASSEMBLEMURS
+                        + " minutes and the last time you used the command was: " + duration.getSeconds() + " seconds ago.";
+                embedBuilder.addField("[ANTI-SPAM Timeout]", message, true);
+                event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+            }
+        } else {
+            notifyChannel(event, lemurs, author, embedBuilder);
+            sentPrivateMessagesToTheUsers(event, lemurs);
+        }
+    }
+
+    private void notifyChannel(SlashCommandInteractionEvent event, Role lemurs, User author, EmbedBuilder embedBuilder) {
         event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
         String textMessage = lemurs.getAsMention() + ASSEMBLEMURS_MESSAGE.getValue()
                 + author.getName() + "#" + author.getDiscriminator() + " wants you to join him. ";
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.addField("Hello!", textMessage, true).build()).queue();
+    }
 
-        List<Member> membersWithLemursRole = event.getGuild().getMembersWithRoles(lemurs);
-        for (Member member : membersWithLemursRole) {
-            //prevents bot from sending to itself or to the caller
-            if (member.getUser().getId().equals(event.getJDA().getSelfUser().getId()) || member.getUser().equals(event.getUser())) {
-                continue;
+    private void sentPrivateMessagesToTheUsers(SlashCommandInteractionEvent event, Role lemurs) {
+        if (ENABLE_SEND_PRIVATE_MESSAGES){
+            List<Member> membersWithLemursRole = event.getGuild().getMembersWithRoles(lemurs);
+            for (Member member : membersWithLemursRole) {
+                //prevents bot from sending to itself or to the caller
+                if (member.getUser().getId().equals(event.getJDA().getSelfUser().getId()) || member.getUser().equals(event.getUser())) {
+                    continue;
+                }
+                PrivateChannel channel = member.getUser().openPrivateChannel().complete();
+                String message = HELLO.getValue() + member.getUser().getName() + " Lemurios-" + event.getUser().getAsTag()
+                        + INVITE_MESSAGE.getValue();
+                channel.sendMessage(message).queue();
+                LOGGER.info("Sent direct message to {}.", member.getUser().getAsTag());
             }
-            PrivateChannel channel = member.getUser().openPrivateChannel().complete();
-            String message = HELLO.getValue() + member.getUser().getName() + " Lemurios-" + event.getUser().getAsTag()
-                    + INVITE_MESSAGE.getValue();
-            channel.sendMessage(message).queue();
-            LOGGER.info("Sent direct message to {}." , member.getUser().getAsTag());
         }
     }
 

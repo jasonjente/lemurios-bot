@@ -9,6 +9,30 @@ CREATE TABLE history_entry
     created_on     TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     CONSTRAINT pk_historyentry PRIMARY KEY (entry_id)
 );
+-- Meme Entity
+CREATE SEQUENCE IF NOT EXISTS meme_seq START WITH 1 INCREMENT BY 50;
+
+CREATE TABLE meme
+(
+    id         BIGINT                      NOT NULL,
+    meme_id    BIGINT,
+    filename   VARCHAR(2048),
+    image_data OID                         NOT NULL,
+    created_on TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    CONSTRAINT pk_meme PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE IF NOT EXISTS meme_server_record_seq START WITH 1 INCREMENT BY 50;
+
+CREATE TABLE meme_server_record
+(
+    meme_id           BIGINT NOT NULL,
+    discord_server_id VARCHAR(255),
+    CONSTRAINT pk_meme_server_record PRIMARY KEY (meme_id)
+);
+
+ALTER TABLE meme_server_record
+    ADD CONSTRAINT FK_MEME_SERVER_RECORD_ON_MEME FOREIGN KEY (meme_id) REFERENCES meme (id);
 
 -- Bot Command Entity
 CREATE SEQUENCE IF NOT EXISTS bot_command_seq START WITH 1 INCREMENT BY 50;

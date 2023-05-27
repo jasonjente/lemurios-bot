@@ -12,21 +12,26 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
+import java.util.Objects;
 
-import static bot.constants.Commands.UPLOAD_MEME_COMMAND;
+import static bot.constants.Commands.UPLOAD_BATCH_MEMES_COMMAND;
+import static bot.dataservice.meme.MemeUtils.createMemesFromFiles;
+import static bot.dataservice.meme.MemeUtils.extractZipFile;
+
 @Service
-public class UploadMemeCommand extends Command {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UploadMemeCommand.class);
+public class UploadBatchMemes extends Command {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UploadBatchMemes.class);
     private DiscordUtils discordUtils;
     private MemeService memeService;
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         String sender = event.getUser().getName();
-        LOGGER.info("{} has requested to upload a meme!", sender);
+        LOGGER.info("{} has requested to upload a    batch of memes!", sender);
         createHistoryEntry(event);
 
         EmbedBuilder embedBuilder = new EmbedBuilder()
@@ -34,28 +39,31 @@ public class UploadMemeCommand extends Command {
 
         List<OptionMapping> attachments = event.getInteraction().getOptions();
         if (!attachments.isEmpty()) {
-            byte[] imageData = discordUtils.saveImagesReceived(sender, embedBuilder, attachments);
-            Meme meme = new Meme();
-            meme.setFilename(event.getUser().getAsTag() + "_" + LocalDateTime.now() + "_meme");
-            meme.setCreatedOn(Timestamp.valueOf(LocalDateTime.now()));
-            meme.setImageData(imageData);
-            memeService.storeMeme(meme);
+            try {
+            File zipFile = discordUtils.saveZipFilesReceived(sender, embedBuilder, attachments);
+            File tempFolder = Files.createTempDirectory("meme-upload").toFile();
+
+            extractZipFile(zipFile, tempFolder);
+            List<Meme> memes = createMemesFromFiles(Objects.requireNonNull(tempFolder.listFiles()));
+
+            memeService.storeMemes(memes);
+            } catch (IOException | NullPointerException e) {
+                embedBuilder.addField("Error","Please upload an image with the command!",true);
+            }
         } else {
             embedBuilder.addField("Error","Please upload an image with the command!",true);
-            embedBuilder.setTitle("Error..");
         }
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
-
     }
 
     @Override
     public String getCommandDescription() {
-        return "Upload a meme that can be seen when the random meme is called!";
+        return "Upload a zip file containing .jpeg/.jpg/.png meme files so they can be shared! Beware the memes will be available on all servers worldwide!";
     }
 
     @Override
     public String getCommandName() {
-        return UPLOAD_MEME_COMMAND.getCommandName();
+        return UPLOAD_BATCH_MEMES_COMMAND.getCommandName();
     }
 
     @Autowired
@@ -67,5 +75,4 @@ public class UploadMemeCommand extends Command {
     public void setMemeService(MemeService memeService){
         this.memeService = memeService;
     }
-
 }
