@@ -63,7 +63,7 @@ public class DataServiceImpl implements DataService {
             ret.setLevel(0);
         }
         if(ret.getPoints()==null){
-            ret.setPoints(5);
+            ret.setPoints(1);
         }
         if(ret.getLevel() != level){
             ret.setLevel(level);

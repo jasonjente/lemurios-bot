@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/application.log</file> <!-- Specify the path and filename for your log file -->
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %boldCyan(%-34.-34thread) %red(%10.10X{jda.shard}) %boldGreen(%-15.-15logger{0}) %highlight(%-6level) %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS}  [%thread] %-5level %logger{36} %msg%n</pattern>
         </encoder>
     </appender>
-
-    <root level="debug">
-        <appender-ref ref="STDOUT" />
+    <logger name="chapters.configuration" level="INFO" />
+    <logger name="chapters.configuration.Foo" level="DEBUG" />
+    <root level="info">
+        <appender-ref ref="FILE" /> <!-- Add the file appender to the root logger -->
     </root>
 </configuration>

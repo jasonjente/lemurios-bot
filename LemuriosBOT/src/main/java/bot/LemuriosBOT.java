@@ -4,6 +4,7 @@ import bot.commands.Command;
 import bot.commands.concrete.chat.*;
 import bot.commands.concrete.images.DetectImageEdgesCommand;
 import bot.commands.concrete.images.MemeCommand;
+import bot.commands.concrete.images.UploadBatchMemes;
 import bot.commands.concrete.images.UploadMemeCommand;
 import bot.commands.concrete.music.*;
 import bot.commands.concrete.music.radio.*;
@@ -43,6 +44,7 @@ public class LemuriosBOT extends ListenerAdapter {
     private HistoryCommand historyCommand;
     private MemeCommand memeCommand;
     private UploadMemeCommand uploadMemeCommand;
+    private UploadBatchMemes uploadBatchMemes;
     private PlayCommand playCommand;
     private StopCommand stopCommand;
     private PauseCommand pauseCommand;
@@ -92,9 +94,12 @@ public class LemuriosBOT extends ListenerAdapter {
         commandData.add(Commands.slash(DETECT_IMAGE_EDGES_COMMAND.getCommandName(),"Upload an image and the bot will return the detected edges in that image.").addOptions(optionDataDetection));
         // /meme
         commandData.add(Commands.slash(MEME_COMMAND.getCommandName(),"The bot will return with a random meme."));
-        // /upload-meme
+        // /upload
         OptionData optionDataMeme = new OptionData(OptionType.ATTACHMENT, "meme-image", "Upload a meme to the BOT",true);
         commandData.add(Commands.slash(UPLOAD_MEME_COMMAND.getCommandName(),"Upload a meme to the Bot.").addOptions(optionDataMeme));
+        // /upload-batch-memes
+        OptionData optionDataBatchMemes = new OptionData(OptionType.ATTACHMENT, "zip-file", "Upload a zip file containing memes!",true);
+        commandData.add(Commands.slash(uploadBatchMemes.getCommandName(),"Upload a meme to the Bot.").addOptions(optionDataBatchMemes));
 
         /* Music Commands */
         // /play :url
@@ -163,6 +168,7 @@ public class LemuriosBOT extends ListenerAdapter {
         commands.put(deleteAllCustomRadioLinkCommand.getCommandName(), deleteAllCustomRadioLinkCommand);
         commands.put(deleteGenreCustomRadioLinkCommand.getCommandName(), deleteGenreCustomRadioLinkCommand);
         commands.put(createInviteCommand.getCommandName(), createInviteCommand);
+        commands.put(uploadBatchMemes.getCommandName(), uploadBatchMemes);
     }
     //Global command for production -- takes up to 1 hour to get deployed
    /** @Override
@@ -210,20 +216,13 @@ public class LemuriosBOT extends ListenerAdapter {
                             event.deferReply().queue(); // Tell discord we received the command, send a thinking... message to the user
                             Command command = commands.get(event.getFullCommandName());
                             command.execute(event);
-                            command.earnPoints(event);
                         }
-                    } catch (NullPointerException npe){
+                    } catch (RuntimeException npe){
                         EmbedBuilder embedBuilder = new EmbedBuilder().setTitle("We encountered an error during command execution :(");
-                        embedBuilder.setDescription("Please connect to a voice channel first before calling the bot!");
                         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
                         LOGGER.error("ERROR:", npe);
-                    } catch (RuntimeException e) {
-                        EmbedBuilder embedBuilder = new EmbedBuilder().setTitle("We encountered an error during command execution :(");
-                        embedBuilder.setDescription(e.getCause().getMessage());
-                        event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
-                        LOGGER.error("ERROR:", e);
                     }
-                });
+        });
         LOGGER.info("Message received from {} - Content: {} - LEAVE", event.getInteraction().getUser().getAsTag(), event.getFullCommandName());
     }
 
@@ -341,6 +340,12 @@ public class LemuriosBOT extends ListenerAdapter {
     public void setCreateInviteCommand(CreateInviteCommand createInviteCommand) {
         this.createInviteCommand = createInviteCommand;
     }
+
+    @Autowired
+    public void setUploadBatchMemes(UploadBatchMemes uploadBatchMemes) {
+        this.uploadBatchMemes = uploadBatchMemes;
+    }
+
     public static Map<String, Command> getCommands() {
         return commands;
     }

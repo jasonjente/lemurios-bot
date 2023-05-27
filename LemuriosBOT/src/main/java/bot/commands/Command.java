@@ -33,6 +33,7 @@ public abstract class Command {
         entry.setCommandExecution(dataService.createCommandExecutionObject(event));
         entry.setDiscordServer(discordServer);
         historyEntryRepository.save(entry);
+        earnPoints(event);
     }
 
     public void earnPoints(SlashCommandInteractionEvent event){
