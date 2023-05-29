@@ -1,9 +1,9 @@
-package bot.dataservice;
+package bot.services.dataservice;
 
-import bot.dataservice.model.CommandExecution;
-import bot.dataservice.model.CustomLink;
-import bot.dataservice.model.DiscordServer;
-import bot.dataservice.model.ServerUser;
+import bot.services.model.CommandExecution;
+import bot.services.model.CustomLink;
+import bot.services.model.DiscordServer;
+import bot.services.model.ServerUser;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.List;

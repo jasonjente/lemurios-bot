@@ -1,6 +1,6 @@
-package bot.dataservice.meme;
+package bot.services.meme;
 
-import bot.dataservice.model.Meme;
+import bot.services.model.Meme;
 
 import javax.persistence.*;
 

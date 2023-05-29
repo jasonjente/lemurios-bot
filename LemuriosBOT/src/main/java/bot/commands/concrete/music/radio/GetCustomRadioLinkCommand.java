@@ -2,8 +2,8 @@ package bot.commands.concrete.music.radio;
 
 import bot.commands.Command;
 import bot.constants.Commands;
-import bot.dataservice.leveling.repositories.CustomLinkRepository;
-import bot.dataservice.model.CustomLink;
+import bot.services.leveling.repositories.CustomLinkRepository;
+import bot.services.model.CustomLink;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;

@@ -145,23 +145,23 @@ public class LemuriosBOT extends ListenerAdapter {
      */
     @PostConstruct
     private void init(){
-        commands.put(ASSEMLEMURS_COMMAND.getCommandName(),assemblemursCommand);
-        commands.put(TAKEN_NAMES.getCommandName(), takenNamesCommand);
-        commands.put(CREDITS_COMMAND.getCommandName(),creditsCommand);
-        commands.put(DETECT_IMAGE_EDGES_COMMAND.getCommandName(),detectImageEdgesCommand);
-        commands.put(HELP_COMMAND.getCommandName(),helpCommand);
-        commands.put(HISTORY_COMMAND.getCommandName(),historyCommand);
-        commands.put(MEME_COMMAND.getCommandName(),memeCommand);
-        commands.put(UPLOAD_MEME_COMMAND.getCommandName(),uploadMemeCommand);
-        commands.put(PLAY_COMMAND.getCommandName(), playCommand);
-        commands.put(PAUSE_COMMAND.getCommandName(), pauseCommand);
-        commands.put(SKIP_COMMAND.getCommandName(), skipCommand);
-        commands.put(STOP_COMMAND.getCommandName(), stopCommand);
-        commands.put(JOIN_COMMAND.getCommandName(), joinCommand);
-        commands.put(NOW_PLAYING.getCommandName(), nowPlayingCommand);
-        commands.put(RESUME_COMMAND.getCommandName(), resumeCommand);
-        commands.put(DISCONNECT_COMMAND.getCommandName(), disconnectCommand);
-        commands.put(LEADERBOARD_COMMAND.getCommandName(), leaderboardCommand);
+        commands.put(assemblemursCommand.getCommandName(),assemblemursCommand);
+        commands.put(takenNamesCommand.getCommandName(), takenNamesCommand);
+        commands.put(creditsCommand.getCommandName(),creditsCommand);
+        commands.put(detectImageEdgesCommand.getCommandName(),detectImageEdgesCommand);
+        commands.put(helpCommand.getCommandName(),helpCommand);
+        commands.put(historyCommand.getCommandName(),historyCommand);
+        commands.put(memeCommand.getCommandName(),memeCommand);
+        commands.put(uploadMemeCommand.getCommandName(),uploadMemeCommand);
+        commands.put(playCommand.getCommandName(), playCommand);
+        commands.put(pauseCommand.getCommandName(), pauseCommand);
+        commands.put(skipCommand.getCommandName(), skipCommand);
+        commands.put(stopCommand.getCommandName(), stopCommand);
+        commands.put(joinCommand.getCommandName(), joinCommand);
+        commands.put(nowPlayingCommand.getCommandName(), nowPlayingCommand);
+        commands.put(resumeCommand.getCommandName(), resumeCommand);
+        commands.put(disconnectCommand.getCommandName(), disconnectCommand);
+        commands.put(leaderboardCommand.getCommandName(), leaderboardCommand);
         commands.put(playCustomRadioCommand.getCommandName(), playCustomRadioCommand);
         commands.put(setCustomRadioLinkCommand.getCommandName(), setCustomRadioLinkCommand);
         commands.put(getCustomRadioLinkCommand.getCommandName(), getCustomRadioLinkCommand);

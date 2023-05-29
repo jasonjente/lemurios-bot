@@ -1,8 +1,8 @@
 package bot.commands.concrete.music.radio;
 
 import bot.commands.Command;
-import bot.dataservice.DataService;
-import bot.dataservice.model.CustomLink;
+import bot.services.dataservice.DataService;
+import bot.services.model.CustomLink;
 import bot.music.MusicPlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;

@@ -1,6 +1,6 @@
-package bot.dataservice.meme;
+package bot.services.meme;
 
-import bot.dataservice.model.Meme;
+import bot.services.model.Meme;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

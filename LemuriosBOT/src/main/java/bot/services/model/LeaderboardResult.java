@@ -1,4 +1,4 @@
-package bot.dataservice.model;
+package bot.services.model;
 
 public class LeaderboardResult {
     private String userTag;

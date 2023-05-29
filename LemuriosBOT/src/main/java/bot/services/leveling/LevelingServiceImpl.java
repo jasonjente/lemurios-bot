@@ -1,14 +1,13 @@
-package bot.dataservice.leveling.service.impl;
+package bot.services.leveling;
 
 import bot.constants.Commands;
-import bot.dataservice.DataService;
-import bot.dataservice.model.CommandExecution;
-import bot.dataservice.model.DiscordServer;
-import bot.dataservice.model.LeaderboardResult;
-import bot.dataservice.model.ServerUser;
-import bot.dataservice.leveling.repositories.ServerUserRepository;
-import bot.dataservice.leveling.service.LevelingService;
-import bot.dataservice.DataServiceImpl;
+import bot.services.dataservice.DataService;
+import bot.services.model.CommandExecution;
+import bot.services.model.DiscordServer;
+import bot.services.model.LeaderboardResult;
+import bot.services.model.ServerUser;
+import bot.services.leveling.repositories.ServerUserRepository;
+import bot.services.dataservice.DataServiceImpl;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

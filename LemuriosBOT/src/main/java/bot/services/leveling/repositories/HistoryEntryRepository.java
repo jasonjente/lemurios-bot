@@ -1,8 +1,8 @@
-package bot.dataservice.leveling.repositories;
+package bot.services.leveling.repositories;
 
-import bot.dataservice.model.CommandExecution;
-import bot.dataservice.model.DiscordServer;
-import bot.dataservice.model.HistoryEntry;
+import bot.services.model.CommandExecution;
+import bot.services.model.DiscordServer;
+import bot.services.model.HistoryEntry;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

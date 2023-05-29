@@ -1,8 +1,8 @@
-package bot.dataservice;
+package bot.services.dataservice;
 
 import bot.constants.Commands;
-import bot.dataservice.leveling.repositories.*;
-import bot.dataservice.model.*;
+import bot.services.leveling.repositories.*;
+import bot.services.model.*;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

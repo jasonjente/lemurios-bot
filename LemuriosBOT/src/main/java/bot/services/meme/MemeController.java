@@ -1,6 +1,6 @@
-package bot.dataservice.meme;
+package bot.services.meme;
 
-import bot.dataservice.model.Meme;
+import bot.services.model.Meme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
-import static bot.dataservice.meme.MemeUtils.createMemesFromFiles;
-import static bot.dataservice.meme.MemeUtils.extractZipFile;
+import static bot.services.meme.MemeUtils.createMemesFromFiles;
+import static bot.services.meme.MemeUtils.extractZipFile;
 
 @RestController
 @RequestMapping("/meme")
