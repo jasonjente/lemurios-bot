@@ -1,10 +1,10 @@
 package bot.commands;
 
-import bot.dataservice.DataService;
-import bot.dataservice.model.DiscordServer;
-import bot.dataservice.model.HistoryEntry;
-import bot.dataservice.leveling.repositories.HistoryEntryRepository;
-import bot.dataservice.leveling.service.LevelingService;
+import bot.services.dataservice.DataService;
+import bot.services.model.DiscordServer;
+import bot.services.model.HistoryEntry;
+import bot.services.leveling.repositories.HistoryEntryRepository;
+import bot.services.leveling.LevelingService;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
-package bot.dataservice.meme;
+package bot.services.meme;
 
-import bot.dataservice.model.Meme;
+import bot.services.model.Meme;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

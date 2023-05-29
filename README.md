@@ -6,6 +6,9 @@
  - [Bot Invite Link](https://discord.com/oauth2/authorize?client_id=1096774404526063687&permissions=2184226816&redirect_uri=https%3A%2F%2Fdiscordapp.com%2Foauth2%2Fauthorize%3F%26client_id%3D1096774404526063687%26scope%3Dbot&response_type=code&scope=voice%20connections%20bot)
  - Approve the requested rights and accesses.
 
+### Build & Run:
+Build: mvn clean package
+Run: mvn spring-boot:run
 ---
 ### Overview:
 The commands currently available:
@@ -115,7 +118,6 @@ Please find below a list of all the beans used in the application:
 package bot.commands.concrete.placeholder;
 
 import bot.commands.Command;
-import bot.music.MusicPlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
@@ -128,9 +130,6 @@ import java.awt.*;
 @Service
 public class PlaceHolderCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlaceHolderCommand.class);
-
-    private MusicPlayerManager musicPlayerManager;
-
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("{} has requested the placeholder command - ENTER.", event.getUser().getName());

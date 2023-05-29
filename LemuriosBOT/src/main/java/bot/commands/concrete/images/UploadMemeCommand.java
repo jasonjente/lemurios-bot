@@ -1,8 +1,8 @@
 package bot.commands.concrete.images;
 
 import bot.commands.Command;
-import bot.dataservice.meme.MemeService;
-import bot.dataservice.model.Meme;
+import bot.services.meme.MemeService;
+import bot.services.model.Meme;
 import bot.utils.DiscordUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

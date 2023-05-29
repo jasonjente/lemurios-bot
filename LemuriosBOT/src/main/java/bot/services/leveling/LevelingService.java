@@ -1,6 +1,6 @@
-package bot.dataservice.leveling.service;
+package bot.services.leveling;
 
-import bot.dataservice.model.LeaderboardResult;
+import bot.services.model.LeaderboardResult;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.List;

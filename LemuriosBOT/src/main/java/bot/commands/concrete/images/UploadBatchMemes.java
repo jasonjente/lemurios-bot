@@ -1,8 +1,8 @@
 package bot.commands.concrete.images;
 
 import bot.commands.Command;
-import bot.dataservice.meme.MemeService;
-import bot.dataservice.model.Meme;
+import bot.services.meme.MemeService;
+import bot.services.model.Meme;
 import bot.utils.DiscordUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static bot.constants.Commands.UPLOAD_BATCH_MEMES_COMMAND;
-import static bot.dataservice.meme.MemeUtils.createMemesFromFiles;
-import static bot.dataservice.meme.MemeUtils.extractZipFile;
+import static bot.services.meme.MemeUtils.createMemesFromFiles;
+import static bot.services.meme.MemeUtils.extractZipFile;
 
 @Service
 public class UploadBatchMemes extends Command {

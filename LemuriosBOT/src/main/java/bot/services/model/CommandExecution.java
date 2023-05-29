@@ -1,4 +1,4 @@
-package bot.dataservice.model;
+package bot.services.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
