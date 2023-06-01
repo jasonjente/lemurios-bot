@@ -34,6 +34,7 @@ public class ResumeCommand extends Command {
             musicPlayerManager.resume(Objects.requireNonNull(event.getGuild()));
         }
         createHistoryEntry(event);
+        earnPoints(event);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
 
         LOGGER.info("{} has requested the Resume command.", event.getUser().getName());

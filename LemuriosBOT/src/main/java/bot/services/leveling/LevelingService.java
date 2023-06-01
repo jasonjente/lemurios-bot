@@ -9,4 +9,6 @@ public interface LevelingService {
     void earnPoints(SlashCommandInteractionEvent event);
 
     List<LeaderboardResult> getLeaderboardForGuild(SlashCommandInteractionEvent event);
+
+    void earnPoints(SlashCommandInteractionEvent event, Integer points);
 }

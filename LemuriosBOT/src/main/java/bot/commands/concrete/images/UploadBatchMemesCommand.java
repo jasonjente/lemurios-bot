@@ -23,8 +23,8 @@ import static bot.services.meme.MemeUtils.createMemesFromFiles;
 import static bot.services.meme.MemeUtils.extractZipFile;
 
 @Service
-public class UploadBatchMemes extends Command {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UploadBatchMemes.class);
+public class UploadBatchMemesCommand extends Command {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UploadBatchMemesCommand.class);
     private DiscordUtils discordUtils;
     private MemeService memeService;
 
@@ -32,7 +32,6 @@ public class UploadBatchMemes extends Command {
     public void execute(SlashCommandInteractionEvent event) {
         String sender = event.getUser().getName();
         LOGGER.info("{} has requested to upload a    batch of memes!", sender);
-        createHistoryEntry(event);
 
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setTitle(sender + ", thank you for your meme-tribution!");
@@ -47,6 +46,8 @@ public class UploadBatchMemes extends Command {
             List<Meme> memes = createMemesFromFiles(Objects.requireNonNull(tempFolder.listFiles()));
 
             memeService.storeMemes(memes);
+            createHistoryEntry(event);
+            earnPoints(event, 2 * memes.size());
             } catch (IOException | NullPointerException e) {
                 embedBuilder.addField("Error","Please upload an image with the command!",true);
             }

@@ -45,6 +45,7 @@ public class PlayCommand extends Command {
 
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
         createHistoryEntry(event);
+        earnPoints(event);
         LOGGER.info("{} has requested the Play command. full command: {} - ENTER", event.getUser().getName(), event.getFullCommandName());
 
     }

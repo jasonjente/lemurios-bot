@@ -2,11 +2,13 @@ package bot.commands.concrete.chat;
 
 import bot.commands.Command;
 import bot.constants.Lemurioi;
+import bot.services.leveling.Jackpot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static bot.constants.Commands.ASSEMLEMURS_COMMAND;
 import static bot.constants.Constants.*;
@@ -27,7 +30,7 @@ public class AssemblemursCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(AssemblemursCommand.class);
     private static final String ROLE_NAME = "LEMURIOI";
     private static final boolean ENABLE_SEND_PRIVATE_MESSAGES = true;
-    private static Map<String, LocalDateTime> timeoutMap = new HashMap<>();
+    private static final Map<String, LocalDateTime> timeoutMap = new HashMap<>();
     private static final long MAX_TIME_OUT_FOR_ASSEMBLEMURS = 1;
     private static final boolean ENABLE_TIMEOUTS = true;
 
@@ -89,6 +92,16 @@ public class AssemblemursCommand extends Command {
                 notifyChannel(event, lemurs, author, embedBuilder);
                 sentPrivateMessagesToTheUsers(event, lemurs);
                 timeoutMap.put(author.getId(), currentTime);
+                Jackpot jackpot = jackpot(event);
+
+                if(jackpot.isWon()){
+                    String winningMessage = "Congratulations " + event.getUser().getName() + " ,you won the jackpot for a total of " + jackpot.getPoints();
+                    LOGGER.info("{} won the jackpot with total winings: {}", event.getUser().getName(), jackpot.getPoints());
+                    event.getChannel().sendMessage(winningMessage).queue();
+                    earnPoints(event, jackpot.getPoints());
+                } else {
+                    earnPoints(event);
+                }
             } else {
                 String user = author.getName();
                 String message = user + ", you can use this command every " + MAX_TIME_OUT_FOR_ASSEMBLEMURS
@@ -96,6 +109,7 @@ public class AssemblemursCommand extends Command {
                 embedBuilder.addField("[ANTI-SPAM Timeout]", message, true);
                 event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
             }
+
         } else {
             notifyChannel(event, lemurs, author, embedBuilder);
             sentPrivateMessagesToTheUsers(event, lemurs);
@@ -104,9 +118,16 @@ public class AssemblemursCommand extends Command {
 
     private void notifyChannel(SlashCommandInteractionEvent event, Role lemurs, User author, EmbedBuilder embedBuilder) {
         event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
-        String textMessage = lemurs.getAsMention() + ASSEMBLEMURS_MESSAGE.getValue()
-                + author.getName() + "#" + author.getDiscriminator() + " wants you to join him. ";
-        event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.addField("Hello!", textMessage, true).build()).queue();
+        if(event.getOptions().isEmpty()) {
+            String textMessage = lemurs.getAsMention() + ASSEMBLEMURS_MESSAGE.getValue()
+                    + author.getName() + "#" + author.getDiscriminator() + " wants you to join him. ";
+            event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.addField("Hello!", textMessage, true).build()).queue();
+        }else {
+            String game = event.getOptions().get(0).getAsString();
+            String textMessage = lemurs.getAsMention() + ASSEMBLEMURS_MESSAGE.getValue()
+                    + author.getName() + "#" + author.getDiscriminator() + " wants you to play "+game + " with him!";
+            event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.addField("Hello!", textMessage, true).build()).queue();
+        }
     }
 
     private void sentPrivateMessagesToTheUsers(SlashCommandInteractionEvent event, Role lemurs) {
@@ -114,7 +135,9 @@ public class AssemblemursCommand extends Command {
             List<Member> membersWithLemursRole = event.getGuild().getMembersWithRoles(lemurs);
             for (Member member : membersWithLemursRole) {
                 //prevents bot from sending to itself or to the caller
-                if (member.getUser().getId().equals(event.getJDA().getSelfUser().getId()) || member.getUser().equals(event.getUser())) {
+                if (member.getUser().getId().equals(event.getJDA().getSelfUser().getId())
+                        || member.getUser().equals(event.getUser())
+                        || isUserInSameVoiceChannelAsUser(event, member)) {
                     continue;
                 }
                 PrivateChannel channel = member.getUser().openPrivateChannel().complete();
@@ -126,6 +149,22 @@ public class AssemblemursCommand extends Command {
         }
     }
 
+    public boolean isUserInSameVoiceChannelAsUser(SlashCommandInteractionEvent event, Member lemurMember){
+        try {
+            Objects.requireNonNull(event.getInteraction().getMember()).getVoiceState();
+            if (event.getInteraction().getMember().getVoiceState() != null
+                    && event.getInteraction().getMember().getVoiceState().inAudioChannel()) {
+                VoiceChannel voiceChannel = event.getInteraction().getMember().getVoiceState().getChannel().asVoiceChannel();
+                List<Member> members = voiceChannel.getMembers();
+                LOGGER.info("Checking if user {} is in the same voice channel as the caller {}", lemurMember.getUser().getAsTag(), event.getUser().getAsTag());
+                return members.contains(lemurMember);
+            }
+        }catch (NullPointerException exception){
+            //not in a voice channel so suppress and return false
+        }
+
+        return false;
+    }
     private void notifyUnworthy(SlashCommandInteractionEvent event) {
         String sender = event.getUser().getAsTag();
         EmbedBuilder embedBuilder = new EmbedBuilder()

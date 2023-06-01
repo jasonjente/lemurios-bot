@@ -63,6 +63,7 @@ public class PlayCustomRadioCommand extends Command {
 
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
         createHistoryEntry(event);
+        earnPoints(event);
         LOGGER.info("{} has requested the PlayCustomRadioCommand command. full command: {} - ENTER", event.getUser().getName(), event.getFullCommandName());
 
     }

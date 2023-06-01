@@ -25,6 +25,7 @@ public class CreateInviteCommand extends Command {
         embedBuilder.addField("Invite Link:", invite.getUrl(), false);
         embedBuilder.setColor(java.awt.Color.RED);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+        earnPoints(event);
         LOGGER.info("CreateInviteCommand() - LEAVE");
     }
 

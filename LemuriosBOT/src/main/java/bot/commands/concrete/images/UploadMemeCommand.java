@@ -40,6 +40,7 @@ public class UploadMemeCommand extends Command {
             meme.setCreatedOn(Timestamp.valueOf(LocalDateTime.now()));
             meme.setImageData(imageData);
             memeService.storeMeme(meme);
+            earnPoints(event);
         } else {
             embedBuilder.addField("Error","Please upload an image with the command!",true);
             embedBuilder.setTitle("Error..");

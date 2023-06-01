@@ -29,6 +29,7 @@ public class CreditsCommand extends Command {
         embedBuilder.setFooter("NOW GTFO HERE!\n With Best Regards Lemurios BOT.");
         embedBuilder.setColor(java.awt.Color.RED);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+        earnPoints(event);
         LOGGER.info("creditsCommand - LEAVE");
     }
 

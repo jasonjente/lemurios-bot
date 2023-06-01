@@ -38,6 +38,7 @@ public class GetCustomRadioLinkCommand extends Command {
 
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
         createHistoryEntry(event);
+        earnPoints(event);
 
         LOGGER.info("{} has requested to get the saved URLs, full command total results: {} - LEAVE", event.getUser().getName(), customLinkList.size());
     }

@@ -32,6 +32,7 @@ public class PauseCommand extends Command {
             embedBuilder.addField("Could not pause!", "To pause, verify that you are connected to a voice channel or that the bot has access to the voice channel.", true);
         }
         createHistoryEntry(event);
+        earnPoints(event);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
     }
 

@@ -59,6 +59,7 @@ public class MemeCommand extends Command {
             embedBuilder.addField(SORRY_MSG.getValue(), ERROR_MESSAGE_SORRY, true);
         }
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+        earnPoints(event);
     }
 
     @Override

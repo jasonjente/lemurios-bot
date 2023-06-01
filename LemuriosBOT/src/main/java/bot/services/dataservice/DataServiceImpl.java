@@ -88,7 +88,7 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public DiscordServer createDiscordServerObject(SlashCommandInteractionEvent event) {
+    public DiscordServer findOrCreateDiscordServerObject(SlashCommandInteractionEvent event) {
         LOGGER.info("createDiscordServerObject() - ENTER");
         DiscordServer ret;
         if(Boolean.FALSE.equals(discordServerRepository.existsByGuildId(event.getGuild().getId()))){

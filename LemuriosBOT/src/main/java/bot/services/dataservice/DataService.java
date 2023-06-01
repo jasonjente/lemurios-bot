@@ -15,7 +15,7 @@ public interface DataService {
 
     CommandExecution createCommandExecutionObject(SlashCommandInteractionEvent event);
 
-    DiscordServer createDiscordServerObject(SlashCommandInteractionEvent event);
+    DiscordServer findOrCreateDiscordServerObject(SlashCommandInteractionEvent event);
 
     void deleteCustomLinksByDiscordServer(String guildId);
 

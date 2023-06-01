@@ -37,7 +37,7 @@ public class LevelingServiceImpl implements LevelingService {
         LOGGER.info("earnPoints() - Enter - Command: {}, points earned: {} for user: {}.", commandUsed, pointsEarned, event.getUser().getAsTag());
         CommandExecution commandExecution = dataService.createCommandExecutionObject(event);
         //Find if the discord server exists, if not create it
-        DiscordServer discordServer = dataService.createDiscordServerObject(event);
+        DiscordServer discordServer = dataService.findOrCreateDiscordServerObject(event);
         String tag = event.getUser().getAsTag();
         //find if the user exists, if not create that user and persist in the database
         dataService.createServerUserObject(tag,discordServer, commandExecution, pointsEarned);
@@ -48,7 +48,7 @@ public class LevelingServiceImpl implements LevelingService {
     public List<LeaderboardResult> getLeaderboardForGuild(SlashCommandInteractionEvent event){
         LOGGER.info("getLeaderboardForGuild() - Enter - GuildId: {}", event.getGuild().getId());
         List<LeaderboardResult> ret = new LinkedList<>();
-        List<ServerUser> serverUsers = serverUserRepository.findOrderedByServerOrderByPointsDesc(dataService.createDiscordServerObject(event));
+        List<ServerUser> serverUsers = serverUserRepository.findOrderedByServerOrderByPointsDesc(dataService.findOrCreateDiscordServerObject(event));
         if(!serverUsers.isEmpty()){
             for (ServerUser user:serverUsers){
                 Integer userLevel = dataService.calculateLevel(user);
@@ -59,6 +59,20 @@ public class LevelingServiceImpl implements LevelingService {
 
         LOGGER.info("getLeaderboardForGuild() - Enter - GuildId: {}, total results: {}",event.getGuild().getId(), ret.size());
         return ret;
+    }
+
+    @Override
+    public void earnPoints(SlashCommandInteractionEvent event, Integer points) {
+        //Find what command was used to calculate the earned points and create an entry in the CommandExecution table.
+        String commandUsed = event.getFullCommandName();
+        LOGGER.info("earnPoints() HIGH-ROLLER - Enter - Command: {}, points earned: {} for user: {}.", commandUsed, points, event.getUser().getAsTag());
+        CommandExecution commandExecution = dataService.createCommandExecutionObject(event);
+        //Find if the discord server exists, if not create it
+        DiscordServer discordServer = dataService.findOrCreateDiscordServerObject(event);
+        String tag = event.getUser().getAsTag();
+        //find if the user exists, if not create that user and persist in the database
+        dataService.createServerUserObject(tag,discordServer, commandExecution, points);
+        LOGGER.info("earnPoints()");
     }
 
 }

@@ -33,7 +33,7 @@ public class DeleteAllCustomRadioLinkCommand extends Command {
         embedBuilder.setTitle("LEMURIOS BOT operation delete radio urls all was " + message);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
         createHistoryEntry(event);
-
+        earnPoints(event);
         LOGGER.info("{} has to delete a genre, full command: {} - LEAVE - success: {}", event.getUser().getName(), event.getFullCommandName(), success);
     }
 

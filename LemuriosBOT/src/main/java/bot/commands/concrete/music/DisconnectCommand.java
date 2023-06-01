@@ -28,6 +28,7 @@ public class DisconnectCommand extends Command {
             embedBuilder.addField("Error:", "The bot is not in a voice channel!", false);
         }
         LOGGER.info("{} has requested the Disconnect command - LEAVE.", event.getUser().getName());
+        earnPoints(event);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
     }
 
