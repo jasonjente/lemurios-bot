@@ -34,6 +34,7 @@ public class JoinCommand extends Command {
             embedBuilder.addField("Error:", "To call the bot you have to be in a voice channel.", false);
         }
         LOGGER.info("{} has requested the Join command - LEAVE.", event.getUser().getName());
+        earnPoints(event);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
     }
 

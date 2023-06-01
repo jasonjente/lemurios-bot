@@ -4,7 +4,7 @@ import bot.commands.Command;
 import bot.commands.concrete.chat.*;
 import bot.commands.concrete.images.DetectImageEdgesCommand;
 import bot.commands.concrete.images.MemeCommand;
-import bot.commands.concrete.images.UploadBatchMemes;
+import bot.commands.concrete.images.UploadBatchMemesCommand;
 import bot.commands.concrete.images.UploadMemeCommand;
 import bot.commands.concrete.music.*;
 import bot.commands.concrete.music.radio.*;
@@ -44,7 +44,7 @@ public class LemuriosBOT extends ListenerAdapter {
     private HistoryCommand historyCommand;
     private MemeCommand memeCommand;
     private UploadMemeCommand uploadMemeCommand;
-    private UploadBatchMemes uploadBatchMemes;
+    private UploadBatchMemesCommand uploadBatchMemesCommand;
     private PlayCommand playCommand;
     private StopCommand stopCommand;
     private PauseCommand pauseCommand;
@@ -73,7 +73,8 @@ public class LemuriosBOT extends ListenerAdapter {
         List<CommandData> commandData = new ArrayList<>();
         /* Chat Commands */
         // /assemblemurs
-        commandData.add(Commands.slash(ASSEMLEMURS_COMMAND.getCommandName(),"Pings all Lemurioi Role Members -- Can be used if and only if you belong to that group."));
+        OptionData assemblemursOptions = new OptionData(OptionType.STRING, "game","(optional) Specify what game you want to play!",false);
+        commandData.add(Commands.slash(ASSEMLEMURS_COMMAND.getCommandName(),"Pings all Lemurioi Role Members -- Can be used if and only if you belong to that group.").addOptions(assemblemursOptions));
         // /taken-names
         commandData.add(Commands.slash(TAKEN_NAMES.getCommandName(),"Prints out all taken Lemur names."));
         // /credits
@@ -99,7 +100,7 @@ public class LemuriosBOT extends ListenerAdapter {
         commandData.add(Commands.slash(UPLOAD_MEME_COMMAND.getCommandName(),"Upload a meme to the Bot.").addOptions(optionDataMeme));
         // /upload-batch-memes
         OptionData optionDataBatchMemes = new OptionData(OptionType.ATTACHMENT, "zip-file", "Upload a zip file containing memes!",true);
-        commandData.add(Commands.slash(uploadBatchMemes.getCommandName(),"Upload a meme to the Bot.").addOptions(optionDataBatchMemes));
+        commandData.add(Commands.slash(uploadBatchMemesCommand.getCommandName(),"Upload a meme to the Bot.").addOptions(optionDataBatchMemes));
 
         /* Music Commands */
         // /play :url
@@ -168,7 +169,7 @@ public class LemuriosBOT extends ListenerAdapter {
         commands.put(deleteAllCustomRadioLinkCommand.getCommandName(), deleteAllCustomRadioLinkCommand);
         commands.put(deleteGenreCustomRadioLinkCommand.getCommandName(), deleteGenreCustomRadioLinkCommand);
         commands.put(createInviteCommand.getCommandName(), createInviteCommand);
-        commands.put(uploadBatchMemes.getCommandName(), uploadBatchMemes);
+        commands.put(uploadBatchMemesCommand.getCommandName(), uploadBatchMemesCommand);
     }
     //Global command for production -- takes up to 1 hour to get deployed
    /** @Override
@@ -342,8 +343,8 @@ public class LemuriosBOT extends ListenerAdapter {
     }
 
     @Autowired
-    public void setUploadBatchMemes(UploadBatchMemes uploadBatchMemes) {
-        this.uploadBatchMemes = uploadBatchMemes;
+    public void setUploadBatchMemes(UploadBatchMemesCommand uploadBatchMemesCommand) {
+        this.uploadBatchMemesCommand = uploadBatchMemesCommand;
     }
 
     public static Map<String, Command> getCommands() {

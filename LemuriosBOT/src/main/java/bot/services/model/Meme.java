@@ -11,7 +11,7 @@ public class Meme {
     @Column(name = "id", nullable = false)
     private Long memeId;
 
-    @Column(name = "FILENAME")
+    @Column(name = "FILENAME", unique = true)
     private String filename;
     @Lob
     @Column(name = "IMAGE_DATA", nullable = false)
@@ -19,6 +19,10 @@ public class Meme {
 
     @Column(name = "CREATED_ON", nullable = false)
     private Timestamp createdOn;
+
+    @JoinColumn(name = "UserId", nullable = false)
+    @OneToOne
+    private ServerUser caller;
 
 
     public Long getMemeId() {
@@ -51,5 +55,13 @@ public class Meme {
 
     public void setCreatedOn(Timestamp createdOn) {
         this.createdOn = createdOn;
+    }
+
+    public ServerUser getCaller() {
+        return caller;
+    }
+
+    public void setCaller(ServerUser caller) {
+        this.caller = caller;
     }
 }

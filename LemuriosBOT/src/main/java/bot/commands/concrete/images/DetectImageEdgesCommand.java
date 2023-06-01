@@ -63,6 +63,7 @@ public class DetectImageEdgesCommand extends Command {
                     inputStream = new FileInputStream(convertedImage);
                     event.getChannel().sendFiles(FileUpload.fromData(inputStream, file)).queue();
                     event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+                    earnPoints(event);
                 } catch (ImageProcessingException | IOException e) {
                     embedBuilder.addField("Error!", "There was en error! " + e.getCause(), true);
                     event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();

@@ -41,7 +41,7 @@ public class NowPlayingCommand extends Command {
         }catch (NullPointerException e){
             embedBuilder.addField("No songs are playing!", "The queue is empty, use the /play command while in a voice channel to summon the bot and start playing music.", true).setColor(Color.RED);
         }
-
+        earnPoints(event);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
     }
 

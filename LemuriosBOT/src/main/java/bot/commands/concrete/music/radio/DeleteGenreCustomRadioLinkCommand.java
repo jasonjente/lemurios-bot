@@ -35,7 +35,7 @@ public class DeleteGenreCustomRadioLinkCommand extends Command {
         embedBuilder.setTitle("LEMURIOS BOT operation delete genre " + genre + " was " + message);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
         createHistoryEntry(event);
-
+        earnPoints(event);
         LOGGER.info("{} has to delete a genre, full command: {} - LEAVE", event.getUser().getName(), event.getFullCommandName());
     }
 

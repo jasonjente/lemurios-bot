@@ -31,6 +31,7 @@ public class StopCommand extends Command {
             embedBuilder.addField("No songs were playing anyway!!", "Use /play to add songs to the queue", true);
         }
         createHistoryEntry(event);
+        earnPoints(event);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
         LOGGER.info("{} has requested the Stop command - LEAVE.", event.getUser().getName());
     }

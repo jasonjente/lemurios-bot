@@ -54,6 +54,7 @@ public class HistoryCommand extends Command {
             findAllCommandsExecutedByCommandName(command, event);
         }
         embedBuilder.setFooter(GTFO_MESSAGE.getValue());
+        earnPoints(event);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
     }
 
@@ -62,13 +63,13 @@ public class HistoryCommand extends Command {
         botCommand.setName(command);
 
         CommandExecution commandExecution = commandExecutionRepository.findAllByCommand(botCommand).get(0);
-        DiscordServer discordServer = dataService.createDiscordServerObject(event);
+        DiscordServer discordServer = dataService.findOrCreateDiscordServerObject(event);
         return repository.findHistoryEntryByCommandExecutionAndDiscordServer(commandExecution, discordServer);
     }
 
     private void findAllCommandsExecuted(SlashCommandInteractionEvent event, EmbedBuilder embedBuilder) {
         try {
-            List<HistoryEntry> historyEntryList = repository.findOrderedByDiscordServerOrderByEntryId(dataService.createDiscordServerObject(event));
+            List<HistoryEntry> historyEntryList = repository.findOrderedByDiscordServerOrderByEntryId(dataService.findOrCreateDiscordServerObject(event));
             int max = 0;
             for(HistoryEntry entry:historyEntryList){
                 if(max == 25){

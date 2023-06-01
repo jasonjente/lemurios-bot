@@ -35,6 +35,7 @@ public class SkipCommand extends Command {
             embedBuilder.addField("Lemurios Music BOT has no songs in its queue", "Use /play to add a song to the queue.", true);
         }
         createHistoryEntry(event);
+        earnPoints(event);
         LOGGER.info("{} has requested the Skip command.", event.getUser().getName());
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
 

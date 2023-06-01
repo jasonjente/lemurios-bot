@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ public class MemeServiceImpl implements MemeService {
     }
 
     @Override
+    @Transactional(rollbackFor = DataIntegrityViolationException.class) //rollback if the user tries to upload duplicate names and disrespectfully throw everything in the trash
     public void storeMemes(List<Meme> memes){
         LOGGER.info("storeMemes() - ENTER - total memes: {}", memes.size());
         memeRepository.saveAll(memes);

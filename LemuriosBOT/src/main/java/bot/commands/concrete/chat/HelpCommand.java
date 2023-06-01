@@ -35,6 +35,7 @@ public class HelpCommand extends Command {
 
         embedBuilder.setColor(java.awt.Color.PINK).setFooter("NOW GTFO HERE!\n With Best Regards Lemurios BOT.");
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+        earnPoints(event);
         LOGGER.info("helpCommand - LEAVE");
     }
 

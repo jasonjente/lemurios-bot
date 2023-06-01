@@ -32,6 +32,7 @@ public class TakenNamesCommand extends Command {
         }
         embedBuilder.setFooter(GTFO_MESSAGE.getValue()).setColor(Color.YELLOW);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+        earnPoints(event);
     }
 
     @Override
