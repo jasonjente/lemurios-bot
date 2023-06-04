@@ -5,7 +5,7 @@ public enum Constants {
     /**
      * MESSAGES
      */
-    ASSEMBLEMURS_MESSAGE(", Assemble! it's play time. @"),
+    ASSEMBLEMURS_MESSAGE(", Assemble! it's play time. "),
     SORRY_FOR_SPAM_MESSAGE(" Sorry for any spam this is a testing session"),
     INVITE_MESSAGE(", has invited you to play. Go join them ASAP."),
     HELP_COMMENT(" I will be your guide. Find below our commands :)"),

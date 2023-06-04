@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Random;
@@ -23,6 +25,7 @@ public abstract class Command {
     private LevelingService levelingService;
     @Autowired
     private DataService dataService;
+    private static final double VALUE_MULTIPLIER = 1.75;
 
     public abstract void execute(SlashCommandInteractionEvent event);
 
@@ -44,23 +47,28 @@ public abstract class Command {
         levelingService.earnPoints(event, points);
     }
 
-    public Jackpot jackpot(SlashCommandInteractionEvent event){
+    protected Jackpot jackpot(SlashCommandInteractionEvent event){
         Jackpot jackpot;
-        if (isJackpot(generateRandomNumber(1, 10000))) {
-            int randomNumber = generateRandomNumber(25, 250);
-            earnPoints(event, randomNumber);
-             jackpot = new Jackpot((int) (randomNumber * 1.75), true);
+        if (isJackpot(2)) {
+            int pointsToEarn = generateRandomNumber(25, 250);
+            earnPoints(event, pointsToEarn);
+             jackpot = new Jackpot((int) (pointsToEarn * VALUE_MULTIPLIER), true);
         } else {
             jackpot = new Jackpot(0, false);
         }
         return jackpot;
     }
-    private static int generateRandomNumber(int min, int max) {
-        Random random = new Random();
-        return random.nextInt(max - min + 1) + min;
+    private int generateRandomNumber(int min, int max) {
+        Random random;
+        try {
+            random = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        return random.nextInt(max - min + 1);
     }
 
-    public static boolean isJackpot(int luckFactor) {
+    private boolean isJackpot(double luckFactor) {
         int randomValue = generateRandomNumber(1, 100_000);
         return randomValue <= luckFactor;
     }
