@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>LemuriosBOT</artifactId>
-    <version>1.3.6.1</version>
+    <version>1.3.6.2</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -37,6 +37,16 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version>
         </dependency>
+
+        <!-- YouTube API -->
+        <!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-youtube -->
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-youtube</artifactId>
+            <version>v3-rev222-1.25.0</version>
+        </dependency>
+
+
         <!-- Spring Boot Dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -80,18 +90,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.6.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${sl4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${sl4j.version}</version>
         </dependency>
     </dependencies>
     <build>
@@ -139,7 +137,7 @@
         <repository>
             <id>central</id>
             <name>bintray</name>
-            <url>http://jcenter.bintray.com</url>
+            <url>https://jcenter.bintray.com</url>
         </repository>
         <repository>
             <id>maven_central</id>
