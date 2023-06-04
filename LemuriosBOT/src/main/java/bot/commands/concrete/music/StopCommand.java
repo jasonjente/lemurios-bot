@@ -38,7 +38,7 @@ public class StopCommand extends Command {
 
     @Override
     public String getCommandDescription() {
-        return "Empties the song queue and stops playing. [new!]";
+        return "Empties the song queue and stops playing. ";
     }
 
     @Override

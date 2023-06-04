@@ -47,7 +47,7 @@ public class NowPlayingCommand extends Command {
 
     @Override
     public String getCommandDescription() {
-        return "Prints the songs in the queue. [new!]";
+        return "Prints the songs in the queue.";
     }
 
     @Override

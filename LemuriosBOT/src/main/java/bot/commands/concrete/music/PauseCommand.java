@@ -38,7 +38,7 @@ public class PauseCommand extends Command {
 
     @Override
     public String getCommandDescription() {
-        return "Pause the bot if it is playing music. [new!]";
+        return "Pause the bot if it is playing music.";
     }
 
     @Override

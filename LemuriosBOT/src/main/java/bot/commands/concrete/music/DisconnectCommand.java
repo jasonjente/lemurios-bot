@@ -34,7 +34,7 @@ public class DisconnectCommand extends Command {
 
     @Override
     public String getCommandDescription() {
-        return "Disconnects the bot the voice channel the user is currently in. [new!]";
+        return "Disconnects the bot the voice channel the user is currently in.";
     }
 
     @Override

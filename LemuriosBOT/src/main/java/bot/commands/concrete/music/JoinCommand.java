@@ -40,7 +40,7 @@ public class JoinCommand extends Command {
 
     @Override
     public String getCommandDescription() {
-        return "Summons the bot the voice channel the user is in. [new!]";
+        return "Summons the bot the voice channel the user is in.";
     }
 
     @Override

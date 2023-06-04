@@ -43,7 +43,7 @@ public class SkipCommand extends Command {
 
     @Override
     public String getCommandDescription() {
-        return "Skips current song playing and goes to the next song in the queue. [new!]";
+        return "Skips current song playing and goes to the next song in the queue.";
     }
 
     @Override
