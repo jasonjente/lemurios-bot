@@ -89,8 +89,9 @@ public class TrackScheduler extends AudioEventAdapter {
             }catch (InterruptedException e){
                 //do nothing
             }
-            trackRetransmitionSet.add(track);
-            queue(track);
+            trackRetransmitionSet.add(track.makeClone());
+            //must not be unique track so clone will work instead of passing the same object
+            queue(track.makeClone());
         } else {
             trackRetransmitionSet.remove(track);
         }

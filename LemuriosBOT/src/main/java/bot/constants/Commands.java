@@ -22,7 +22,7 @@ public enum Commands {
     NOW_PLAYING("now-playing", 1),
     MEME_COMMAND("meme", 2),
     HISTORY_COMMAND("history", 1),
-    TAKEN_NAMES("taken-names", 2),
+    TAKEN_NAMES("taken-names", 1),
     UPLOAD_MEME_COMMAND("upload", 5),
     UPLOAD_BATCH_MEMES_COMMAND("upload-batch", 15),
     DETECT_IMAGE_EDGES_COMMAND("detect-edges", 2),

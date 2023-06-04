@@ -30,9 +30,12 @@ public class AssemblemursCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(AssemblemursCommand.class);
     private static final String ROLE_NAME = "LEMURIOI";
     private static final boolean ENABLE_SEND_PRIVATE_MESSAGES = true;
-    private static final Map<String, LocalDateTime> timeoutMap = new HashMap<>();
-    private static final long MAX_TIME_OUT_FOR_ASSEMBLEMURS = 1;
+    private static final long SECONDS = 60;
+    private static final long MINUTES = 1;
+    //Better to handle in seconds than minutes
+    private static final long MAX_TIME_OUT_FOR_ASSEMBLEMURS = MINUTES * SECONDS;
     private static final boolean ENABLE_TIMEOUTS = true;
+    private static final Map<String, LocalDateTime> timeoutMap = new HashMap<>();
 
 
     @Override
@@ -86,12 +89,12 @@ public class AssemblemursCommand extends Command {
 
             LocalDateTime currentTime = LocalDateTime.now();
             Duration duration = Duration.between(lastTimeUsed, currentTime);
-            long minutesDifference = duration.toMinutes();
+            long timeDiffInSeconds = duration.getSeconds();
 
-            if (minutesDifference > MAX_TIME_OUT_FOR_ASSEMBLEMURS) {
+            if (timeDiffInSeconds > MAX_TIME_OUT_FOR_ASSEMBLEMURS) {
                 notifyChannel(event, lemurs, author, embedBuilder);
                 sentPrivateMessagesToTheUsers(event, lemurs);
-                timeoutMap.put(author.getId(), currentTime);
+                timeoutMap.put(author.getId(), LocalDateTime.now());
                 Jackpot jackpot = jackpot(event);
 
                 if(jackpot.isWon()){
@@ -105,7 +108,7 @@ public class AssemblemursCommand extends Command {
             } else {
                 String user = author.getName();
                 String message = user + ", you can use this command every " + MAX_TIME_OUT_FOR_ASSEMBLEMURS
-                        + " minutes and the last time you used the command was: " + duration.getSeconds() + " seconds ago.";
+                        + " seconds and the last time you used the command was: " + duration.getSeconds() + " seconds ago.";
                 embedBuilder.addField("[ANTI-SPAM Timeout]", message, true);
                 event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
             }
@@ -120,12 +123,12 @@ public class AssemblemursCommand extends Command {
         event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
         if(event.getOptions().isEmpty()) {
             String textMessage = lemurs.getAsMention() + ASSEMBLEMURS_MESSAGE.getValue()
-                    + author.getName() + "#" + author.getDiscriminator() + " wants you to join him. ";
+                    + author.getAsMention() + "#" + author.getDiscriminator() + " wants you to join him. ";
             event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.addField("Hello!", textMessage, true).build()).queue();
         }else {
             String game = event.getOptions().get(0).getAsString();
             String textMessage = lemurs.getAsMention() + ASSEMBLEMURS_MESSAGE.getValue()
-                    + author.getName() + "#" + author.getDiscriminator() + " wants you to play "+game + " with him!";
+                    + author.getAsMention() + "#" + author.getDiscriminator() + " wants you to play " + game + " with him!";
             event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.addField("Hello!", textMessage, true).build()).queue();
         }
     }
@@ -141,7 +144,7 @@ public class AssemblemursCommand extends Command {
                     continue;
                 }
                 PrivateChannel channel = member.getUser().openPrivateChannel().complete();
-                String message = HELLO.getValue() + member.getUser().getName() + " Lemurios-" + event.getUser().getAsTag()
+                String message = HELLO.getValue() + member.getUser().getName() + " Lemurios - " + event.getUser().getAsMention()
                         + INVITE_MESSAGE.getValue();
                 channel.sendMessage(message).queue();
                 LOGGER.info("Sent direct message to {}.", member.getUser().getAsTag());

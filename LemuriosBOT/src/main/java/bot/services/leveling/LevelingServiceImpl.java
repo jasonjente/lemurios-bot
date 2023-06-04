@@ -41,7 +41,7 @@ public class LevelingServiceImpl implements LevelingService {
         String tag = event.getUser().getAsTag();
         //find if the user exists, if not create that user and persist in the database
         dataService.createServerUserObject(tag,discordServer, commandExecution, pointsEarned);
-        LOGGER.info("earnPoints()");
+        LOGGER.info("earnPoints() - LEAVE : user: {} earned : {} ", event.getUser().getAsTag(), pointsEarned);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class LevelingServiceImpl implements LevelingService {
         String tag = event.getUser().getAsTag();
         //find if the user exists, if not create that user and persist in the database
         dataService.createServerUserObject(tag,discordServer, commandExecution, points);
-        LOGGER.info("earnPoints()");
+        LOGGER.info("earnPoints() - LEAVE -  points earned: {}, user: {}", points, event.getUser().getAsTag());
     }
 
 }
