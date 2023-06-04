@@ -50,7 +50,7 @@ public class DataServiceImpl implements DataService {
         }
         ret.setLevel(calculateLevel(ret));
         serverUserRepository.save(ret);
-        LOGGER.info("createServerUserObject() - LEAVE: saving tag: {}, discor derver: {}, points earned: {}, userId: {}", tag, discordServer.getGuildId(), pointsEarned, ret.getId());
+        LOGGER.info("createServerUserObject() - LEAVE: saving tag: {}, discord server: {}, points earned: {}, userId: {}", tag, discordServer.getGuildId(), pointsEarned, ret.getId());
         return ret;
     }
 
