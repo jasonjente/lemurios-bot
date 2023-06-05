@@ -40,6 +40,8 @@ public class MusicPlayerManager {
         }
         MusicPlayer player = instances.get(voiceChannel.getGuild().getId());
         player.loadAndPlay(textChannel, voiceChannel, song);
+        //In case we reuse the player in paused state we should unpause to have the music start
+        player.resume(textChannel.getGuild());
         LOGGER.info("loadAndPlay() - LEAVE");
     }
 
