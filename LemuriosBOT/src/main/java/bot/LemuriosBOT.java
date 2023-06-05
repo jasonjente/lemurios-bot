@@ -52,7 +52,6 @@ public class LemuriosBOT extends ListenerAdapter {
     private ResumeCommand resumeCommand;
     private NowPlayingCommand nowPlayingCommand;
     private JoinCommand joinCommand;
-    private static final Map<String, Command> commands = new HashMap<>();
     private DisconnectCommand disconnectCommand;
     private LeaderboardCommand leaderboardCommand;
     private PlayCustomRadioCommand playCustomRadioCommand;
@@ -61,6 +60,7 @@ public class LemuriosBOT extends ListenerAdapter {
     private DeleteAllCustomRadioLinkCommand deleteAllCustomRadioLinkCommand;
     private DeleteGenreCustomRadioLinkCommand deleteGenreCustomRadioLinkCommand;
     private CreateInviteCommand createInviteCommand;
+    private static final Map<String, Command> commands = new HashMap<>();
 
     //Guild Commands -- Commands get instantly deployed
 
@@ -104,8 +104,8 @@ public class LemuriosBOT extends ListenerAdapter {
 
         /* Music Commands */
         // /play :url
-        OptionData optionDataSongToPlay = new OptionData(OptionType.STRING, "url", "Used to add a song to the queue",true);
-        commandData.add(Commands.slash(PLAY_COMMAND.getCommandName(), "play a song via soundcloud, YouTube or from a discord CDN link.").addOptions(optionDataSongToPlay));
+        OptionData optionDataSongToPlay = new OptionData(OptionType.STRING, "search", "Enter the title you are looking for or a URL",true);
+        commandData.add(Commands.slash(PLAY_COMMAND.getCommandName(), "Search and play a song via YouTube or from a discord CDN link.").addOptions(optionDataSongToPlay));
         // /play-radio :genre
         OptionData playCustomRadioGenreOptionData = new OptionData((OptionType.STRING), GENRE_OPTION ,"specify the genre you want to add.", true);
         commandData.add(Commands.slash(playCustomRadioCommand.getCommandName(), playCustomRadioCommand.getCommandDescription()).addOptions(playCustomRadioGenreOptionData));
