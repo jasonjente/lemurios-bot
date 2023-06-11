@@ -20,12 +20,6 @@ public class Meme {
     @Column(name = "CREATED_ON", nullable = false)
     private Timestamp createdOn;
 
-//todo delete
-    //    @JoinColumn(name = "UserId", nullable = false)
-//    @OneToOne
-//    private ServerUser caller;
-
-
     public Long getMemeId() {
         return memeId;
     }
@@ -58,11 +52,5 @@ public class Meme {
         this.createdOn = createdOn;
     }
 
-//    public ServerUser getCaller() {
-//        return caller;
-//    }
-//
-//    public void setCaller(ServerUser caller) {
-//        this.caller = caller;
-//    }
+
 }

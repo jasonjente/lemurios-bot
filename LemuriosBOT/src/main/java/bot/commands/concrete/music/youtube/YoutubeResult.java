@@ -5,6 +5,7 @@ public class YoutubeResult {
     private String requestedTitle;
     private String actualTitle;
     private String uploader;
+    private String thumbnailUrl;
 
 
     public String getVideoIdentifier() {
@@ -43,4 +44,11 @@ public class YoutubeResult {
         this.uploader = uploader;
     }
 
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
 }

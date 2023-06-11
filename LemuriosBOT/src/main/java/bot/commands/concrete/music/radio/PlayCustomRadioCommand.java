@@ -1,9 +1,9 @@
 package bot.commands.concrete.music.radio;
 
 import bot.commands.Command;
+import bot.music.MusicPlayerManager;
 import bot.services.dataservice.DataService;
 import bot.services.model.CustomLink;
-import bot.music.MusicPlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
@@ -50,18 +50,18 @@ public class PlayCustomRadioCommand extends Command {
                 TextChannel textChannel = event.getChannel().asTextChannel();
                 VoiceChannel voiceChannel = event.getInteraction().getMember().getVoiceState().getChannel().asVoiceChannel();
                 LOGGER.info("Voice channel {}", voiceChannel.getName());
-                embedBuilder.setTitle("Lemurios Music BOT - Started " + genre +" radio!").setColor(Color.YELLOW);
-                musicPlayerManager.stopAndLoadAndPlay(textChannel, voiceChannel, song);
+                embedBuilder.setTitle(":musical_note: Lemurios Music BOT - Started " + genre +" radio:musical_note:!").setColor(Color.YELLOW);
+
+                musicPlayerManager.stopAndLoadAndPlay(event, textChannel, voiceChannel, song, embedBuilder);
             } else {
                 embedBuilder.setTitle("Lemurios Music BOT - Error.").setColor(Color.RED);
-                embedBuilder.addField("Error:", "To call the bot you have to be in a voice channel.", false);
+                embedBuilder.addField("Error :warning: :", "To call the bot you have to be in a voice channel.", false);
             }
         } else {
             embedBuilder.setTitle("Lemurios Music BOT - Error.").setColor(Color.RED);
             embedBuilder.addField("Error:", "Please register first a URL by using the /set-radio command!", false);
         }
 
-        event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
         createHistoryEntry(event);
         earnPoints(event);
         LOGGER.info("{} has requested the PlayCustomRadioCommand command. full command: {} - ENTER", event.getUser().getName(), event.getFullCommandName());

@@ -11,12 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import static bot.constants.Commands.MEME_COMMAND;
 import static bot.constants.Constants.SORRY_MSG;
@@ -41,21 +36,12 @@ public class MemeCommand extends Command {
         LOGGER.info("{} has requested the meme command.", sender);
         EmbedBuilder embedBuilder = new EmbedBuilder().setImage("attachment://meme.png") ;// we specify this in sendFile as "meme.png"
         Meme meme;
-        try {
-            meme = memeService.getRandomMeme(event);
-            if(meme!=null) {
-                LOGGER.info("{} will have the {} meme.", sender, meme.getFilename());
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(meme.getImageData());
-                BufferedImage bufferedImageMeme = ImageIO.read(inputStream);
-                ImageIO.write(bufferedImageMeme, "png", os);
-                InputStream ret = new ByteArrayInputStream(os.toByteArray());
-                event.getChannel().sendFiles(FileUpload.fromData(ret, "meme.png")).setEmbeds(embedBuilder.build()).queue();
-            }else {
-                embedBuilder.addField(SORRY_MSG.getValue(), ERROR_MESSAGE_SORRY, true);
-            }
-        } catch (IOException e) {
-            LOGGER.error("Error: ", e);
+        meme = memeService.getRandomMeme(event);
+        if(meme!=null) {
+            LOGGER.info("{} will have the {} meme.", sender, meme.getFilename());
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(meme.getImageData());
+            event.getChannel().sendFiles(FileUpload.fromData(inputStream, "meme.png")).setEmbeds(embedBuilder.build()).queue();
+        }else {
             embedBuilder.addField(SORRY_MSG.getValue(), ERROR_MESSAGE_SORRY, true);
         }
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();

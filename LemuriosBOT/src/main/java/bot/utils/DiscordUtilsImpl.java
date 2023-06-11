@@ -4,6 +4,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -19,6 +21,8 @@ import java.util.List;
 
 @Service
 public class DiscordUtilsImpl implements DiscordUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DiscordUtilsImpl.class);
+
     @Override
     public String getAvailableFilename(String directory, String filename){
         File file = new File(new File(directory), filename);
@@ -54,6 +58,7 @@ public class DiscordUtilsImpl implements DiscordUtils {
                 ImageIO.write(image, "png", outputFile);
                 filenames.add(finalFilename);
             } catch (IOException e) {
+                LOGGER.error("saveImagesReceived() - ERROR: ", e);
                 embedBuilder.addField("Image upload failed!", "Please try again, if the error persists please contact the admins!" + sender, true);
             }
 
@@ -71,7 +76,7 @@ public class DiscordUtilsImpl implements DiscordUtils {
                 return IOUtils.toByteArray(connection.getInputStream());
 
             } catch (IOException e) {
-                embedBuilder.addField("Image upload failed!", "Please try again, if the error persists please contact the admins!" + sender, true);
+                embedBuilder.addField("Image download failed!", "Please try again! If the error persists please contact the admins " + sender, true);
             }
 
         }

@@ -7,33 +7,54 @@
  - Approve the requested rights and accesses.
 
 ### Build & Run:
-Build: mvn clean package
-Run: mvn spring-boot:run
+
+- Build:
+```shell
+mvn clean package
+```
+
+- Run:
+```shell
+mvn spring-boot:run
+```
+
+- Run & Debug:
+```shell
+mvn spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
+```
+
 ---
 ### Overview:
 The commands currently available:
- - ASSEMLEMURS_COMMAND / calls all members of the LEMURIOI role
- - CREDITS_COMMAND / shows the credits
- - HELP_COMMAND / shows all available commands
- - PLAY_COMMAND / the bot will join the channel that the caller is in and then plays the audio of the provided URL, works with most CDNs (like discords or facebook's) and youtube
- - SET_RADIO / The bot will save a URL and a genre for later retrieval, works with the /get-radio :genre command.
- - GET_RADIO / the bot will join the channel that the caller is in and then plays the audio of the provided URL, works with most CDNs (like discords or facebook's) and youtube
- - DELETE_ALL / the bot will delete all urls for the server
- - DELETE_GENRE / the bot will delete the urls for a specific genre server
- - PAUSE_COMMAND / pauses the bot
- - RESUME_COMMAND / unpauses the bot
- - SKIP_COMMAND / skips current track
- - STOP_COMMAND / completely stops current track and removes following tracks from the queue
- - JOIN_COMMAND / the bot will join the voice channel the caller is in
- - NOW_PLAYING / shows information about the current track playing
- - MEME_COMMAND / bot returns a random meme that the server hasn't seen. 
- - HISTORY_COMMAND / shows the last commands executed
- - TAKEN_NAMES / shows the taken names of Lemurioi
- - UPLOAD_MEME_COMMAND / lets the user upload a meme to the bot so it can be served later
- - DETECT_IMAGE_EDGES_COMMAND / the user uploads an image and the bot will return a bnw image with the detected edges 
- - DISCONNECT_COMMAND / disconnects the bot from the voice channel
- - LEADERBOARD_COMMAND / shows the leaderboard for the guild
- - SCHEDULE_COMMAND / [Work in progress]
+#### Chat commands:
+ - /assemblemurs => calls all members of the LEMURIOI role
+ - /credits     => shows the credits
+ - /help        => shows all available commands
+ - /invite      => generates an invite link
+ - /history     => shows the last 25 commands executed
+ - /taken-names => shows the taken names of Lemurioi
+ - /leaderboard => shows the leaderboard for the guild
+ ---
+
+#### Image commands:
+- /meme                => bot returns a random meme that the server hasn't seen.
+- /upload-batch        => upload a zip file containing memes to the bot
+- /upload              => lets the user upload a meme to the bot so it can be served later
+- /detect-edges        => the user uploads an image and the bot will return a bnw image with the detected edges
+---
+#### Music commands:  
+ - /play + URL or YouTube query => The bot will join the channel that the caller is in and then plays the audio of the provided URL, works with most CDNs (like discords or facebook's) and youtube
+ - /set-radio-url + URL         => The bot will save a URL and a genre for later retrieval, works with the /get-radio :genre command.
+ - /get-radio-urls              => The bot will join the channel that the caller is in and then plays the audio of the provided URL, works with most CDNs (like discords or facebook's) and youtube
+ - /delete-all                  => The bot will delete all urls for the server
+ - /delete-genre                => The bot will delete the urls for a specific genre server
+ - /pause                       => Pauses the bot
+ - /resume                      => Unpauses the bot
+ - /skip                        => Skips current track
+ - /stop                        => Completely stops current track and removes following tracks from the queue
+ - /join                        => The bot will join the voice channel the caller is in
+ - /now-playing                 => Shows information about the current track playing (artist and time remaining)
+ - /disconnect                  => Disconnects the bot from the voice channel
 
 ---
    
@@ -46,73 +67,31 @@ act as beans.
 
 During startup all beans get instantiated and are added to a map where the key is the command name. The command name is taken by an enum which is shared both by the map and the commands that are identified by the bot during the startup.
 
-
-Please find below a list of all the beans used in the application:
- * LemuriosBOT.java - @Component
-   * Responsible for registering the slash interaction commands and map them to java beans/Commands. 
-     When a Slash Interaction event arrives is picked up by the BOT, the bot will initially reply. During the initial reply, the bot will appear with the:
-
-    ![img.png](img.png)
- * Command.java - @Service
+Please find below a list of the most important classes/beans used in the application:
+ * **LemuriosBOT.java - @Component**
+   * Responsible for registering the slash interaction commands and map them to java beans/Commands.
+     When a Slash Interaction event arrives is picked up by the BOT, the bot will initially reply. During the initial reply, the bot will appear with the Bot is thinking:
+   ![img.png](img.png)
+ * **LemuriosBotSpringBootApplication.java @SpringBootApplication**,
+   * add your own Discord developer key
+ * **YoutubeSearcher.java - @Service**
+   * add your own YouTube Api developer key
+ * **Command.java - @Service**
    * Abstract class which holds all basic functionality of the commands.
- * AssemblemursCommand.java - @Service
-   * Chat command that sends a direct message to each online member of the 'Lemurioi' discord role and also does a ping in the chat for that role.
- * CreditsCommand.java - @Service
-   * Chat command that shows the credits and the version.
- * HelpCommand.java - @Service
-   * Chat command that prints all commands available.
- * HistoryCommand.java - @Service
-   * Chat command that prints the last 25 commands.
- * Leaderboard.java @Service
-    * Chat command shows the leaderboard for the server the command was executed on.
- * TakenNamesCommand.java - @Service
-   * Chat command that prints the taken Lemurios XXX names.
- * DetectImageEdgesCommand.java - @Service
-   * Chat command that uploads a picture to the BOT, and it will find its edges.
- * MemeCommand.java - @Service
-   * Chat command that returns a random meme.
- * UploadMemeCommand.java - @Service
-   * Chat command uploads a meme that can be uploaded by a user.
- * DisconnectCommand.java @Service
-    * Chat command that disconnects the bot from the voice channel
- * JoinCommand.java - @Service
-   * Chat command that summons the bot on the voice chat that the caller is in.
- * NowPlaying - @Service
-   * Chat command that prints the song queue. 
- * PauseCommand.java - @Service
-   * Chat command that pauses the Lemurios Music Bot.
- * PlayCommand.java - @Service
-   * Chat command that adds a song to the queue and then plays it. 
- * ResumeCommand.java - @Service
-   * Chat command that resumes the player if it is paused.
- * SkipCommand.java - @Service
-   * Chat command that skips the current song playing.
- * StopCommand.java - @Service
-   * Chat command that stops the execution of the player and removes the queue.
- * MusicPlayerManager.java - @Service
-   * Class responsible for providing different instances of MusicPlayers to different guilds.
- * DataServiceImpl.java -@Service
-   * Class responsible for database operations
- * LevelingServiceImpl.java - @Service
-   * Class responsible for level/point progression
- * DiscordUtilsImpl.java - @Service
-   * Class responsible for providing utilities like downloading images or getting an available filename
- * DeleteAllCustomRadioLinkCommand.java - @Service
-   * Class responsible for deleting all links
- * DeleteGenreCustomRadioLinkCommand.java - @Service
-   * Class responsible for deleting the link for a genre
- * GetCustomRadioLinkCommand.java - @Service
-   * Class responsible for retrieving all persisted urls and their genres
- * PlayCustomRadioCommand.java - @Service
-   * Class responsible for playing the radio for the link of the specified genre
- * SetCustomRadioLinkCommand.java - @Service
-   * Class responsible for setting a URL and genre
+ * **MusicPlayerManager.java - @Service**
+   * Bean that manages the MusicPlayer Instances
 
-**Finally, each command will be responsible for editing the initial reply and adding any information needed by the bot.**
+**Finally, each command is responsible for editing the initial reply and adding any information needed by the bot.**
 
+```java
+//For example here we edit the initial reply, adding our embed inside.
+EmberdBuilder embedBuilder = new EmbedBuilder();
+embedBuilder.addField("My field", "Has value of a string that I can choose!", true);
+event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+```
 ---
 
-### Example for extending the Command.java
+#### Example for extending the Command.java
 
 ```java
 package bot.commands.concrete.placeholder;
@@ -185,16 +164,40 @@ Then add the following on the LemuriosBOT.java:
 
 The command should be now available on the next startup:
 ![img_1.png](img_1.png)
-
-### More on Commands:
+---
+#### More on Commands:
  - Guild Commands: these commands get instantly deployed. These are the commands under the onGuildReady() method.
  - Global Commands: for production use and takes up to 1 hour to get deployed on the discord's backend. These commands are defined in the onReady() method. {
- 
+ ---
+
+### Music Player Functionality Overview:
+#### Youtube search:
+It should be obvious that entering a URL to play is not the most optimal use case for the user. Most users don't even 
+want to type commands and want to do everything with as few keystrokes and clicks as possible. So we created a dev key for YouTube's 
+Data API (v3) SaaS, which allows the search for videos by query and the results contain metadata like the video title, the user who 
+uploaded the video, thumbnails etc. However, this requires some attention as the use has quota and exceeding the quota can result in termination of the
+free tier and the user might have to pay.
+
+#### Music player Manager:
+The music player is based on the lava player, developed by sdmelluq. To allow the BOT to join multiple guilds at the same time, a mapping was created
+with the MusicPlayerManager bean. This bean, is responsible for handling the 1-to-1 association of music players to guilds. It is responsible for:
+- creating Music Players on demand in a synchronous fashion,
+- connecting and disconnecting them to and from voice channels
+
+#### Music Player
+- The current design allows for one music player being connected to a guild at each time. The player accepts a URL from the user,
+or from the search result from YouTube. It can accept, videos, playlists and even some more CDNs for audio like discords. For example
+you can upload an mp3 on a chat and then get the URL of that mp3 and play it with the BOT
+- Each music player holds an AudioPlayerManager instance and a map called MusicManagers. The AudioManagerPlayer acts as the entry point of the LavaPlayer 
+that creates the Audio Track from the URL provided.
+- Music Player is responsible for responding back to discord with the thumbnail, the duration, etc.
 
 ### Known errors:
-- sometimes lava player crashes when loading a youtube links
+- sometimes lava player crashes when loading a youtube links, raising a "FriendlyException". The issue has been mitigated by adding a retransmission 
+mechanism that after 2 unsuccessful attempts, it will stop trying to connect.
 ### Guides:
- * [Lave player](https://github.com/sedmelluq/LavaPlayer#jda-integration)
+ * [Lave player](https://github.com/sedmelluq/LavaPlayer#jda-integration) [Has been replaced by LavaPlayerFork]
+ * [Lava player-fork](https://github.com/Walkyst/lavaplayer-fork)
  * [JDA Wiki Tutorial](https://jda.wiki/using-jda/making-a-music-bot/)
  
 

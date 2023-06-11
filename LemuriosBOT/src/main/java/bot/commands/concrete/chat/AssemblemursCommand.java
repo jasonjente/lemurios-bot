@@ -17,10 +17,8 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import static bot.constants.Commands.ASSEMLEMURS_COMMAND;
 import static bot.constants.Constants.*;
@@ -120,7 +118,6 @@ public class AssemblemursCommand extends Command {
     }
 
     private void notifyChannel(SlashCommandInteractionEvent event, Role lemurs, User author, EmbedBuilder embedBuilder) {
-        event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
         if(event.getOptions().isEmpty()) {
             String textMessage = lemurs.getAsMention() + ASSEMBLEMURS_MESSAGE.getValue()
                     + author.getAsMention() + "#" + author.getDiscriminator() + " wants you to join him. ";
@@ -135,9 +132,11 @@ public class AssemblemursCommand extends Command {
 
     private void sentPrivateMessagesToTheUsers(SlashCommandInteractionEvent event, Role lemurs) {
         if (ENABLE_SEND_PRIVATE_MESSAGES){
-            List<Member> membersWithLemursRole = event.getGuild().getMembersWithRoles(lemurs);
+            List<Role> roleLemurs = new ArrayList<>();
+            roleLemurs.add(lemurs);
+            List<Member> membersWithLemursRole = event.getGuild().getMembersWithRoles(roleLemurs);
             for (Member member : membersWithLemursRole) {
-                //prevents bot from sending to itself or to the caller
+                //prevents bot from sending to itself or to the caller or the users that are in the same voice channel as the caller
                 if (member.getUser().getId().equals(event.getJDA().getSelfUser().getId())
                         || member.getUser().equals(event.getUser())
                         || isUserInSameVoiceChannelAsUser(event, member)) {
@@ -159,8 +158,9 @@ public class AssemblemursCommand extends Command {
                     && event.getInteraction().getMember().getVoiceState().inAudioChannel()) {
                 VoiceChannel voiceChannel = event.getInteraction().getMember().getVoiceState().getChannel().asVoiceChannel();
                 List<Member> members = voiceChannel.getMembers();
-                LOGGER.info("Checking if user {} is in the same voice channel as the caller {}", lemurMember.getUser().getAsTag(), event.getUser().getAsTag());
-                return members.contains(lemurMember);
+                boolean isLemur = members.contains(lemurMember);
+                LOGGER.info("Checking user {} is in the same voice channel as the caller {}: {}", lemurMember.getUser().getAsTag(), event.getUser().getAsTag(), isLemur);
+                return isLemur;
             }
         }catch (NullPointerException exception){
             //not in a voice channel so suppress and return false

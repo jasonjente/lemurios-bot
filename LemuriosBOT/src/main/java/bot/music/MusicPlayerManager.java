@@ -1,5 +1,6 @@
 package bot.music;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
@@ -33,16 +34,19 @@ public class MusicPlayerManager {
     public void removeInstance(String guildId){
         instances.remove(guildId);
     }
-    public void loadAndPlay(TextChannel textChannel, VoiceChannel voiceChannel, String song) {
-        LOGGER.info("loadAndPlay() - ENTER - Attempting to pause for Guild Id {}", voiceChannel.getGuild().getId());
+    public void loadAndPlay(SlashCommandInteractionEvent event, TextChannel textChannel, VoiceChannel voiceChannel, String song, EmbedBuilder embedBuilder) {
+        LOGGER.info("loadAndPlay() - ENTER - Attempting to play for Guild Id {}", voiceChannel.getGuild().getId());
         if(!instances.containsKey(voiceChannel.getGuild().getId())){
             addInstance(voiceChannel.getGuild().getId());
         }
         MusicPlayer player = instances.get(voiceChannel.getGuild().getId());
-        player.loadAndPlay(textChannel, voiceChannel, song);
+        player.loadAndPlay(event, textChannel, voiceChannel, song, embedBuilder);
         //In case we reuse the player in paused state we should unpause to have the music start
         player.resume(textChannel.getGuild());
-        LOGGER.info("loadAndPlay() - LEAVE");
+        String caller = event.getUser().getAsTag();
+        String guildId = event.getGuild().getId();
+        String voiceChannelName = voiceChannel.getName();
+        LOGGER.info("loadAndPlay() - LEAVE, caller: {}, guildId: {}, voice channel: {}, song: {} ", caller, guildId, voiceChannelName, song);
     }
 
     public void pause(Guild guild) {
@@ -99,7 +103,7 @@ public class MusicPlayerManager {
     }
 
     public String disconnectFromVoiceChannel(SlashCommandInteractionEvent event) {
-        LOGGER.info("disconnectFromVoiceChannel() - ENTER - Attempting to connect MusicPlayer to voice channel for Guild Id {}", event.getChannel().getId());
+        LOGGER.info("disconnectFromVoiceChannel() - ENTER - Attempting to disconnect MusicPlayer to voice channel for Guild Id {}", event.getChannel().getId());
         MusicPlayer player = instances.get(event.getGuild().getId());
         player.stop(event.getGuild());
         String disconnectedChannelName = player.disconnectFromVoiceChannel(event.getGuild().getAudioManager());
@@ -116,10 +120,10 @@ public class MusicPlayerManager {
         player.connectToVoiceChannel(event.getGuild().getAudioManager(), voiceChannel);
     }
 
-    public void stopAndLoadAndPlay(TextChannel textChannel, VoiceChannel voiceChannel, String song) {
+    public void stopAndLoadAndPlay(SlashCommandInteractionEvent event, TextChannel textChannel, VoiceChannel voiceChannel, String song, EmbedBuilder embedBuilder) {
         if(instances.containsKey(textChannel.getGuild().getId())){
             stop(textChannel.getGuild());
         }
-        loadAndPlay(textChannel, voiceChannel, song);
+        loadAndPlay(event, textChannel, voiceChannel, song, embedBuilder);
     }
 }

@@ -34,10 +34,9 @@ public class YoutubeSearcher {
             YouTube.Search.List request = youtubeService.search().list("snippet");
             SearchListResponse response = sendRequest(requestedSong, request);
 
-            YoutubeResult youtubeResult = new YoutubeResult();
+            YoutubeResult youtubeResult = createYoutubeResults(response);
             youtubeResult.setRequestedTitle(requestedSong);
 
-            youtubeResult = createYoutubeResults(response);
             LOGGER.info("search() - LEAVE - Found this: title: {}, video id: {}", youtubeResult.getActualTitle(), youtubeResult.getVideoIdentifier());
             return youtubeResult;
 
@@ -60,7 +59,7 @@ public class YoutubeSearcher {
     private SearchListResponse sendRequest(String requestedSong, YouTube.Search.List request) throws IOException {
         return request.setKey(DEVELOPER_KEY)
                 .setChannelType("any")
-                .setMaxResults(1L)
+                .setMaxResults(3L)
                 .setQ(requestedSong)
                 .setSafeSearch("none")
                 .setVideoDuration("any")
@@ -74,6 +73,7 @@ public class YoutubeSearcher {
         ret.setActualTitle(searchResult.getSnippet().getTitle());
         ret.setUploader(searchResult.getSnippet().getChannelTitle());
         ret.setVideoIdentifier(searchResult.getId().getVideoId());
+        ret.setThumbnailUrl(searchResult.getSnippet().getThumbnails().getDefault().getUrl());
         return ret;
     }
 }

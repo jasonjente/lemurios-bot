@@ -61,6 +61,7 @@ public class LemuriosBOT extends ListenerAdapter {
     private DeleteGenreCustomRadioLinkCommand deleteGenreCustomRadioLinkCommand;
     private CreateInviteCommand createInviteCommand;
     private static final Map<String, Command> commands = new HashMap<>();
+    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     //Guild Commands -- Commands get instantly deployed
 
@@ -210,7 +211,6 @@ public class LemuriosBOT extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event){ 
         LOGGER.info("Message received from {} - Content: {} - ENTER", event.getInteraction().getUser().getAsTag(), event.getFullCommandName());
-        ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
                     try {
                         if (commands.containsKey(event.getFullCommandName())) {

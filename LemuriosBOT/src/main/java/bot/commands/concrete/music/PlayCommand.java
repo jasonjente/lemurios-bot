@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,9 @@ public class PlayCommand extends Command {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         if (event.getInteraction().getMember().getVoiceState() != null) {
             String song = event.getInteraction().getOptions().get(0).getAsString();
-            if(!isValidYoutubeURL(song)){
-                //if the user did not provide a url then we have to construct the URL by searching youtube for the title
-                // and getting (lazily) getting the first result
+            if(!(isValidUrl(song) || isValidYoutubeURL(song))){
+                //if the user did not provide a url then we have to construct the URL by searching YouTube for the title
+                // and (lazily) getting the first result
                 try {
                     YoutubeResult youtubeResult = youtubeSearcher.search(song);
                     song = youtubeResult.getVideoURL();
@@ -51,19 +52,24 @@ public class PlayCommand extends Command {
             TextChannel textChannel = event.getChannel().asTextChannel();
             VoiceChannel voiceChannel = event.getInteraction().getMember().getVoiceState().getChannel().asVoiceChannel();
             LOGGER.info("Voice channel {}", voiceChannel.getName());
-            embedBuilder.setTitle("Lemurios Music BOT - Lets get this party started!").setColor(Color.YELLOW);
-            musicPlayerManager.loadAndPlay(textChannel, voiceChannel, song);
+            embedBuilder.setTitle(":musical_note: Lemurios BOT - Music Player :musical_note:");
+            musicPlayerManager.loadAndPlay(event, textChannel, voiceChannel, song, embedBuilder);
         } else {
             embedBuilder.setTitle("Lemurios Music BOT - Error.").setColor(Color.RED);
             embedBuilder.addField("Error:", "To call the bot you have to be in a voice channel.", false);
         }
 
-        event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
         createHistoryEntry(event);
         earnPoints(event);
         LOGGER.info("{} has requested the Play command. full command: {} - ENTER", event.getUser().getName(), event.getFullCommandName());
 
     }
+
+    private boolean isValidUrl(String song) {
+        return UrlValidator.getInstance().isValid(song);
+    }
+
+
 
     //based on this: https://stackoverflow.com/questions/24030892/android-java-check-if-url-is-valid-youtube-url
     private boolean isValidYoutubeURL(String song) {
