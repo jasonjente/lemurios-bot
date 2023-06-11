@@ -9,11 +9,21 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
+import net.dv8tion.jda.api.utils.FileUpload;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +31,11 @@ import java.util.Map;
 /**
  * Class for handling the music player.
  * audioPlayerManager is used for creating audio players and loading tracks and playlists.
+ *
+ * Important: Music player handles music replies, in order to provide the thumbnail to the reply as well as any other relevant information.
  */
 public class MusicPlayer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MusicPlayer.class);
     private final AudioPlayerManager playerManager;
     private final Map<Long, GuildMusicManager> musicManagers;
 
@@ -50,17 +63,20 @@ public class MusicPlayer {
 
     /**
      * Loads the song on the playlist and starts playing if the queue is empty
-     * @param channel t
+     *
+     * @param event
+     * @param channel      t
      * @param voiceChannel
      * @param trackUrl
+     * @param embedBuilder
      */
-    public void loadAndPlay(final TextChannel channel, VoiceChannel voiceChannel, final String trackUrl) {
+    public void loadAndPlay(SlashCommandInteractionEvent event, final TextChannel channel, VoiceChannel voiceChannel, final String trackUrl, EmbedBuilder embedBuilder) {
         GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
 
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                createReturnMessageAndPlay(track, channel, voiceChannel, musicManager);
+                createReturnMessageAndPlay(event, track, channel, voiceChannel, musicManager, embedBuilder);
             }
 
             @Override
@@ -71,7 +87,7 @@ public class MusicPlayer {
                 if (firstTrack == null) {
                     firstTrack = playlist.getTracks().get(0);
                 }
-                createReturnMessageAndPlay(firstTrack, channel, voiceChannel, musicManager);
+                createReturnMessageAndPlayPlaylist(event, firstTrack, channel, voiceChannel, musicManager, embedBuilder, audioTrackList);
                 audioTrackList.remove(firstTrack);
                 for(AudioTrack track: audioTrackList){
                     musicManager.getScheduler().queue(track);
@@ -90,12 +106,37 @@ public class MusicPlayer {
         });
     }
 
-    private void createReturnMessageAndPlay(AudioTrack track, TextChannel channel, VoiceChannel voiceChannel, GuildMusicManager musicManager) {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("Lemurios Music BOT");
+    private void createReturnMessageAndPlay(SlashCommandInteractionEvent event, AudioTrack track, TextChannel channel, VoiceChannel voiceChannel, GuildMusicManager musicManager, EmbedBuilder embedBuilder) {
         embedBuilder.addField("Added to queue: ", track.getInfo().title, false);
         embedBuilder.setColor(Color.ORANGE);
-        channel.sendMessageEmbeds(embedBuilder.build()).queue();
+        InputStream inputStream = getThumbnailIfPossible(track.getInfo().identifier);
+        embedBuilder.addField(new MessageEmbed.Field("duration: ", formatTime(track.getDuration()), true));
+        if(inputStream != null) {
+            embedBuilder.setImage("attachment://thumbnail.png");
+            event.getInteraction().getHook().editOriginalEmbeds().setFiles(FileUpload.fromData(inputStream, "thumbnail.png")).setEmbeds(embedBuilder.build()).queue();
+        } else {
+            event.getInteraction().getHook().editOriginalEmbeds().setEmbeds(embedBuilder.build()).queue();
+        }
+
+        play(channel.getGuild(), voiceChannel, musicManager, track);
+    }
+    private void createReturnMessageAndPlayPlaylist(SlashCommandInteractionEvent event, AudioTrack track, TextChannel channel, VoiceChannel voiceChannel, GuildMusicManager musicManager, EmbedBuilder embedBuilder, List<AudioTrack> audioTrackList) {
+        embedBuilder.setColor(Color.ORANGE);
+        //TODO Optimize this as it thinks this is for Youtube
+        InputStream inputStream = getThumbnailIfPossible(track.getInfo().identifier);
+        embedBuilder.setImage("attachment://thumbnail.png");
+        embedBuilder.addField("Adding the following tracks to the queue: ", "", false);
+        int counter = 1;
+        for(AudioTrack audioTrack:audioTrackList) {
+            embedBuilder.addField(new MessageEmbed.Field(counter + ". Added to the queue!", audioTrack.getInfo().title + "(" + formatTime(track.getDuration()) +")", true));
+            counter++;
+        }
+
+        if(inputStream != null) {
+            event.getInteraction().getHook().editOriginalEmbeds().setFiles(FileUpload.fromData(inputStream, "thumbnail.png")).setEmbeds(embedBuilder.build()).queue();
+        } else {
+            event.getInteraction().getHook().editOriginalEmbeds().setEmbeds(embedBuilder.build()).queue();
+        }
 
         play(channel.getGuild(), voiceChannel, musicManager, track);
     }
@@ -179,5 +220,31 @@ public class MusicPlayer {
         String voiceChanel = audioManager.getConnectedChannel().getName();
         audioManager.closeAudioConnection();
         return voiceChanel;
+    }
+    private InputStream getThumbnailIfPossible(String id) {
+        try {
+            String thumbnailUrl = "https://i.ytimg.com/vi/" +
+                    id +
+                    "/default.jpg";
+            HttpURLConnection connection = getHttpURLConnection(thumbnailUrl);
+            return connection.getInputStream();
+        } catch (IOException e) {
+            //error downloading suppress
+            LOGGER.error("error downloading thumbnail: {}", id, e);
+        }
+        return null;
+    }
+    @NotNull
+    private HttpURLConnection getHttpURLConnection(String attachmentUrl) throws IOException {
+        URL url = new URL(attachmentUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        // Set the headers to match the ones sent by a browser to trick the CDN and avoid error 403
+        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+        connection.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+        connection.setRequestProperty("Accept-Encoding", "gzip, deflate, br");
+        connection.setRequestProperty("Referer", "https://discord.com/channels/");
+        connection.setRequestProperty("Cookie", "cookies_here");
+        return connection;
     }
 }

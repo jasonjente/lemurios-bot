@@ -17,7 +17,7 @@ public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
     private final BlockingQueue<AudioTrack> queue;
     private String currentlyPlaying;
-    private static Set<AudioTrack> trackRetransmitionSet = new HashSet<>();
+    private static final Set<String> trackRetransmissionSet = new HashSet<>();
 
     /**
      * @param player The audio player this scheduler uses
@@ -83,17 +83,17 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         // There was an error playing the track, so we retry once otherwise we suppress.
-        if(!trackRetransmitionSet.contains(track)){
+        if(!trackRetransmissionSet.contains(track.getInfo().identifier)){
             try{
                 Thread.sleep(1000);
             }catch (InterruptedException e){
                 //do nothing
             }
-            trackRetransmitionSet.add(track.makeClone());
+            trackRetransmissionSet.add(track.getInfo().identifier);
             //must not be unique track so clone will work instead of passing the same object
             queue(track.makeClone());
         } else {
-            trackRetransmitionSet.remove(track);
+            trackRetransmissionSet.remove(track.getInfo().identifier);
         }
     }
 

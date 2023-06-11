@@ -52,7 +52,7 @@ public abstract class Command {
         if (isJackpot(2)) {
             int pointsToEarn = generateRandomNumber(25, 250);
             earnPoints(event, pointsToEarn);
-             jackpot = new Jackpot((int) (pointsToEarn * VALUE_MULTIPLIER), true);
+            jackpot = new Jackpot((int) (pointsToEarn * VALUE_MULTIPLIER), true);
         } else {
             jackpot = new Jackpot(0, false);
         }
@@ -63,7 +63,7 @@ public abstract class Command {
         try {
             random = SecureRandom.getInstanceStrong();
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            random = new Random(2312312438644389749l);
         }
         return random.nextInt(max - min + 1);
     }

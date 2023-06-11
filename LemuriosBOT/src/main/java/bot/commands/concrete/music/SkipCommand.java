@@ -25,11 +25,13 @@ public class SkipCommand extends Command {
         LOGGER.info("{} has requested the Skip command.", event.getUser().getName());
         EmbedBuilder embedBuilder = new EmbedBuilder();
         try {
-            String nowPlaying = musicPlayerManager.getSongPlaying(Objects.requireNonNull(event.getGuild())).get(0);
+            String toBeSkipped = musicPlayerManager.getSongPlaying(Objects.requireNonNull(event.getGuild())).get(0);
             embedBuilder.setTitle("LEMURIOS BOT - Skipped track :").setColor(Color.ORANGE);
             TextChannel textChannel = event.getChannel().asTextChannel();
             musicPlayerManager.skipTrack(event, textChannel);
-            embedBuilder.addField("Skipped track:", nowPlaying, true);
+            embedBuilder.addField("Skipped track:", toBeSkipped, true);
+            String nowPlaying = musicPlayerManager.getSongPlaying(Objects.requireNonNull(event.getGuild())).get(0);
+            embedBuilder.addField("Now Playing track:", nowPlaying, true);
         } catch (NullPointerException e){
             LOGGER.warn("Not playing any songs ?");
             embedBuilder.addField("Lemurios Music BOT has no songs in its queue", "Use /play to add a song to the queue.", true);
