@@ -96,12 +96,12 @@ public class MusicPlayer {
 
             @Override
             public void noMatches() {
-                channel.sendMessage("Nothing found by " + trackUrl).queue();
+                event.getInteraction().getHook().sendMessage("Nothing found by " + trackUrl).queue();
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
-                channel.sendMessage("Could not play: " + exception.getMessage()).queue();
+                event.getInteraction().getHook().sendMessage("Could not play: " + exception.getMessage()).queue();
             }
         });
     }
@@ -161,8 +161,6 @@ public class MusicPlayer {
     public void skipTrack(TextChannel channel) {
         GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
         musicManager.getScheduler().nextTrack();
-
-        channel.sendMessage("Skipped to next track.").queue();
     }
 
     public void connectToVoiceChannel(AudioManager audioManager, VoiceChannel voiceChannel) {

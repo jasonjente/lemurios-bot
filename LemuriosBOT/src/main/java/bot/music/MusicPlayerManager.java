@@ -43,7 +43,7 @@ public class MusicPlayerManager {
         player.loadAndPlay(event, textChannel, voiceChannel, song, embedBuilder);
         //In case we reuse the player in paused state we should unpause to have the music start
         player.resume(textChannel.getGuild());
-        String caller = event.getUser().getAsTag();
+        String caller = event.getUser().getName();
         String guildId = event.getGuild().getId();
         String voiceChannelName = voiceChannel.getName();
         LOGGER.info("loadAndPlay() - LEAVE, caller: {}, guildId: {}, voice channel: {}, song: {} ", caller, guildId, voiceChannelName, song);
@@ -90,15 +90,15 @@ public class MusicPlayerManager {
         LOGGER.info("getSongPlaying() - ENTER - Attempting to get the song playing for Guild Id {}", guild.getId());
         MusicPlayer player = instances.get(guild.getId());
         List<String> ret = player.getSongQueue(guild);
-        LOGGER.info("getSongPlaying() - LEAVE");
+        LOGGER.info("getSongPlaying() - LEAVE, queue size: {}", ret.size());
         return ret;
     }
 
     public String getTimeRemaining(Guild guild) {
-        LOGGER.info("getTimeRemaining() - ENTER");
+        LOGGER.info("getTimeRemaining() - ENTER for Guild Id {}", guild.getId());
         MusicPlayer player = instances.get(guild.getId());
         String timeRemaining = player.getTimeRemaining(guild);
-        LOGGER.info("getTimeRemaining() - LEAVE");
+        LOGGER.info("getTimeRemaining() - {} - LEAVE", timeRemaining);
         return timeRemaining;
     }
 

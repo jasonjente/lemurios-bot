@@ -36,7 +36,7 @@ public class UploadMemeCommand extends Command {
         if (!attachments.isEmpty()) {
             byte[] imageData = discordUtils.saveImagesReceived(sender, embedBuilder, attachments);
             Meme meme = new Meme();
-            meme.setFilename(event.getUser().getAsTag() + "_" + LocalDateTime.now() + "_meme");
+            meme.setFilename(event.getUser().getName() + "_" + LocalDateTime.now() + "_meme");
             meme.setCreatedOn(Timestamp.valueOf(LocalDateTime.now()));
             meme.setImageData(imageData);
             memeService.storeMeme(meme);

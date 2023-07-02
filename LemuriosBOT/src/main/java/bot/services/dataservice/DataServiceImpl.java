@@ -36,7 +36,7 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public ServerUser createServerUserObject(String tag, DiscordServer discordServer, CommandExecution commandExecution, Integer pointsEarned) {
-        LOGGER.info("createServerUserObject() - caller tag: {}, server: {}, command {}, points earned: {}", tag, discordServer.getGuildId(), commandExecution.getCommand().getName(), pointsEarned );
+        LOGGER.debug("createServerUserObject() - caller tag: {}, server: {}, command {}, points earned: {}", tag, discordServer.getGuildId(), commandExecution.getCommand().getName(), pointsEarned );
         ServerUser ret;
         if(Boolean.FALSE.equals(serverUserRepository.existsServerUserByTagAndServer(tag,discordServer))){
             ret = new ServerUser();
@@ -50,7 +50,7 @@ public class DataServiceImpl implements DataService {
         }
         ret.setLevel(calculateLevel(ret));
         serverUserRepository.save(ret);
-        LOGGER.info("createServerUserObject() - LEAVE: saving tag: {}, discord server: {}, points earned: {}, userId: {}", tag, discordServer.getGuildId(), pointsEarned, ret.getId());
+        LOGGER.debug("createServerUserObject() - LEAVE: saving tag: {}, discord server: {}, points earned: {}, userId: {}", tag, discordServer.getGuildId(), pointsEarned, ret.getId());
         return ret;
     }
 
@@ -75,7 +75,7 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public CommandExecution createCommandExecutionObject(SlashCommandInteractionEvent event) {
-        LOGGER.info("createCommandExecutionObject() - ENTER");
+        LOGGER.debug("createCommandExecutionObject() - ENTER");
         CommandExecution ret = new CommandExecution();
         BotCommand botCommand = new BotCommand();
         botCommand.setName(event.getCommandString());
@@ -83,13 +83,13 @@ public class DataServiceImpl implements DataService {
         ret.setExecutedAt(LocalDateTime.now());
         ret.setCommand(botCommand);
         commandExecutionRepository.save(ret);
-        LOGGER.info("createCommandExecutionObject() - LEAVE: command execution id: {}", ret.getId());
+        LOGGER.debug("createCommandExecutionObject() - LEAVE: command execution id: {}", ret.getId());
         return ret;
     }
 
     @Override
     public DiscordServer findOrCreateDiscordServerObject(SlashCommandInteractionEvent event) {
-        LOGGER.info("createDiscordServerObject() - ENTER");
+        LOGGER.debug("createDiscordServerObject() - ENTER");
         DiscordServer ret;
         if(Boolean.FALSE.equals(discordServerRepository.existsByGuildId(event.getGuild().getId()))){
             ret = new DiscordServer();
@@ -98,48 +98,48 @@ public class DataServiceImpl implements DataService {
         }else {
             ret = discordServerRepository.findDiscordServerByGuildId(event.getGuild().getId());
         }
-        LOGGER.info("createDiscordServerObject() - LEAVE - GuildId: {}, discordId: {}", event.getGuild().getId(), ret.getId());
+        LOGGER.debug("createDiscordServerObject() - LEAVE - GuildId: {}, discordId: {}", event.getGuild().getId(), ret.getId());
         return ret;
     }
 
     @Override
     public void deleteCustomLinksByDiscordServer(String guildId) {
-        LOGGER.info("deleteCustomLinksByDiscordServer() - ENTER - GuildId {}", guildId);
+        LOGGER.debug("deleteCustomLinksByDiscordServer() - ENTER - GuildId {}", guildId);
         customLinkRepository.deleteCustomLinksByDiscordServer(guildId);        
-        LOGGER.info("deleteCustomLinksByDiscordServer() - LEAVE");
+        LOGGER.debug("deleteCustomLinksByDiscordServer() - LEAVE");
     }
 
     @Override
     public void deleteCustomLinkByDiscordServerAndGenre(String guildId, String genre) {
-        LOGGER.info("deleteCustomLinkByDiscordServerAndGenre() - ENTER - Genre: {}, GuildID: {}", genre, guildId);
+        LOGGER.debug("deleteCustomLinkByDiscordServerAndGenre() - ENTER - Genre: {}, GuildID: {}", genre, guildId);
         customLinkRepository.deleteCustomLinkByDiscordServerAndGenre(guildId, genre);
-        LOGGER.info("deleteCustomLinkByDiscordServerAndGenre() - LEAVE");
+        LOGGER.debug("deleteCustomLinkByDiscordServerAndGenre() - LEAVE");
     }
 
     @Override
     public void saveCustomLink(CustomLink customLink) {
-        LOGGER.info("saveCustomLink() - ENTER - Genre: {}, GuildID: {}", customLink.getGenre(), customLink.getDiscordServer());
+        LOGGER.debug("saveCustomLink() - ENTER - Genre: {}, GuildID: {}", customLink.getGenre(), customLink.getDiscordServer());
         customLinkRepository.save(customLink);
-        LOGGER.info("saveCustomLink() - LEAVE - Genre: {}, GuildID: {}", customLink.getGenre(), customLink.getDiscordServer());
+        LOGGER.debug("saveCustomLink() - LEAVE - Genre: {}, GuildID: {}", customLink.getGenre(), customLink.getDiscordServer());
     }
 
     @Override
     public CustomLink findCustomLinkByDiscordServerAndGenre(String id, String genre) {
-        LOGGER.info("findCustomLinkByDiscordServerAndGenre() - ENTER - Genre: {}, GuildID: {}", genre, id);
+        LOGGER.debug("findCustomLinkByDiscordServerAndGenre() - ENTER - Genre: {}, GuildID: {}", genre, id);
         CustomLink ret = customLinkRepository.findCustomLinkByDiscordServerAndGenre(id, genre);
         if(ret!=null){
-            LOGGER.info("findCustomLinkByDiscordServerAndGenre() - LEAVE - Genre: {}, GuildID: {}, id: {}", genre, id, ret.getId());
+            LOGGER.debug("findCustomLinkByDiscordServerAndGenre() - LEAVE - Genre: {}, GuildID: {}, id: {}", genre, id, ret.getId());
         }else {
-            LOGGER.info("No entry found for genre: {}", genre);
+            LOGGER.debug("No entry found for genre: {}", genre);
         }
         return ret;
     }
 
     @Override
     public List<CustomLink> findCustomLinksByDiscordServerAndGenre(String guildId) {
-        LOGGER.info("findCustomLinkByDiscordServerAndGenre() - ENTER - GuildID: {}",guildId);
+        LOGGER.debug("findCustomLinkByDiscordServerAndGenre() - ENTER - GuildID: {}",guildId);
         List<CustomLink> ret = customLinkRepository.getCustomLinksByDiscordServer(guildId);
-        LOGGER.info("findCustomLinkByDiscordServerAndGenre() - LEAVE - GuildID: {}, Custom links found: {}", guildId, ret.size());
+        LOGGER.debug("findCustomLinkByDiscordServerAndGenre() - LEAVE - GuildID: {}, Custom links found: {}", guildId, ret.size());
         return ret;
     }
 

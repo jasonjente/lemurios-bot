@@ -44,7 +44,11 @@ public class PlayCommand extends Command {
                 // and (lazily) getting the first result
                 try {
                     YoutubeResult youtubeResult = youtubeSearcher.search(song);
-                    song = youtubeResult.getVideoURL();
+                    if(youtubeResult.getPlaylistUrl() != null){
+                        song = youtubeResult.getPlaylistUrl();
+                    } else {
+                        song = youtubeResult.getVideoURL();
+                    }
                 } catch (YoutubeSearchException e) {
                     LOGGER.error("Error while searching for a video with title {} \n ", event.getInteraction().getOptions().get(0).getAsString(), e);
                 }

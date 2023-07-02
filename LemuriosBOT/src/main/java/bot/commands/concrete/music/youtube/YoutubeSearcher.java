@@ -72,6 +72,11 @@ public class YoutubeSearcher {
         SearchResult searchResult = response.getItems().get(0);
         ret.setActualTitle(searchResult.getSnippet().getTitle());
         ret.setUploader(searchResult.getSnippet().getChannelTitle());
+        if(response.getItems().get(0).getId().getPlaylistId()!= null) {
+            String playlistUrl = response.getItems().get(0).getId().getPlaylistId();
+            ret.setPlaylistUrl(playlistUrl);
+        }
+
         ret.setVideoIdentifier(searchResult.getId().getVideoId());
         ret.setThumbnailUrl(searchResult.getSnippet().getThumbnails().getDefault().getUrl());
         return ret;
