@@ -32,7 +32,7 @@ public abstract class Command {
     public void createHistoryEntry(SlashCommandInteractionEvent event){
         HistoryEntry entry = new HistoryEntry();
         entry.setCommandIssued(event.getCommandString());
-        entry.setFullTag(event.getUser().getAsTag());
+        entry.setFullTag(event.getUser().getName());
         entry.setCreatedOn(Timestamp.from(Instant.now()));
         DiscordServer discordServer = dataService.findOrCreateDiscordServerObject(event);
         entry.setCommandExecution(dataService.createCommandExecutionObject(event));

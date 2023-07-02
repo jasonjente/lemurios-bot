@@ -59,7 +59,7 @@ public class AssemblemursCommand extends Command {
     }
 
     private boolean userIsLemurWorthy(SlashCommandInteractionEvent event) {
-        String sender = event.getUser().getAsTag();
+        String sender = event.getUser().getName();
         Role lemurs = event.getGuild().getRolesByName(ROLE_NAME, true).get(0);
         if (!event.getMember().getRoles().contains(lemurs)) {
             LOGGER.info("{} is not worthy", sender);
@@ -73,7 +73,7 @@ public class AssemblemursCommand extends Command {
         Role lemurs = event.getGuild().getRolesByName(ROLE_NAME, true).get(0);
         User author = event.getUser();
         EmbedBuilder embedBuilder = new EmbedBuilder()
-                .setTitle("LEMURS ASSEMBLE")
+                .setTitle("ASSEMBLEMURS")
                 .setColor(Color.YELLOW);
 
         if(ENABLE_TIMEOUTS) {
@@ -120,12 +120,12 @@ public class AssemblemursCommand extends Command {
     private void notifyChannel(SlashCommandInteractionEvent event, Role lemurs, User author, EmbedBuilder embedBuilder) {
         if(event.getOptions().isEmpty()) {
             String textMessage = lemurs.getAsMention() + ASSEMBLEMURS_MESSAGE.getValue()
-                    + author.getAsMention() + "#" + author.getDiscriminator() + " wants you to join him. ";
+                    + author.getAsMention() + " wants you to join them. ";
             event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.addField("Hello!", textMessage, true).build()).queue();
         }else {
             String game = event.getOptions().get(0).getAsString();
             String textMessage = lemurs.getAsMention() + ASSEMBLEMURS_MESSAGE.getValue()
-                    + author.getAsMention() + "#" + author.getDiscriminator() + " wants you to play " + game + " with him!";
+                    + author.getAsMention() + " wants you to play " + game + " with them!";
             event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.addField("Hello!", textMessage, true).build()).queue();
         }
     }
@@ -146,7 +146,7 @@ public class AssemblemursCommand extends Command {
                 String message = HELLO.getValue() + member.getUser().getName() + " Lemurios - " + event.getUser().getAsMention()
                         + INVITE_MESSAGE.getValue();
                 channel.sendMessage(message).queue();
-                LOGGER.info("Sent direct message to {}.", member.getUser().getAsTag());
+                LOGGER.info("Sent direct message to {}.", member.getUser().getName());
             }
         }
     }
@@ -159,7 +159,7 @@ public class AssemblemursCommand extends Command {
                 VoiceChannel voiceChannel = event.getInteraction().getMember().getVoiceState().getChannel().asVoiceChannel();
                 List<Member> members = voiceChannel.getMembers();
                 boolean isLemur = members.contains(lemurMember);
-                LOGGER.info("Checking user {} is in the same voice channel as the caller {}: {}", lemurMember.getUser().getAsTag(), event.getUser().getAsTag(), isLemur);
+                LOGGER.info("Checking user {} is in the same voice channel as the caller {}: {}", lemurMember.getUser().getName(), event.getUser().getName(), isLemur);
                 return isLemur;
             }
         }catch (NullPointerException exception){
@@ -169,7 +169,7 @@ public class AssemblemursCommand extends Command {
         return false;
     }
     private void notifyUnworthy(SlashCommandInteractionEvent event) {
-        String sender = event.getUser().getAsTag();
+        String sender = event.getUser().getName();
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setTitle(sender + " sorry, but you are not worthy enough to call the Lemurs. :/")
                 .setDescription("Sorry " + sender + ", it seems you dont belong to the lemurs group.")

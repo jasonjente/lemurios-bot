@@ -31,7 +31,7 @@ public class MemeCommand extends Command {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        String sender = event.getUser().getAsTag();
+        String sender = event.getUser().getName();
         createHistoryEntry(event);
         LOGGER.info("{} has requested the meme command.", sender);
         EmbedBuilder embedBuilder = new EmbedBuilder().setImage("attachment://meme.png") ;// we specify this in sendFile as "meme.png"

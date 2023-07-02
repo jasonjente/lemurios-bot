@@ -210,7 +210,7 @@ public class LemuriosBOT extends ListenerAdapter {
      */
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event){ 
-        LOGGER.info("Message received from {} - Content: {} - ENTER", event.getInteraction().getUser().getAsTag(), event.getFullCommandName());
+        LOGGER.info("Message received from {} - Content: {} - ENTER", event.getInteraction().getUser().getName(), event.getFullCommandName());
         executor.execute(() -> {
                     try {
                         if (commands.containsKey(event.getFullCommandName())) {
@@ -224,7 +224,7 @@ public class LemuriosBOT extends ListenerAdapter {
                         LOGGER.error("ERROR:", npe);
                     }
         });
-        LOGGER.info("Message received from {} - Content: {} - LEAVE", event.getInteraction().getUser().getAsTag(), event.getFullCommandName());
+        LOGGER.info("Message received from {} - Content: {} - LEAVE", event.getInteraction().getUser().getName(), event.getFullCommandName());
     }
 
     /**

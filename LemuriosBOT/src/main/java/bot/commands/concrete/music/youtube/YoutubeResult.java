@@ -6,6 +6,7 @@ public class YoutubeResult {
     private String actualTitle;
     private String uploader;
     private String thumbnailUrl;
+    private String playlistUrl;
 
 
     public String getVideoIdentifier() {
@@ -50,5 +51,13 @@ public class YoutubeResult {
 
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public String getPlaylistUrl() {
+        return playlistUrl;
+    }
+
+    public void setPlaylistUrl(String playlistUrl) {
+        this.playlistUrl = playlistUrl;
     }
 }

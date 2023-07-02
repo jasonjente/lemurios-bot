@@ -37,7 +37,7 @@ public class HistoryCommand extends Command {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        String sender = event.getUser().getAsTag();
+        String sender = event.getUser().getName();
         createHistoryEntry(event);
         LOGGER.info("{} has requested the history of commands.", sender);
         EmbedBuilder embedBuilder = new EmbedBuilder()

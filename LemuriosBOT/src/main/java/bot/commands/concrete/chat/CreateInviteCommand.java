@@ -16,7 +16,7 @@ public class CreateInviteCommand extends Command {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        String caller = event.getUser().getAsTag();
+        String caller = event.getUser().getName();
         LOGGER.info("CreateInviteCommand() - ENTER - User {} requested an invite link!", caller);
         Invite invite = event.getInteraction().getChannel().asTextChannel().createInvite().complete();
         createHistoryEntry(event);

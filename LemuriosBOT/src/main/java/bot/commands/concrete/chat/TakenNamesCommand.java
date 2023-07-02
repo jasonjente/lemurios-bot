@@ -19,7 +19,7 @@ public class TakenNamesCommand extends Command {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        String sender = event.getUser().getAsTag();
+        String sender = event.getUser().getName();
         LOGGER.info("{} has requested the available names command.", sender);
         createHistoryEntry(event);
 
