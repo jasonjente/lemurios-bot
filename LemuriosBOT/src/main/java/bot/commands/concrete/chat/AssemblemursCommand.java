@@ -19,6 +19,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static bot.constants.Commands.ASSEMLEMURS_COMMAND;
 import static bot.constants.Constants.*;
@@ -134,7 +135,11 @@ public class AssemblemursCommand extends Command {
         if (ENABLE_SEND_PRIVATE_MESSAGES){
             List<Role> roleLemurs = new ArrayList<>();
             roleLemurs.add(lemurs);
-            List<Member> membersWithLemursRole = event.getGuild().getMembersWithRoles(roleLemurs);
+            List<Member> membersWithLemursRole = event.getGuild().loadMembers()
+                    .get()
+                    .stream()
+                    .filter(member -> member.getRoles().contains(lemurs))
+                    .collect(Collectors.toList());
             for (Member member : membersWithLemursRole) {
                 //prevents bot from sending to itself or to the caller or the users that are in the same voice channel as the caller
                 if (member.getUser().getId().equals(event.getJDA().getSelfUser().getId())

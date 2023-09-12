@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 import static bot.constants.Commands.DETECT_IMAGE_EDGES_COMMAND;
@@ -35,7 +35,7 @@ public class DetectImageEdgesCommand extends Command {
         String sender = event.getUser().getName();
         LOGGER.info("{} has requested to detect some edges!", sender);
         createHistoryEntry(event);
-        InputStream inputStream;
+        InputStream inputStream = null;
         EmbedBuilder embedBuilder = new EmbedBuilder().setImage("attachment://detectedImage.png") ;// we specify this in sendFile as "detectedImage.png"
         List<OptionMapping> attachments = event.getInteraction().getOptions();
         if (!attachments.isEmpty()) {
@@ -60,14 +60,20 @@ public class DetectImageEdgesCommand extends Command {
                     File convertedImage = new File(new File(IMAGE_DETECTION_IMAGE_OUT_DIR.getValue()), filename);
                     LOGGER.info("Filename old {}, Filename new: {} ,exists {},  full path to new file: {} ", file, filename, convertedImage.exists(), convertedImage.getAbsolutePath());
 
-                    inputStream = new FileInputStream(convertedImage);
+                    inputStream = Files.newInputStream(convertedImage.toPath());
                     event.getChannel().sendFiles(FileUpload.fromData(inputStream, file)).queue();
                     event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
                     earnPoints(event);
                 } catch (ImageProcessingException | IOException e) {
                     embedBuilder.addField("Error!", "There was en error! " + e.getCause(), true);
                     event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
-                    return;
+                } finally {
+                    try {
+                        assert inputStream != null;
+                        inputStream.close();
+                    } catch (IOException e) {
+                        LOGGER.trace("Unexpected error closing input stream, ", e);
+                    }
                 }
 
             }
