@@ -43,19 +43,7 @@ public class EdgeDetector {
             final int yStart = chunk * chunkSize;
             final int yEnd = (chunk == 7) ? height : (chunk + 1) * chunkSize;
 
-            executor.execute(() -> {
-                for (int y = yStart; y < yEnd; y++) {
-                    for (int x = 0; x < width; x++) {
-                        double intensity = applyKernel(image, kernel, x, y);
-                        //reverse condition to make white background with black lines
-                        if (intensity > THRESHOLD) {
-                            result.setRGB(x, y, Color.BLACK.getRGB());
-                        } else {
-                            result.setRGB(x, y, Color.WHITE.getRGB());
-                        }
-                    }
-                }
-            });
+            performEdgeDetection(image, width, result, kernel, executor, yStart, yEnd);
         }
 
         executor.shutdown();
@@ -66,6 +54,22 @@ public class EdgeDetector {
         }
 
         return result;
+    }
+
+    private static void performEdgeDetection(BufferedImage image, int width, BufferedImage result, double[][] kernel, ExecutorService executor, int yStart, int yEnd) {
+        executor.execute(() -> {
+            for (int y = yStart; y < yEnd; y++) {
+                for (int x = 0; x < width; x++) {
+                    double intensity = applyKernel(image, kernel, x, y);
+                    //reverse condition to make white background with black lines
+                    if (intensity > THRESHOLD) {
+                        result.setRGB(x, y, Color.BLACK.getRGB());
+                    } else {
+                        result.setRGB(x, y, Color.WHITE.getRGB());
+                    }
+                }
+            }
+        });
     }
 
     /**
