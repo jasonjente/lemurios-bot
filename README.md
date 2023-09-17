@@ -19,6 +19,11 @@ mvn spring-boot:run
 ```
 
 - Run & Debug:
+
+  - Add your dev. keys on the lemurs.properties file under these names: 
+    - **youtube_dev_key**, this is optional, but if ommitted then the youtube functionality will not work.
+    - **discord_dev_key**, this is mandatory for the startup of the bot.
+
 ```shell
 mvn spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
 ```

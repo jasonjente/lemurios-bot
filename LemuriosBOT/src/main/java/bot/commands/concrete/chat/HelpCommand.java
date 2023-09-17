@@ -1,7 +1,7 @@
 package bot.commands.concrete.chat;
 
 
-import bot.LemuriosBOT;
+import bot.LemuriosBOTListenerAdapter;
 import bot.commands.Command;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -27,7 +27,7 @@ public class HelpCommand extends Command {
                 .setTitle("LEMURIOS BOT Help Center.")
                 .setDescription(HELLO.getValue()+ event.getUser().getName() + HELP_COMMENT.getValue());
 
-        Map<String,Command> commandMap = LemuriosBOT.getCommands();
+        Map<String,Command> commandMap = LemuriosBOTListenerAdapter.getCommands();
 
         for (Command command:commandMap.values()){
             embedBuilder.addField(command.getCommandName(),command.getCommandDescription(), false);

@@ -1,6 +1,6 @@
 package bot.commands.concrete.chat;
 
-import bot.LemuriosBOT;
+import bot.LemuriosBOTListenerAdapter;
 import bot.commands.Command;
 import bot.services.dataservice.DataService;
 import bot.services.model.BotCommand;
@@ -50,7 +50,7 @@ public class HistoryCommand extends Command {
         }
         if(event.getOptions().isEmpty()) {
             findAllCommandsExecuted(event, embedBuilder);
-        } else if (LemuriosBOT.getCommands().containsKey(command)){
+        } else if (LemuriosBOTListenerAdapter.getCommands().containsKey(command)){
             findAllCommandsExecutedByCommandName(command, event);
         }
         embedBuilder.setFooter(GTFO_MESSAGE.getValue());
