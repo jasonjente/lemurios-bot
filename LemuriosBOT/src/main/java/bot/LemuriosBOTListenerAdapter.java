@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,11 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.PreDestroy;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static bot.constants.Commands.*;
 
@@ -62,6 +62,8 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
     private CreateInviteCommand createInviteCommand;
     private static final Map<String, Command> commands = new HashMap<>();
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+    private final Set<Future<?>> futuresSet = new HashSet<>();
 
     //Guild Commands -- Commands get instantly deployed
 
@@ -110,6 +112,16 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
         commands.put(uploadBatchMemesCommand.getCommandName(), uploadBatchMemesCommand);
     }
 
+    @PreDestroy
+    private void onDestroy(){
+        LOGGER.info("Shutting down listener!");
+        for (Future<?> runnableFuture : futuresSet){
+            boolean canceled = runnableFuture.cancel(true);
+            LOGGER.info("Command terminated: {}, is done: {} , is canceled: {}.", canceled, runnableFuture.isDone(), runnableFuture.isCancelled());
+        }
+
+        executor.shutdownNow();
+    }
     /**
      * The correct command is chosen based on its type during the runtime.
      * For example when the user prompts the '/help' command, the map returns the helpCommand bean and then the execute()
@@ -120,20 +132,25 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event){ 
         LOGGER.info("Message received from {} - Content: {} - ENTER", event.getInteraction().getUser().getName(), event.getFullCommandName());
-        executor.execute(() -> {
-                    try {
-                        if (commands.containsKey(event.getFullCommandName())) {
-                            event.deferReply().queue(); // Tell discord we received the command, send a thinking... message to the user
-                            Command command = commands.get(event.getFullCommandName());
-                            command.execute(event);
-                        }
-                    } catch (RuntimeException npe){
-                        EmbedBuilder embedBuilder = new EmbedBuilder().setTitle("We encountered an error during command execution :(");
-                        event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
-                        LOGGER.error("ERROR:", npe);
-                    }
-        });
+        futuresSet.add(executor.submit(getRunnable(event)));
         LOGGER.info("Message received from {} - Content: {} - LEAVE", event.getInteraction().getUser().getName(), event.getFullCommandName());
+    }
+
+    @NotNull
+    private Runnable getRunnable(SlashCommandInteractionEvent event) {
+        return () -> {
+            try {
+                if (commands.containsKey(event.getFullCommandName())) {
+                    event.deferReply().queue(); // Tell discord we received the command, send a thinking... message to the user
+                    Command command = commands.get(event.getFullCommandName());
+                    command.execute(event);
+                }
+            } catch (RuntimeException runtimeException){
+                EmbedBuilder embedBuilder = new EmbedBuilder().setTitle("We encountered an error during command execution :(");
+                event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
+                LOGGER.error("ERROR:", runtimeException);
+            }
+        };
     }
 
     /**
