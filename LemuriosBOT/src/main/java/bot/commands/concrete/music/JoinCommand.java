@@ -1,7 +1,7 @@
 package bot.commands.concrete.music;
 
 import bot.commands.Command;
-import bot.music.MusicPlayerManager;
+import bot.application.utils.music.MusicPlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.util.Objects;
 
-import static bot.constants.Commands.JOIN_COMMAND;
+import static bot.application.constants.Commands.JOIN_COMMAND;
 
 @Service
 public class JoinCommand extends Command {
@@ -24,7 +24,6 @@ public class JoinCommand extends Command {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("{} has requested the Join command - ENTER.", event.getUser().getName());
-        createHistoryEntry(event);
         EmbedBuilder embedBuilder = new EmbedBuilder();
         try{
             VoiceChannel voiceChannel = Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(event.getInteraction().getMember()).getVoiceState()).getChannel()).asVoiceChannel());

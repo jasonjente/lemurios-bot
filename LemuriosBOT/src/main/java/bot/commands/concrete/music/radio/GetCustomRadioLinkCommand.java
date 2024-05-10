@@ -1,9 +1,9 @@
 package bot.commands.concrete.music.radio;
 
 import bot.commands.Command;
-import bot.constants.Commands;
-import bot.services.leveling.repositories.CustomLinkRepository;
-import bot.services.model.CustomLink;
+import bot.application.constants.Commands;
+import bot.application.services.repositories.CustomLinkRepository;
+import bot.application.services.model.CustomLink;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class GetCustomRadioLinkCommand extends Command {
         String guildId = event.getGuild().getId();
         EmbedBuilder embedBuilder = new EmbedBuilder();
         List<CustomLink> customLinkList = customLinkRepository.getCustomLinksByDiscordServer(guildId);
-        if(!customLinkList.isEmpty()) {
+        if (!customLinkList.isEmpty()) {
             embedBuilder.setTitle("Lemurios Music BOT - Here is your playlist Link!").setColor(Color.YELLOW);
             for (CustomLink customLink:customLinkList){
                 embedBuilder.addField("Genre:", customLink.getGenre() + " , url: "+ customLink.getUrl(), false);
@@ -37,7 +37,6 @@ public class GetCustomRadioLinkCommand extends Command {
         }
 
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
-        createHistoryEntry(event);
         earnPoints(event);
 
         LOGGER.info("{} has requested to get the saved URLs, full command total results: {} - LEAVE", event.getUser().getName(), customLinkList.size());

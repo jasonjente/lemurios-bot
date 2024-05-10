@@ -1,7 +1,7 @@
 package bot.commands.concrete.music;
 
 import bot.commands.Command;
-import bot.music.MusicPlayerManager;
+import bot.application.utils.music.MusicPlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static bot.constants.Commands.DISCONNECT_COMMAND;
+import static bot.application.constants.Commands.DISCONNECT_COMMAND;
 
 @Service
 public class DisconnectCommand extends Command {
@@ -19,7 +19,6 @@ public class DisconnectCommand extends Command {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("{} has requested the Disconnect command - ENTER.", event.getUser().getName());
-        createHistoryEntry(event);
         EmbedBuilder embedBuilder = new EmbedBuilder();
         try{
             String disconnectedChannel = musicPlayerManager.disconnectFromVoiceChannel(event);

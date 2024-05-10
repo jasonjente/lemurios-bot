@@ -3,8 +3,8 @@ package bot.commands.concrete.music;
 import bot.commands.Command;
 import bot.commands.concrete.music.youtube.YoutubeResult;
 import bot.commands.concrete.music.youtube.YoutubeSearcher;
-import bot.exceptions.YoutubeSearchException;
-import bot.music.MusicPlayerManager;
+import bot.application.exceptions.YoutubeSearchException;
+import bot.application.utils.music.MusicPlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.util.regex.Pattern;
 
-import static bot.constants.Commands.PLAY_COMMAND;
+import static bot.application.constants.Commands.PLAY_COMMAND;
 
 @Service
 public class PlayCommand extends Command {
@@ -39,12 +39,12 @@ public class PlayCommand extends Command {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         if (event.getInteraction().getMember().getVoiceState() != null) {
             String song = event.getInteraction().getOptions().get(0).getAsString();
-            if(!(isValidUrl(song) || isValidYoutubeURL(song))){
+            if (!(isValidUrl(song) || isValidYoutubeURL(song))){
                 //if the user did not provide a url then we have to construct the URL by searching YouTube for the title
                 // and (lazily) getting the first result
                 try {
                     YoutubeResult youtubeResult = youtubeSearcher.search(song);
-                    if(youtubeResult.getPlaylistUrl() != null){
+                    if (youtubeResult.getPlaylistUrl() != null){
                         song = youtubeResult.getPlaylistUrl();
                     } else {
                         song = youtubeResult.getVideoURL();
@@ -63,7 +63,6 @@ public class PlayCommand extends Command {
             embedBuilder.addField("Error:", "To call the bot you have to be in a voice channel.", false);
         }
 
-        createHistoryEntry(event);
         earnPoints(event);
         LOGGER.info("{} has requested the Play command. full command: {} - ENTER", event.getUser().getName(), event.getFullCommandName());
 

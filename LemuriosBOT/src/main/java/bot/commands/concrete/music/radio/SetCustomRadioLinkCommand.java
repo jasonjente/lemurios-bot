@@ -1,9 +1,9 @@
 package bot.commands.concrete.music.radio;
 
 import bot.commands.Command;
-import bot.constants.Commands;
-import bot.services.dataservice.DataService;
-import bot.services.model.CustomLink;
+import bot.application.constants.Commands;
+import bot.application.services.data.DataService;
+import bot.application.services.model.CustomLink;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class SetCustomRadioLinkCommand extends Command {
         String url = event.getInteraction().getOptions().get(0).getAsString();
         String genre = event.getInteraction().getOptions().get(1).getAsString();
         CustomLink customLink = dataService.findCustomLinkByDiscordServerAndGenre(event.getGuild().getId(), genre);
-        if(customLink != null){
+        if (customLink != null){
             customLink.setUrl(url);
         } else {
             customLink = new CustomLink(url, guildId, genre);
@@ -37,7 +37,6 @@ public class SetCustomRadioLinkCommand extends Command {
 
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
 
-        createHistoryEntry(event);
         earnPoints(event);
         LOGGER.info("{} has requested to save a new URL, full command: {} - LEAVE", event.getUser().getName(), url);
     }

@@ -1,8 +1,8 @@
 package bot.commands.concrete.music.radio;
 
 import bot.commands.Command;
-import bot.constants.Commands;
-import bot.services.dataservice.DataService;
+import bot.application.constants.Commands;
+import bot.application.services.data.DataService;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
@@ -32,7 +32,6 @@ public class DeleteAllCustomRadioLinkCommand extends Command {
         String message = success ? "successful.":"not successful.";
         embedBuilder.setTitle("LEMURIOS BOT operation delete radio urls all was " + message);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
-        createHistoryEntry(event);
         earnPoints(event);
         LOGGER.info("{} has to delete a genre, full command: {} - LEAVE - success: {}", event.getUser().getName(), event.getFullCommandName(), success);
     }

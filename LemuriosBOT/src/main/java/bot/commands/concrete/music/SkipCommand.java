@@ -1,7 +1,7 @@
 package bot.commands.concrete.music;
 
 import bot.commands.Command;
-import bot.music.MusicPlayerManager;
+import bot.application.utils.music.MusicPlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.util.Objects;
 
-import static bot.constants.Commands.SKIP_COMMAND;
+import static bot.application.constants.Commands.SKIP_COMMAND;
 
 @Service
 public class SkipCommand extends Command {
@@ -36,7 +36,6 @@ public class SkipCommand extends Command {
             LOGGER.warn("Not playing any songs ?");
             embedBuilder.addField("Lemurios Music BOT has no songs in its queue", "Use /play to add a song to the queue.", true);
         }
-        createHistoryEntry(event);
         earnPoints(event);
         LOGGER.info("{} has requested the Skip command.", event.getUser().getName());
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();

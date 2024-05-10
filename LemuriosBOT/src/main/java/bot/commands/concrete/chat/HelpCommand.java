@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-import static bot.constants.Commands.*;
-import static bot.constants.Constants.*;
+import static bot.application.constants.Commands.*;
+import static bot.application.constants.Constants.*;
 
 @Service
 public class HelpCommand extends Command {
@@ -22,7 +22,6 @@ public class HelpCommand extends Command {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("helpCommand - ENTER - {} called for help", event.getUser().getName());
-        createHistoryEntry(event);
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setTitle("LEMURIOS BOT Help Center.")
                 .setDescription(HELLO.getValue()+ event.getUser().getName() + HELP_COMMENT.getValue());

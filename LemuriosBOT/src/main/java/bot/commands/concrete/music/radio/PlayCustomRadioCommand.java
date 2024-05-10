@@ -1,9 +1,9 @@
 package bot.commands.concrete.music.radio;
 
 import bot.commands.Command;
-import bot.music.MusicPlayerManager;
-import bot.services.dataservice.DataService;
-import bot.services.model.CustomLink;
+import bot.application.utils.music.MusicPlayerManager;
+import bot.application.services.data.DataService;
+import bot.application.services.model.CustomLink;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.util.List;
 
-import static bot.constants.Commands.PLAY_RADIO;
+import static bot.application.constants.Commands.PLAY_RADIO;
 
 @Service
 public class PlayCustomRadioCommand extends Command {
@@ -34,17 +34,17 @@ public class PlayCustomRadioCommand extends Command {
         if (event.getUser().isBot()) return;
         String guildId = event.getGuild().getId();
         String genre = event.getInteraction().getOptions().get(0).getAsString();
-        List<CustomLink> list = dataService.findCustomLinksByDiscordServerAndGenre(guildId);
+        List<CustomLink> list = dataService.findCustomLinksByDiscordServer(guildId);
         CustomLink customLink = null;
 
-        for(CustomLink entry:list){
+        for (CustomLink entry:list){
             if (genre.equals(entry.getGenre())){
                 customLink = entry;
                 break;
             }
         }
 
-        if(customLink != null){
+        if (customLink != null){
             if (event.getInteraction().getMember().getVoiceState() != null) {
                 String song = customLink.getUrl();
                 TextChannel textChannel = event.getChannel().asTextChannel();
@@ -62,7 +62,6 @@ public class PlayCustomRadioCommand extends Command {
             embedBuilder.addField("Error:", "Please register first a URL by using the /set-radio command!", false);
         }
 
-        createHistoryEntry(event);
         earnPoints(event);
         LOGGER.info("{} has requested the PlayCustomRadioCommand command. full command: {} - ENTER", event.getUser().getName(), event.getFullCommandName());
 

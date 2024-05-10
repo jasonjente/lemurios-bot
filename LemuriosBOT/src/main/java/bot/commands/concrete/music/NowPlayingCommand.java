@@ -1,7 +1,7 @@
 package bot.commands.concrete.music;
 
 import bot.commands.Command;
-import bot.music.MusicPlayerManager;
+import bot.application.utils.music.MusicPlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
@@ -13,7 +13,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Objects;
 
-import static bot.constants.Commands.NOW_PLAYING;
+import static bot.application.constants.Commands.NOW_PLAYING;
 
 @Service
 public class NowPlayingCommand extends Command {
@@ -24,11 +24,10 @@ public class NowPlayingCommand extends Command {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("{} has requested the Now Playing command - ENTER.", event.getUser().getName());
-        createHistoryEntry(event);
         EmbedBuilder embedBuilder = new EmbedBuilder();
         try {
             List<String> songInQueue = musicPlayerManager.getSongPlaying(Objects.requireNonNull(event.getGuild()));
-            if(!songInQueue.isEmpty()) {
+            if (!songInQueue.isEmpty()) {
                 embedBuilder.setTitle("LEMURIOS BOT - Now Playing: " + songInQueue.get(0)).setColor(Color.ORANGE);
                 String currentlyPlayingValue = musicPlayerManager.getTimeRemaining(event.getGuild());
                 embedBuilder.addField("Time: ", currentlyPlayingValue,false);

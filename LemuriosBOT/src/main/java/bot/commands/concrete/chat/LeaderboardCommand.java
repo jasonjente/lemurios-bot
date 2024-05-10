@@ -1,8 +1,8 @@
 package bot.commands.concrete.chat;
 
 import bot.commands.Command;
-import bot.services.model.LeaderboardResult;
-import bot.services.leveling.LevelingService;
+import bot.application.services.model.LeaderboardResult;
+import bot.application.services.leveling.LevelingService;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static bot.constants.Commands.LEADERBOARD_COMMAND;
+import static bot.application.constants.Commands.LEADERBOARD_COMMAND;
 
 @Service
 public class LeaderboardCommand extends Command {
@@ -22,13 +22,17 @@ public class LeaderboardCommand extends Command {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("LeaderboardCommand() - Enter");
-        createHistoryEntry(event);
         EmbedBuilder embedBuilder = new EmbedBuilder();
         List<LeaderboardResult> leaderboardResults = levelingService.getLeaderboardForGuild(event);
 
+        var counter = 0;
         for (LeaderboardResult result : leaderboardResults){
+            if (counter == 10){
+                break;
+            }
             String valueMessage = "Points: " + result.getPoints() + " , Level: " + result.getLevel();
             embedBuilder.addField("User: " + result.getUserTag(), valueMessage,false);
+            counter++;
         }
 
         embedBuilder.setColor(java.awt.Color.PINK).setFooter("NOW GTFO HERE!\n With Best Regards Lemurios BOT.");

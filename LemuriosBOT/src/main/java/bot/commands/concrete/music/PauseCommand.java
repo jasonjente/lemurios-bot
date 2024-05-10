@@ -1,7 +1,7 @@
 package bot.commands.concrete.music;
 
 import bot.commands.Command;
-import bot.music.MusicPlayerManager;
+import bot.application.utils.music.MusicPlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
-import static bot.constants.Commands.PAUSE_COMMAND;
+import static bot.application.constants.Commands.PAUSE_COMMAND;
 
 @Service
 public class PauseCommand extends Command {
@@ -31,7 +31,6 @@ public class PauseCommand extends Command {
         }catch (NullPointerException e){
             embedBuilder.addField("Could not pause!", "To pause, verify that you are connected to a voice channel or that the bot has access to the voice channel.", true);
         }
-        createHistoryEntry(event);
         earnPoints(event);
         event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
     }

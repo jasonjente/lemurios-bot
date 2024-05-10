@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.stereotype.Service;
 
-import static bot.constants.Commands.CREDITS_COMMAND;
+import static bot.application.constants.Commands.CREDITS_COMMAND;
 
 @Service
 public class CreditsCommand extends Command {
@@ -20,7 +20,6 @@ public class CreditsCommand extends Command {
     public void execute(SlashCommandInteractionEvent event) {
         LOGGER.info("creditsCommand - ENTER");
         String version = buildProperties.getVersion();
-        createHistoryEntry(event);
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Lemurios BOT Credits");
         embedBuilder.setDescription("This bot was created by OSO ZW XATZO, Development started in April 2023.");

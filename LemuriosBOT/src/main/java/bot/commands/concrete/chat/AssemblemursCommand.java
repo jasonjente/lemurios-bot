@@ -1,14 +1,11 @@
 package bot.commands.concrete.chat;
 
+import bot.application.constants.Lemurioi;
 import bot.commands.Command;
-import bot.constants.Lemurioi;
-import bot.services.leveling.Jackpot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,12 +14,14 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static bot.constants.Commands.ASSEMLEMURS_COMMAND;
-import static bot.constants.Constants.*;
+import static bot.application.constants.Commands.ASSEMLEMURS_COMMAND;
+import static bot.application.constants.Constants.*;
 
 @Service
 public class AssemblemursCommand extends Command {
@@ -38,11 +37,10 @@ public class AssemblemursCommand extends Command {
 
 
     @Override
-    public void execute(SlashCommandInteractionEvent event) {
+    public void execute(final SlashCommandInteractionEvent event) {
         LOGGER.info("assemblemursCommand - ENTER");
-        if(userIsLemurWorthy(event)){
+        if (userIsLemurWorthy(event)) {
             doAssemble(event);
-            createHistoryEntry(event);
         } else {
             notifyUnworthy(event);
         }
@@ -51,7 +49,8 @@ public class AssemblemursCommand extends Command {
 
     @Override
     public String getCommandDescription() {
-        return "pings all lemurs that belong in the LEMURIOI role. \nTo call the other lemurs you will have to be a member of lemurs :).";
+        return "pings all lemurs that belong in the LEMURIOI role. " +
+                "\nTo call the other lemurs you will have to be a member of lemurs :).";
     }
 
     @Override
@@ -59,7 +58,7 @@ public class AssemblemursCommand extends Command {
         return ASSEMLEMURS_COMMAND.getCommandName();
     }
 
-    private boolean userIsLemurWorthy(SlashCommandInteractionEvent event) {
+    private boolean userIsLemurWorthy(final SlashCommandInteractionEvent event) {
         String sender = event.getUser().getName();
         Role lemurs = event.getGuild().getRolesByName(ROLE_NAME, true).get(0);
         if (!event.getMember().getRoles().contains(lemurs)) {
@@ -70,14 +69,14 @@ public class AssemblemursCommand extends Command {
         return true;
     }
 
-    private void doAssemble(SlashCommandInteractionEvent event) {
+    private void doAssemble(final SlashCommandInteractionEvent event) {
         Role lemurs = event.getGuild().getRolesByName(ROLE_NAME, true).get(0);
         User author = event.getUser();
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setTitle("ASSEMBLEMURS")
                 .setColor(Color.YELLOW);
 
-        if(ENABLE_TIMEOUTS) {
+        if (ENABLE_TIMEOUTS) {
             LocalDateTime lastTimeUsed;
 
             if (timeoutMap.containsKey(author.getId())) {
@@ -94,20 +93,10 @@ public class AssemblemursCommand extends Command {
                 notifyChannel(event, lemurs, author, embedBuilder);
                 sentPrivateMessagesToTheUsers(event, lemurs);
                 timeoutMap.put(author.getId(), LocalDateTime.now());
-                Jackpot jackpot = jackpot(event);
-
-                if(jackpot.isWon()){
-                    String winningMessage = "Congratulations " + event.getUser().getName() + " ,you won the jackpot for a total of " + jackpot.getPoints();
-                    LOGGER.info("{} won the jackpot with total winings: {}", event.getUser().getName(), jackpot.getPoints());
-                    event.getChannel().sendMessage(winningMessage).queue();
-                    earnPoints(event, jackpot.getPoints());
-                } else {
-                    earnPoints(event);
-                }
             } else {
                 String user = author.getName();
                 String message = user + ", you can use this command every " + MAX_TIME_OUT_FOR_ASSEMBLEMURS
-                        + " seconds and the last time you used the command was: " + duration.getSeconds() + " seconds ago.";
+                    + " seconds and the last time you used the command was: " + duration.getSeconds() + " seconds ago.";
                 embedBuilder.addField("[ANTI-SPAM Timeout]", message, true);
                 event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
             }
@@ -118,37 +107,42 @@ public class AssemblemursCommand extends Command {
         }
     }
 
-    private void notifyChannel(SlashCommandInteractionEvent event, Role lemurs, User author, EmbedBuilder embedBuilder) {
-        if(event.getOptions().isEmpty()) {
-            String textMessage = lemurs.getAsMention() + ASSEMBLEMURS_MESSAGE.getValue()
+    private void notifyChannel(final SlashCommandInteractionEvent event, final Role lemurs,
+                               final User author, final EmbedBuilder embedBuilder) {
+        if (event.getOptions().isEmpty()) {
+            var textMessage = lemurs.getAsMention() + ASSEMBLEMURS_MESSAGE.getValue()
                     + author.getAsMention() + " wants you to join them. ";
-            event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.addField("Hello!", textMessage, true).build()).queue();
-        }else {
-            String game = event.getOptions().get(0).getAsString();
-            String textMessage = lemurs.getAsMention() + ASSEMBLEMURS_MESSAGE.getValue()
+            event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.addField("Hello!", textMessage,
+                    true).build()).queue();
+        } else {
+            var game = event.getOptions().get(0).getAsString();
+            var textMessage = lemurs.getAsMention() + ASSEMBLEMURS_MESSAGE.getValue()
                     + author.getAsMention() + " wants you to play " + game + " with them!";
-            event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.addField("Hello!", textMessage, true).build()).queue();
+            event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.addField("Hello!", textMessage,
+                    true).build()).queue();
         }
     }
 
-    private void sentPrivateMessagesToTheUsers(SlashCommandInteractionEvent event, Role lemurs) {
-        if (ENABLE_SEND_PRIVATE_MESSAGES){
-            List<Role> roleLemurs = new ArrayList<>();
+    private void sentPrivateMessagesToTheUsers(final SlashCommandInteractionEvent event, final Role lemurs) {
+        if (ENABLE_SEND_PRIVATE_MESSAGES) {
+            var roleLemurs = new ArrayList<>();
             roleLemurs.add(lemurs);
-            List<Member> membersWithLemursRole = event.getGuild().loadMembers()
+            var membersWithLemursRole = event.getGuild().loadMembers()
                     .get()
                     .stream()
                     .filter(member -> member.getRoles().contains(lemurs))
                     .collect(Collectors.toList());
-            for (Member member : membersWithLemursRole) {
-                //prevents bot from sending to itself or to the caller or the users that are in the same voice channel as the caller
+            for (var member : membersWithLemursRole) {
+                //prevents bot from sending to itself or to the caller or
+                // the users that are in the same voice channel as the caller
                 if (member.getUser().getId().equals(event.getJDA().getSelfUser().getId())
                         || member.getUser().equals(event.getUser())
                         || isUserInSameVoiceChannelAsUser(event, member)) {
                     continue;
                 }
-                PrivateChannel channel = member.getUser().openPrivateChannel().complete();
-                String message = HELLO.getValue() + member.getUser().getName() + " Lemurios - " + event.getUser().getAsMention()
+                var channel = member.getUser().openPrivateChannel().complete();
+                var message = HELLO.getValue() + member.getUser().getName() + " Lemurios - "
+                        + event.getUser().getAsMention()
                         + INVITE_MESSAGE.getValue();
                 channel.sendMessage(message).queue();
                 LOGGER.info("Sent direct message to {}.", member.getUser().getName());
@@ -156,33 +150,42 @@ public class AssemblemursCommand extends Command {
         }
     }
 
-    public boolean isUserInSameVoiceChannelAsUser(SlashCommandInteractionEvent event, Member lemurMember){
+    public boolean isUserInSameVoiceChannelAsUser(final SlashCommandInteractionEvent event, final Member lemurMember) {
         try {
             Objects.requireNonNull(event.getInteraction().getMember()).getVoiceState();
             if (event.getInteraction().getMember().getVoiceState() != null
                     && event.getInteraction().getMember().getVoiceState().inAudioChannel()) {
-                VoiceChannel voiceChannel = event.getInteraction().getMember().getVoiceState().getChannel().asVoiceChannel();
-                List<Member> members = voiceChannel.getMembers();
-                boolean isLemur = members.contains(lemurMember);
-                LOGGER.info("Checking user {} is in the same voice channel as the caller {}: {}", lemurMember.getUser().getName(), event.getUser().getName(), isLemur);
+                var voiceChannel = event.getInteraction().getMember().getVoiceState().getChannel().asVoiceChannel();
+                var members = voiceChannel.getMembers();
+                var isLemur = members.contains(lemurMember);
+                LOGGER.info("Checking user {} is in the same voice channel as the caller {}: {}",
+                        lemurMember.getUser().getName(), event.getUser().getName(), isLemur);
                 return isLemur;
             }
-        }catch (NullPointerException exception){
+        } catch (NullPointerException exception) {
             //not in a voice channel so suppress and return false
         }
 
         return false;
     }
-    private void notifyUnworthy(SlashCommandInteractionEvent event) {
+
+    private void notifyUnworthy(final SlashCommandInteractionEvent event) {
         String sender = event.getUser().getName();
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setTitle(sender + " sorry, but you are not worthy enough to call the Lemurs. :/")
                 .setDescription("Sorry " + sender + ", it seems you dont belong to the lemurs group.")
-                .addField("Q: What do I now?", "A: To become a member of lemurs you have to change your name in League of Legends to a name with this format (also legally):", false)
-                .addField("1: How should my name look like?", "Lemurios XXX, where XXX are three **(3)** integers like 123, 012, 006", true)
-                .addField("2: Is there any name I cannot choose?", "Lemurios 069 and Lemurios 420 are forbidden from being chosen", true)
-                .addField("3: What are the available Lemurios XXX names?", "Here is a list with all claimed lemurs: \n" + Lemurioi.usedNames(), true)
-                .addField("Finally ", "After these steps have been fulfilled, please contact Lemurios 002 or Lemurios 007 to proceed with your application.", true)
+                .addField("Q: What do I now?",
+                        "A: To become a member of lemurs you have to change your name " +
+                                "in League of Legends to a name with this format (also legally):", false)
+                .addField("1: How should my name look like?",
+                        "Lemurios XXX, where XXX are three **(3)** integers like 123, 012, 006", true)
+                .addField("2: Is there any name I cannot choose?",
+                        "Lemurios 069 and Lemurios 420 are forbidden from being chosen", true)
+                .addField("3: What are the available Lemurios XXX names?",
+                        "Here is a list with all claimed lemurs: \n" + Lemurioi.usedNames(), true)
+                .addField("Finally ",
+                        "After these steps have been fulfilled, please contact Lemurios 002 or Lemurios 007" +
+                                " to proceed with your application.", true)
                 .setColor(java.awt.Color.RED)
                 .setFooter(GTFO_MESSAGE.getValue());
 
