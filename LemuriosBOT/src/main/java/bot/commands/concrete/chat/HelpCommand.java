@@ -7,17 +7,15 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 import static bot.application.constants.Commands.*;
-import static bot.application.constants.Constants.*;
+import static bot.application.constants.MessageConstants.*;
 
-@Service
+
 public class HelpCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(HelpCommand.class);
-
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {

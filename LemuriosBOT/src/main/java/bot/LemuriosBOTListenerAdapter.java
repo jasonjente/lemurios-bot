@@ -15,7 +15,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -31,6 +30,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static bot.application.constants.Commands.*;
+import static net.dv8tion.jda.api.interactions.commands.build.Commands.slash;
 
 @Component
 @RequiredArgsConstructor
@@ -88,12 +88,27 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
      */
     @PostConstruct
     private void init() {
+
+        /*
+            Chat commands
+         */
         commands.put(assemblemursCommand.getCommandName(), assemblemursCommand);
-        commands.put(takenNamesCommand.getCommandName(), takenNamesCommand);
+        commands.put(createInviteCommand.getCommandName(), createInviteCommand);
         commands.put(creditsCommand.getCommandName(), creditsCommand);
         commands.put(helpCommand.getCommandName(), helpCommand);
+        commands.put(leaderboardCommand.getCommandName(), leaderboardCommand);
+        commands.put(takenNamesCommand.getCommandName(), takenNamesCommand);
+
+        /*
+            Meme commands
+         */
         commands.put(memeCommand.getCommandName(), memeCommand);
+        commands.put(uploadBatchMemesCommand.getCommandName(), uploadBatchMemesCommand);
         commands.put(uploadMemeCommand.getCommandName(), uploadMemeCommand);
+
+        /*
+            Music commands
+         */
         commands.put(playCommand.getCommandName(), playCommand);
         commands.put(pauseCommand.getCommandName(), pauseCommand);
         commands.put(skipCommand.getCommandName(), skipCommand);
@@ -102,16 +117,18 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
         commands.put(nowPlayingCommand.getCommandName(), nowPlayingCommand);
         commands.put(resumeCommand.getCommandName(), resumeCommand);
         commands.put(disconnectCommand.getCommandName(), disconnectCommand);
-        commands.put(leaderboardCommand.getCommandName(), leaderboardCommand);
         commands.put(playCustomRadioCommand.getCommandName(), playCustomRadioCommand);
         commands.put(setCustomRadioLinkCommand.getCommandName(), setCustomRadioLinkCommand);
         commands.put(getCustomRadioLinkCommand.getCommandName(), getCustomRadioLinkCommand);
         commands.put(deleteAllCustomRadioLinkCommand.getCommandName(), deleteAllCustomRadioLinkCommand);
         commands.put(deleteGenreCustomRadioLinkCommand.getCommandName(), deleteGenreCustomRadioLinkCommand);
-        commands.put(createInviteCommand.getCommandName(), createInviteCommand);
-        commands.put(uploadBatchMemesCommand.getCommandName(), uploadBatchMemesCommand);
+
     }
 
+    /**
+     * Invoked on the shutdown of the application. Makes sure that futures that are still pending are getting canceled
+     * ASAP to avoid memory leaks and shuts down the executor to avoid the spawning of new threads.
+     */
     @PreDestroy
     private void onDestroy() {
         LOGGER.info("Shutting down listener!");
@@ -168,91 +185,101 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
     private List<CommandData> setupCommandOptions() {
         var commandData = new ArrayList<CommandData>();
 
-        /* Chat Commands */
+        /*
+            Chat Commands
+         */
+
         // /assemblemurs
         var assemblemursOptions = new OptionData(OptionType.STRING,
                 "game", "(optional) Specify what game you want to play!", false);
-        commandData.add(Commands.slash(ASSEMLEMURS_COMMAND.getCommandName(),
-                "Pings all Lemurioi Role Members -- Can be used if and only if you belong to that group.").addOptions(assemblemursOptions));
+        commandData.add(slash(ASSEMLEMURS_COMMAND.getCommandName(),
+                "Pings all Lemurioi Role Members -- Can be used if and only if you belong to that group.")
+                .addOptions(assemblemursOptions));
         // /taken-names
-        commandData.add(Commands.slash(TAKEN_NAMES.getCommandName(),
+        commandData.add(slash(TAKEN_NAMES.getCommandName(),
                 "Prints out all taken Lemur names."));
         // /credits
-        commandData.add(Commands.slash(CREDITS_COMMAND.getCommandName(),
+        commandData.add(slash(CREDITS_COMMAND.getCommandName(),
                 "Prints out the application's credits."));
         // /help
-        commandData.add(Commands.slash(HELP_COMMAND.getCommandName(),
+        commandData.add(slash(HELP_COMMAND.getCommandName(),
                 "Prints all the available commands."));
         // /leaderboard
-        commandData.add(Commands.slash(LEADERBOARD_COMMAND.getCommandName(),
+        commandData.add(slash(LEADERBOARD_COMMAND.getCommandName(),
                 leaderboardCommand.getCommandDescription()));
         // /invite
-        commandData.add(Commands.slash(createInviteCommand.getCommandName(),
+        commandData.add(slash(createInviteCommand.getCommandName(),
                 createInviteCommand.getCommandDescription()));
 
-        /* Image Commands */
-        // /detect-edges
-        var optionDataDetection = new OptionData(OptionType.ATTACHMENT,
-                "image", "Upload an image to detect its edges.", true);
-        commandData.add(Commands.slash(DETECT_IMAGE_EDGES_COMMAND.getCommandName(),
-                "Upload an image and the bot will return the detected edges in that image.").addOptions(optionDataDetection));
+        /*
+            Meme Commands
+        */
         // /meme
-        commandData.add(Commands.slash(MEME_COMMAND.getCommandName(),
+        commandData.add(slash(MEME_COMMAND.getCommandName(),
                 "The bot will return with a random meme."));
         // /upload
         var optionDataMeme = new OptionData(OptionType.ATTACHMENT,
                 "meme-image", "Upload a meme to the BOT", true);
-        commandData.add(Commands.slash(UPLOAD_MEME_COMMAND.getCommandName(),
+        commandData.add(slash(UPLOAD_MEME_COMMAND.getCommandName(),
                 "Upload a meme to the Bot.").addOptions(optionDataMeme));
         // /upload-batch-memes
         var optionDataBatchMemes = new OptionData(OptionType.ATTACHMENT,
                 "zip-file", "Upload a zip file containing memes!", true);
-        commandData.add(Commands.slash(uploadBatchMemesCommand.getCommandName(),
+        commandData.add(slash(uploadBatchMemesCommand.getCommandName(),
                 "Upload a meme to the Bot.").addOptions(optionDataBatchMemes));
 
-        /* Music Commands */
+        /*
+            Music Commands
+         */
+
         // /play :url
         var optionDataSongToPlay = new OptionData(OptionType.STRING, "search",
                 "Enter the title you are looking for or a URL", true);
-        commandData.add(Commands.slash(PLAY_COMMAND.getCommandName(),
-                "Search and play a song via YouTube or from a discord CDN link.").addOptions(optionDataSongToPlay));
+        commandData.add(slash(PLAY_COMMAND.getCommandName(),
+                "Search and play a song via YouTube or from a discord CDN link.")
+                .addOptions(optionDataSongToPlay));
+
         // /play-radio :genre
         var playCustomRadioGenreOptionData = new OptionData((OptionType.STRING), GENRE_OPTION,
                 "specify the genre you want to add.", true);
-        commandData.add(Commands.slash(playCustomRadioCommand.getCommandName(),
+        commandData.add(slash(playCustomRadioCommand.getCommandName(),
                 playCustomRadioCommand.getCommandDescription()).addOptions(playCustomRadioGenreOptionData));
         // /skip
-        commandData.add(Commands.slash(SKIP_COMMAND.getCommandName(), "Skips current song from the song list."));
+        commandData.add(
+                slash(SKIP_COMMAND.getCommandName(), "Skips current song from the song list."));
         // /pause
-        commandData.add(Commands.slash(PAUSE_COMMAND.getCommandName(), "Pauses current song from the song list."));
+        commandData.add(
+                slash(PAUSE_COMMAND.getCommandName(), "Pauses current song from the song list."));
         // /resume
-        commandData.add(Commands.slash(STOP_COMMAND.getCommandName(), "Stops execution and empties the song list."));
+        commandData.add(
+                slash(STOP_COMMAND.getCommandName(), "Stops execution and empties the song list."));
         // /join
-        commandData.add(Commands.slash(JOIN_COMMAND.getCommandName(), "Bot joins the voice channel the caller is in."));
+        commandData.add(
+                slash(JOIN_COMMAND.getCommandName(), "Bot joins the voice channel the caller is in."));
         // /now-playing
-        commandData.add(Commands.slash(NOW_PLAYING.getCommandName(), "Bot prints the song it is currently playing."));
+        commandData.add(slash(NOW_PLAYING.getCommandName(), "Bot prints the song it is currently playing."));
         // /resume
-        commandData.add(Commands.slash(RESUME_COMMAND.getCommandName(), "Bot unpauses the song it paused."));
+        commandData.add(slash(RESUME_COMMAND.getCommandName(), "Bot unpauses the song it paused."));
         // /disconnect
-        commandData.add(Commands.slash(DISCONNECT_COMMAND.getCommandName(), "Bot disconnects and empties the queue."));
+        commandData.add(slash(DISCONNECT_COMMAND.getCommandName(), "Bot disconnects and empties the queue."));
         // /set-radio-url :url :genre
         var setCustomRadioCommandOptionDataUrl = new OptionData((OptionType.STRING),
                 "url", setCustomRadioLinkCommand.getCommandDescription(), true);
         var setCustomRadioCommandOptionDataGenre = new OptionData((OptionType.STRING),
                 GENRE_OPTION, "specify the genre you want to add.", true);
-        commandData.add(Commands.slash(setCustomRadioLinkCommand.getCommandName(),
+        commandData.add(slash(setCustomRadioLinkCommand.getCommandName(),
                 setCustomRadioLinkCommand.getCommandDescription()).addOptions(
-                        setCustomRadioCommandOptionDataUrl, setCustomRadioCommandOptionDataGenre));
+                setCustomRadioCommandOptionDataUrl, setCustomRadioCommandOptionDataGenre));
         // /get-radio-urls
-        commandData.add(Commands.slash(getCustomRadioLinkCommand.getCommandName(),
+        commandData.add(slash(getCustomRadioLinkCommand.getCommandName(),
                 getCustomRadioLinkCommand.getCommandDescription()));
         // /delete-genre
         var deleteByGenre = new OptionData((OptionType.STRING), GENRE_OPTION,
                 "specify the genre you want to delete.", true);
-        commandData.add(Commands.slash(deleteGenreCustomRadioLinkCommand.getCommandName(),
+        commandData.add(slash(deleteGenreCustomRadioLinkCommand.getCommandName(),
                 deleteGenreCustomRadioLinkCommand.getCommandDescription()).addOptions(deleteByGenre));
         // /delete-all
-        commandData.add(Commands.slash(deleteAllCustomRadioLinkCommand.getCommandName(),
+        commandData.add(slash(deleteAllCustomRadioLinkCommand.getCommandName(),
                 deleteAllCustomRadioLinkCommand.getCommandDescription()));
         return commandData;
     }

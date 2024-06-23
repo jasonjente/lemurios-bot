@@ -1,6 +1,6 @@
 package bot.application.services.meme;
 
-import bot.domain.MemeServerRecord;
+import bot.application.domain.MemeServerRecord;
 import bot.application.services.repositories.MemeRepository;
 import bot.application.services.model.Meme;
 import lombok.RequiredArgsConstructor;

@@ -7,11 +7,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import static bot.application.constants.Commands.DISCONNECT_COMMAND;
 
-@Service
+
 public class DisconnectCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(DisconnectCommand.class);
     private MusicPlayerManager musicPlayerManager;

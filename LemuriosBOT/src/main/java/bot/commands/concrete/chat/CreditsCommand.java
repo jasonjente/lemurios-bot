@@ -1,17 +1,17 @@
 package bot.commands.concrete.chat;
 
 import bot.commands.Command;
+import lombok.Setter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
-import org.springframework.stereotype.Service;
 
 import static bot.application.constants.Commands.CREDITS_COMMAND;
 
-@Service
+@Setter
 public class CreditsCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(CreditsCommand.class);
 

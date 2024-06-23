@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.time.Duration;
@@ -21,9 +20,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static bot.application.constants.Commands.ASSEMLEMURS_COMMAND;
-import static bot.application.constants.Constants.*;
+import static bot.application.constants.MessageConstants.*;
 
-@Service
 public class AssemblemursCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(AssemblemursCommand.class);
     private static final String ROLE_NAME = "LEMURIOI";
@@ -70,9 +68,9 @@ public class AssemblemursCommand extends Command {
     }
 
     private void doAssemble(final SlashCommandInteractionEvent event) {
-        Role lemurs = event.getGuild().getRolesByName(ROLE_NAME, true).get(0);
-        User author = event.getUser();
-        EmbedBuilder embedBuilder = new EmbedBuilder()
+        var lemurs = event.getGuild().getRolesByName(ROLE_NAME, true).get(0);
+        var author = event.getUser();
+        var embedBuilder = new EmbedBuilder()
                 .setTitle("ASSEMBLEMURS")
                 .setColor(Color.YELLOW);
 
@@ -86,7 +84,7 @@ public class AssemblemursCommand extends Command {
             }
 
             LocalDateTime currentTime = LocalDateTime.now();
-            Duration duration = Duration.between(lastTimeUsed, currentTime);
+            var duration = Duration.between(lastTimeUsed, currentTime);
             long timeDiffInSeconds = duration.getSeconds();
 
             if (timeDiffInSeconds > MAX_TIME_OUT_FOR_ASSEMBLEMURS) {

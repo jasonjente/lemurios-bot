@@ -30,7 +30,7 @@ public class YoutubeSearcher {
      * Call function to create API service object. Define and
      * execute API request. Print API response.
      *
-     * @throws GeneralSecurityException, IOException
+     * @throws GeneralSecurityException, IOException in case of errors during the track execution.
      */
     public YoutubeResult search(String requestedSong) throws YoutubeSearchException {
         LOGGER.info("search() - ENTER - requesting: {}", requestedSong);

@@ -1,4 +1,4 @@
-package bot.domain;
+package bot.application.domain;
 
 import bot.application.services.model.Meme;
 import lombok.Data;

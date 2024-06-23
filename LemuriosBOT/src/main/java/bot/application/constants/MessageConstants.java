@@ -1,7 +1,7 @@
 package bot.application.constants;
 
 
-public enum Constants {
+public enum MessageConstants {
     /**
      * This enum contains some values that are being used by the bot.
      */
@@ -14,7 +14,7 @@ public enum Constants {
 
     private final String value;
 
-    Constants(final String value) {
+    MessageConstants(final String value) {
         this.value = value;
     }
 

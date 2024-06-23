@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.Objects;
 
 import static bot.application.constants.Commands.NOW_PLAYING;
 
-@Service
+
 public class NowPlayingCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(NowPlayingCommand.class);
 

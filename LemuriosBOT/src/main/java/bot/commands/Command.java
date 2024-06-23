@@ -3,9 +3,8 @@ package bot.commands;
 import bot.application.services.leveling.LevelingService;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
+
 public abstract class Command {
 
     /**
@@ -15,8 +14,10 @@ public abstract class Command {
     private LevelingService levelingService;
 
     /**
-     * This method is
-     * @param event
+     * This method is the base method of all commands that can be executed. It takes as input a slash command event,
+     * which will call the appropriate bean.
+     *
+     * @param event the slash command interaction event that was invoked.
      */
     public abstract void execute(SlashCommandInteractionEvent event);
 

@@ -6,14 +6,13 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.awt.*;
 
 import static bot.application.constants.Commands.TAKEN_NAMES;
-import static bot.application.constants.Constants.GTFO_MESSAGE;
+import static bot.application.constants.MessageConstants.GTFO_MESSAGE;
 
-@Service
+
 public class TakenNamesCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(TakenNamesCommand.class);
 

@@ -10,14 +10,13 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static bot.application.constants.Commands.UPLOAD_MEME_COMMAND;
-@Service
+
 public class UploadMemeCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(UploadMemeCommand.class);
     private DiscordUtils discordUtils;

@@ -77,7 +77,7 @@ public class MusicPlayer {
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                createReturnMessageAndPlay(event, track, channel, voiceChannel, musicManager, embedBuilder);
+                createReturnMessageAndPlayTrack(event, track, channel, voiceChannel, musicManager, embedBuilder);
             }
 
             @Override
@@ -109,16 +109,17 @@ public class MusicPlayer {
         });
     }
 
-    private void createReturnMessageAndPlay(final SlashCommandInteractionEvent event,final AudioTrack track,
-                                            final TextChannel channel, final VoiceChannel voiceChannel,
-                                            final GuildMusicManager musicManager, final EmbedBuilder embedBuilder) {
+    private void createReturnMessageAndPlayTrack(final SlashCommandInteractionEvent event, final AudioTrack track,
+                                                 final TextChannel channel, final VoiceChannel voiceChannel,
+                                                 final GuildMusicManager musicManager, final EmbedBuilder embedBuilder) {
         embedBuilder.addField("Added to queue: ", track.getInfo().title, false);
         embedBuilder.setColor(Color.ORANGE);
         var inputStream = getThumbnailIfPossible(track.getInfo().identifier);
         embedBuilder.addField(new MessageEmbed.Field("duration: ", formatTime(track.getDuration()), true));
         if (inputStream != null) {
             embedBuilder.setImage("attachment://thumbnail.png");
-            event.getInteraction().getHook().editOriginalEmbeds().setFiles(FileUpload.fromData(inputStream, "thumbnail.png")).setEmbeds(embedBuilder.build()).queue();
+            event.getInteraction().getHook().editOriginalEmbeds().setFiles(
+                    FileUpload.fromData(inputStream, "thumbnail.png")).setEmbeds(embedBuilder.build()).queue();
         } else {
             event.getInteraction().getHook().editOriginalEmbeds().setEmbeds(embedBuilder.build()).queue();
         }

@@ -6,21 +6,18 @@ import bot.commands.concrete.music.youtube.YoutubeSearcher;
 import bot.application.exceptions.YoutubeSearchException;
 import bot.application.utils.music.MusicPlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.util.regex.Pattern;
 
 import static bot.application.constants.Commands.PLAY_COMMAND;
 
-@Service
+
 public class PlayCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlayCommand.class);
     private MusicPlayerManager musicPlayerManager;
@@ -53,11 +50,11 @@ public class PlayCommand extends Command {
                     LOGGER.error("Error while searching for a video with title {} \n ", event.getInteraction().getOptions().get(0).getAsString(), e);
                 }
             }
-            TextChannel textChannel = event.getChannel().asTextChannel();
-            VoiceChannel voiceChannel = event.getInteraction().getMember().getVoiceState().getChannel().asVoiceChannel();
-            LOGGER.info("Voice channel {}", voiceChannel.getName());
-            embedBuilder.setTitle(":musical_note: Lemurios BOT - Music Player :musical_note:");
-            musicPlayerManager.loadAndPlay(event, textChannel, voiceChannel, song, embedBuilder);
+            try {
+                musicPlayerManager.loadAndPlay(event, song, embedBuilder);
+            } catch (Exception exception) {
+                LOGGER.error("error", exception);
+            }
         } else {
             embedBuilder.setTitle("Lemurios Music BOT - Error.").setColor(Color.RED);
             embedBuilder.addField("Error:", "To call the bot you have to be in a voice channel.", false);

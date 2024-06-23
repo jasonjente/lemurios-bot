@@ -34,7 +34,11 @@ public class MusicPlayerManager {
     public void removeInstance(final String guildId){
         instances.remove(guildId);
     }
-    public void loadAndPlay(SlashCommandInteractionEvent event, TextChannel textChannel, VoiceChannel voiceChannel, String song, EmbedBuilder embedBuilder) {
+    public void loadAndPlay(SlashCommandInteractionEvent event, String song, EmbedBuilder embedBuilder) {
+        var textChannel = event.getChannel().asTextChannel();
+        var voiceChannel = event.getInteraction().getMember().getVoiceState().getChannel().asVoiceChannel();
+        LOGGER.info("Voice channel {}", voiceChannel.getName());
+        embedBuilder.setTitle(":musical_note: Lemurios BOT - Music Player :musical_note:");
         LOGGER.info("loadAndPlay() - ENTER - Attempting to play for Guild Id {}", voiceChannel.getGuild().getId());
         if (!instances.containsKey(voiceChannel.getGuild().getId())){
             addInstance(voiceChannel.getGuild().getId());
@@ -112,7 +116,7 @@ public class MusicPlayerManager {
         return disconnectedChannelName;
     }
 
-    public void joinVoiceChannel(SlashCommandInteractionEvent event, VoiceChannel voiceChannel) {
+    public void joinVoiceChannel(final SlashCommandInteractionEvent event, final VoiceChannel voiceChannel) {
         if (!instances.containsKey(voiceChannel.getGuild().getId())){
             addInstance(voiceChannel.getGuild().getId());
         }
@@ -120,10 +124,14 @@ public class MusicPlayerManager {
         player.connectToVoiceChannel(event.getGuild().getAudioManager(), voiceChannel);
     }
 
-    public void stopAndLoadAndPlay(SlashCommandInteractionEvent event, TextChannel textChannel, VoiceChannel voiceChannel, String song, EmbedBuilder embedBuilder) {
+    public void stopAndLoadAndPlay(final SlashCommandInteractionEvent event, final String song,
+                                   final EmbedBuilder embedBuilder) {
+        var textChannel = event.getChannel().asTextChannel();
+        var voiceChannel = event.getInteraction().getMember().getVoiceState().getChannel().asVoiceChannel();
+        LOGGER.info("Voice channel {}", voiceChannel.getName());
         if (instances.containsKey(textChannel.getGuild().getId())){
             stop(textChannel.getGuild());
         }
-        loadAndPlay(event, textChannel, voiceChannel, song, embedBuilder);
+        loadAndPlay(event, song, embedBuilder);
     }
 }

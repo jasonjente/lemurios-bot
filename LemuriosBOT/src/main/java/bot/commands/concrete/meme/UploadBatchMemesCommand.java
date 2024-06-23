@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +21,7 @@ import static bot.application.constants.Commands.UPLOAD_BATCH_MEMES_COMMAND;
 import static bot.application.utils.MemeUtils.createMemesFromFiles;
 import static bot.application.utils.MemeUtils.extractZipFile;
 
-@Service
+
 public class UploadBatchMemesCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(UploadBatchMemesCommand.class);
     private DiscordUtils discordUtils;

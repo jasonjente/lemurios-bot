@@ -9,12 +9,11 @@ import net.dv8tion.jda.api.utils.FileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 
 import static bot.application.constants.Commands.MEME_COMMAND;
-import static bot.application.constants.Constants.SORRY_MSG;
+import static bot.application.constants.MessageConstants.SORRY_MSG;
 
 
 /**
@@ -22,7 +21,7 @@ import static bot.application.constants.Constants.SORRY_MSG;
  * then converted into an Input Stream.
  * The event parameter contains relevant information like the author and the chat endpoints.
  */
-@Service
+
 public class MemeCommand extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(MemeCommand.class);
     private MemeService memeService;
