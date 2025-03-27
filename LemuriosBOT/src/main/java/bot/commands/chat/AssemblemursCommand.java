@@ -69,7 +69,7 @@ public class AssemblemursCommand extends Command {
     }
 
     private void doAssemble(final SlashCommandInteractionEvent event) {
-        var lemurs = event.getGuild().getRolesByName(ROLE_NAME, true).get(0);
+        var lemurs = event.getGuild().getRolesByName(ROLE_NAME, true).getFirst();
         var author = event.getUser();
         var embedBuilder = new EmbedBuilder()
                 .setTitle("ASSEMBLEMURS")
@@ -78,11 +78,7 @@ public class AssemblemursCommand extends Command {
         if (ENABLE_TIMEOUTS) {
             LocalDateTime lastTimeUsed;
 
-            if (timeoutMap.containsKey(author.getId())) {
-                lastTimeUsed = timeoutMap.get(author.getId());
-            } else {
-                lastTimeUsed = LocalDateTime.MIN;
-            }
+            lastTimeUsed = timeoutMap.getOrDefault(author.getId(), LocalDateTime.MIN);
 
             LocalDateTime currentTime = LocalDateTime.now();
             var duration = Duration.between(lastTimeUsed, currentTime);

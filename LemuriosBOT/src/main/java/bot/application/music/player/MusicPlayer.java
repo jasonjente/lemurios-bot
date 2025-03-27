@@ -66,8 +66,11 @@ public class MusicPlayer {
             guild.getAudioManager().setSendingHandler(musicManager.getSendHandler());
 
             return musicManager;
-        } 
-        throw new InvalidBotStateException("Error creating musing manager for guild");
+        } else {
+            var musicManager = new GuildMusicManager(playerManager);
+            musicManagers.put(guildId, musicManager);
+            return musicManager;
+        }
     }
 
     /**
