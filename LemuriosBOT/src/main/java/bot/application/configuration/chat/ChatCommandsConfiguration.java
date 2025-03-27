@@ -1,6 +1,6 @@
 package bot.application.configuration.chat;
 
-import bot.commands.concrete.chat.*;
+import bot.commands.chat.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -45,16 +45,6 @@ public class ChatCommandsConfiguration {
     @Bean
     HelpCommand helpCommand() {
         return new HelpCommand();
-    }
-
-    /**
-     * This method returns an instance of the LeaderboardCommand bean.
-     *
-     * @return an instance of the Leaderboard Command Bean.
-     */
-    @Bean
-    LeaderboardCommand leaderboardCommand() {
-        return new LeaderboardCommand();
     }
 
     /**

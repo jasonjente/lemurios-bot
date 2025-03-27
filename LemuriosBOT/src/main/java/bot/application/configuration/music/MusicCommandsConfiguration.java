@@ -1,7 +1,6 @@
 package bot.application.configuration.music;
 
-import bot.commands.concrete.music.*;
-import bot.commands.concrete.music.radio.*;
+import bot.commands.music.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,51 +9,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class MusicCommandsConfiguration {
-
-    /**
-     * This method returns an instance of the DeleteAllCustomRadioLinkCommand bean.
-     * @return an instance of the Delete All Custom Radio Link Command Bean.
-     */
-    @Bean
-    DeleteAllCustomRadioLinkCommand deleteAllCustomRadioLinkCommand() {
-        return new DeleteAllCustomRadioLinkCommand();
-    }
-
-    /**
-     * This method returns an instance of the DeleteGenreCustomRadioLinkCommand bean.
-     * @return an instance of the Delete Genre Custom Radio Link Command Bean.
-     */
-    @Bean
-    DeleteGenreCustomRadioLinkCommand deleteGenreCustomRadioLinkCommand() {
-        return new DeleteGenreCustomRadioLinkCommand();
-    }
-
-    /**
-     * This method returns an instance of the GetCustomRadioLinkCommand bean.
-     * @return an instance of the Get Custom Radio Link Command Bean.
-     */
-    @Bean
-    GetCustomRadioLinkCommand getCustomRadioLinkCommand() {
-        return new GetCustomRadioLinkCommand();
-    }
-
-    /**
-     * This method returns an instance of the PlayCustomRadioCommand bean.
-     * @return an instance of the Play Custom Radio Command Bean.
-     */
-    @Bean
-    PlayCustomRadioCommand playCustomRadioCommand() {
-        return new PlayCustomRadioCommand();
-    }
-
-    /**
-     * This method returns an instance of the SetCustomRadioLinkCommand bean.
-     * @return an instance of the Set Custom Radio Link Command Bean.
-     */
-    @Bean
-    SetCustomRadioLinkCommand setCustomRadioLinkCommand() {
-        return new SetCustomRadioLinkCommand();
-    }
 
     /**
      * This method returns an instance of the DisconnectCommand bean.

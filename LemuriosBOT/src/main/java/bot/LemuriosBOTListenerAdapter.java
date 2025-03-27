@@ -1,14 +1,11 @@
 package bot;
 
 import bot.commands.Command;
-import bot.commands.concrete.chat.*;
-import bot.commands.concrete.meme.MemeCommand;
-import bot.commands.concrete.meme.UploadBatchMemesCommand;
-import bot.commands.concrete.meme.UploadMemeCommand;
-import bot.commands.concrete.music.*;
-import bot.commands.concrete.music.radio.*;
+import bot.commands.chat.*;
+import bot.commands.music.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -17,13 +14,11 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,16 +29,12 @@ import static net.dv8tion.jda.api.interactions.commands.build.Commands.slash;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class LemuriosBOTListenerAdapter extends ListenerAdapter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LemuriosBOTListenerAdapter.class);
-    private static final String GENRE_OPTION = "genre";
     private final AssemblemursCommand assemblemursCommand;
     private final TakenNamesCommand takenNamesCommand;
     private final CreditsCommand creditsCommand;
     private final HelpCommand helpCommand;
-    private final MemeCommand memeCommand;
-    private final UploadMemeCommand uploadMemeCommand;
-    private final UploadBatchMemesCommand uploadBatchMemesCommand;
     private final PlayCommand playCommand;
     private final StopCommand stopCommand;
     private final PauseCommand pauseCommand;
@@ -52,17 +43,11 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
     private final NowPlayingCommand nowPlayingCommand;
     private final JoinCommand joinCommand;
     private final DisconnectCommand disconnectCommand;
-    private final LeaderboardCommand leaderboardCommand;
-    private final PlayCustomRadioCommand playCustomRadioCommand;
-    private final SetCustomRadioLinkCommand setCustomRadioLinkCommand;
-    private final GetCustomRadioLinkCommand getCustomRadioLinkCommand;
-    private final DeleteAllCustomRadioLinkCommand deleteAllCustomRadioLinkCommand;
-    private final DeleteGenreCustomRadioLinkCommand deleteGenreCustomRadioLinkCommand;
     private final CreateInviteCommand createInviteCommand;
 
     @Getter
     private static final Map<String, Command> commands = new HashMap<>();
-    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private final ExecutorService executor = Executors.newFixedThreadPool(4);
 
     private final Set<Future<?>> futuresSet = new HashSet<>();
 
@@ -96,15 +81,7 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
         commands.put(createInviteCommand.getCommandName(), createInviteCommand);
         commands.put(creditsCommand.getCommandName(), creditsCommand);
         commands.put(helpCommand.getCommandName(), helpCommand);
-        commands.put(leaderboardCommand.getCommandName(), leaderboardCommand);
         commands.put(takenNamesCommand.getCommandName(), takenNamesCommand);
-
-        /*
-            Meme commands
-         */
-        commands.put(memeCommand.getCommandName(), memeCommand);
-        commands.put(uploadBatchMemesCommand.getCommandName(), uploadBatchMemesCommand);
-        commands.put(uploadMemeCommand.getCommandName(), uploadMemeCommand);
 
         /*
             Music commands
@@ -117,12 +94,6 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
         commands.put(nowPlayingCommand.getCommandName(), nowPlayingCommand);
         commands.put(resumeCommand.getCommandName(), resumeCommand);
         commands.put(disconnectCommand.getCommandName(), disconnectCommand);
-        commands.put(playCustomRadioCommand.getCommandName(), playCustomRadioCommand);
-        commands.put(setCustomRadioLinkCommand.getCommandName(), setCustomRadioLinkCommand);
-        commands.put(getCustomRadioLinkCommand.getCommandName(), getCustomRadioLinkCommand);
-        commands.put(deleteAllCustomRadioLinkCommand.getCommandName(), deleteAllCustomRadioLinkCommand);
-        commands.put(deleteGenreCustomRadioLinkCommand.getCommandName(), deleteGenreCustomRadioLinkCommand);
-
     }
 
     /**
@@ -131,10 +102,10 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
      */
     @PreDestroy
     private void onDestroy() {
-        LOGGER.info("Shutting down listener!");
+        log.info("Shutting down listener!");
         for (Future<?> runnableFuture : futuresSet) {
             boolean canceled = runnableFuture.cancel(true);
-            LOGGER.info("Command terminated: {}, is done: {} , is canceled: {}.",
+            log.info("Command terminated: {}, is done: {} , is canceled: {}.",
                     canceled, runnableFuture.isDone(), runnableFuture.isCancelled());
         }
 
@@ -152,10 +123,10 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
      */
     @Override
     public void onSlashCommandInteraction(final SlashCommandInteractionEvent event) {
-        LOGGER.info("Message received from {} - Content: {} - ENTER",
+        log.info("Message received from {} - Content: {} - ENTER",
                 event.getInteraction().getUser().getName(), event.getFullCommandName());
         futuresSet.add(executor.submit(getRunnable(event)));
-        LOGGER.info("Message received from {} - Content: {} - LEAVE",
+        log.info("Message received from {} - Content: {} - LEAVE",
                 event.getInteraction().getUser().getName(), event.getFullCommandName());
     }
 
@@ -172,7 +143,7 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
             } catch (RuntimeException runtimeException) {
                 var embedBuilder = new EmbedBuilder().setTitle("We encountered an error during command execution :(");
                 event.getInteraction().getHook().editOriginalEmbeds(embedBuilder.build()).queue();
-                LOGGER.error("ERROR:", runtimeException);
+                log.error("ERROR:", runtimeException);
             }
         };
     }
@@ -180,7 +151,7 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
     /**
      * Creates the commands, their input parameters if they have any and their relevant information, that will be published to discord
      *
-     * @returns a list of all the Discord CommonData which hold the information about commands.
+     * @return a list of all the Discord CommonData which hold the information about commands.
      */
     private List<CommandData> setupCommandOptions() {
         var commandData = new ArrayList<CommandData>();
@@ -204,12 +175,6 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
         // /help
         commandData.add(slash(HELP_COMMAND.getCommandName(),
                 "Prints all the available commands."));
-        // /leaderboard
-        commandData.add(slash(LEADERBOARD_COMMAND.getCommandName(),
-                leaderboardCommand.getCommandDescription()));
-        // /invite
-        commandData.add(slash(createInviteCommand.getCommandName(),
-                createInviteCommand.getCommandDescription()));
 
         /*
             Meme Commands
@@ -222,11 +187,6 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
                 "meme-image", "Upload a meme to the BOT", true);
         commandData.add(slash(UPLOAD_MEME_COMMAND.getCommandName(),
                 "Upload a meme to the Bot.").addOptions(optionDataMeme));
-        // /upload-batch-memes
-        var optionDataBatchMemes = new OptionData(OptionType.ATTACHMENT,
-                "zip-file", "Upload a zip file containing memes!", true);
-        commandData.add(slash(uploadBatchMemesCommand.getCommandName(),
-                "Upload a meme to the Bot.").addOptions(optionDataBatchMemes));
 
         /*
             Music Commands
@@ -239,11 +199,6 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
                 "Search and play a song via YouTube or from a discord CDN link.")
                 .addOptions(optionDataSongToPlay));
 
-        // /play-radio :genre
-        var playCustomRadioGenreOptionData = new OptionData((OptionType.STRING), GENRE_OPTION,
-                "specify the genre you want to add.", true);
-        commandData.add(slash(playCustomRadioCommand.getCommandName(),
-                playCustomRadioCommand.getCommandDescription()).addOptions(playCustomRadioGenreOptionData));
         // /skip
         commandData.add(
                 slash(SKIP_COMMAND.getCommandName(), "Skips current song from the song list."));
@@ -262,25 +217,7 @@ public class LemuriosBOTListenerAdapter extends ListenerAdapter {
         commandData.add(slash(RESUME_COMMAND.getCommandName(), "Bot unpauses the song it paused."));
         // /disconnect
         commandData.add(slash(DISCONNECT_COMMAND.getCommandName(), "Bot disconnects and empties the queue."));
-        // /set-radio-url :url :genre
-        var setCustomRadioCommandOptionDataUrl = new OptionData((OptionType.STRING),
-                "url", setCustomRadioLinkCommand.getCommandDescription(), true);
-        var setCustomRadioCommandOptionDataGenre = new OptionData((OptionType.STRING),
-                GENRE_OPTION, "specify the genre you want to add.", true);
-        commandData.add(slash(setCustomRadioLinkCommand.getCommandName(),
-                setCustomRadioLinkCommand.getCommandDescription()).addOptions(
-                setCustomRadioCommandOptionDataUrl, setCustomRadioCommandOptionDataGenre));
-        // /get-radio-urls
-        commandData.add(slash(getCustomRadioLinkCommand.getCommandName(),
-                getCustomRadioLinkCommand.getCommandDescription()));
-        // /delete-genre
-        var deleteByGenre = new OptionData((OptionType.STRING), GENRE_OPTION,
-                "specify the genre you want to delete.", true);
-        commandData.add(slash(deleteGenreCustomRadioLinkCommand.getCommandName(),
-                deleteGenreCustomRadioLinkCommand.getCommandDescription()).addOptions(deleteByGenre));
-        // /delete-all
-        commandData.add(slash(deleteAllCustomRadioLinkCommand.getCommandName(),
-                deleteAllCustomRadioLinkCommand.getCommandDescription()));
+
         return commandData;
     }
 
