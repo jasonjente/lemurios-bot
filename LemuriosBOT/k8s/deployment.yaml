@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lemurios-bot
+  namespace: lemurios
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lemurios-bot
+  template:
+    metadata:
+      labels:
+        app: lemurios-bot
+    spec:
+      containers:
+        - name: app
+          image: lemurios-bot:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 17081

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lemurios-bot
+  namespace: lemurios
+spec:
+  selector:
+    app: lemurios-bot
+  ports:
+    - port: 17081
+      targetPort: 17081
+      protocol: TCP
+  type: ClusterIP
